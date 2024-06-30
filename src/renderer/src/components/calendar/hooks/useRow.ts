@@ -57,4 +57,11 @@ export const useHeight = (height: number) => {
  * @param hour 小时
  * @returns
  */
-export const isDividedHour = (hour: number) => !((hour * hour_count) % HOUR_LENGTH);
+export const isFirstHour = (hour: number) => !((hour * hour_count) % HOUR_LENGTH);
+
+/**
+ * 是否为每段时间中最后的小时
+ * @param hour 小时
+ * @returns
+ */
+export const isLastHour = (hour: number) => hour_count === HOUR_LENGTH || !isFirstHour(hour);

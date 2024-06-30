@@ -8,7 +8,7 @@ import { DataCell, QueryDataType } from '@antv/s2';
 import { Circle, Line, Rect } from '@antv/g';
 
 import type { IShapeData } from '../hooks/useData';
-import { isDividedHour } from '../hooks/useRow';
+import { isLastHour } from '../hooks/useRow';
 import { LIME, RED, SKY, YELLOW } from '../theme/colors';
 
 import { DateTimeGrain } from '@t/enum';
@@ -308,10 +308,10 @@ export class ShapeDataCell extends DataCell {
         );
     }
 
-    // 是否为最后一个节点
+    // 是否为最后的节点
     private isLastNode() {
         if (this.isAllDayCell()) return true;
-        return !isDividedHour(Number(this.meta.rowQuery?.key));
+        return isLastHour(Number(this.meta.rowQuery?.key));
     }
 
     // *重写边框绘制方法

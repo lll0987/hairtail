@@ -3,7 +3,7 @@
 import { RowCell } from '@antv/s2';
 import dayjs from 'dayjs';
 
-import { FORMAT_TIME, isDividedHour } from '../hooks/useRow';
+import { FORMAT_TIME, isFirstHour } from '../hooks/useRow';
 import { DateTimeGrain } from '@t/enum';
 
 /**
@@ -24,7 +24,7 @@ export class TimeRowCell extends RowCell {
         // #不是时间行或者不是分段时间的不绘制文字
         if (
             [DateTimeGrain.DATE, DateTimeGrain.DATE_RANGE].includes(key) ||
-            !isDividedHour(Number(key))
+            !isFirstHour(Number(key))
         )
             return;
 
