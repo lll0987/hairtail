@@ -56,7 +56,7 @@ const initConfig = (events: IEvent[]): S2DataConfig => {
     };
 };
 
-const initOptions = (width: number, height: number): S2Options => {
+export const initOptions = (width: number, height: number): S2Options => {
     const { ColHeight, RowHeight, DateRowHeight, DateRangeRowHeight } = useHeight(height);
     return {
         width,

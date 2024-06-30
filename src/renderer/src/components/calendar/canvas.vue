@@ -1,36 +1,59 @@
 <template>
     <div class="w-full h-full grid grid-rows-[auto_1fr] grid-cols-1 gap-8">
-        <bar @scroll="handleScroll"></bar>
-        <div ref="canvasRef" class="w-full h-full"></div>
+        <bar @scroll="handleScrollToDate"></bar>
+        <div ref="canvasRef" class="w-full h-full overflow-hidden"></div>
     </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { PivotSheet } from '@antv/s2';
+import { PivotSheet, S2Event } from '@antv/s2';
+import { debounce } from 'lodash';
+
+import { initOptions, useOptions } from './hooks/useOptions';
+import { useScroll, SHORTCUT } from './hooks/useScroll';
+import { LightTheme } from './theme/light';
 
 import { IEvent } from '@t/interface';
-
 import bar from './bar.vue';
-
-import { useOptions } from './hooks/useOptions';
-import { useScroll, SHORTCUT } from './hooks/useScroll';
-
-import { LightTheme } from './theme/light';
 
 const props = defineProps<{ data: IEvent[] }>();
 const canvasRef = ref<HTMLDivElement | null>(null);
 let s2: PivotSheet | null = null;
 
-const handleScroll = (date: SHORTCUT | string) => {
+// 滚动到日期
+const handleScrollToDate = (date: SHORTCUT | string) => {
     if (!s2) return;
     useScroll(s2, date);
 };
+
+// 尺寸自适应
+const handleResize = debounce(async (width: number, height: number) => {
+    if (!s2) return;
+    const options = initOptions(width, height);
+    s2.setOptions(options, true);
+    s2.changeSheetSize(width, height);
+    await s2.render(false);
+}, 300);
+
+const resizeObserver = new ResizeObserver(([entry] = []) => {
+    const [size] = entry.borderBoxSize || [];
+    handleResize(size.inlineSize, size.blockSize);
+});
+
+/**
+ * ?优化
+ * 大尺寸缩小到小尺寸时，滚动位置会保持不变，即按最左侧位置，因此会有一部分右侧信息丢失
+ * 是否需要按右侧？
+ * 同理：月份计算、滚动到日期是否也要调整？
+ * 配置项？
+ */
 
 onMounted(async () => {
     const container = canvasRef.value as HTMLDivElement;
     const { clientWidth: width, clientHeight: height } = container;
 
+    // 生成配置
     const { dataConfig, options } = useOptions(width, height, props.data);
 
     // 创建图像
@@ -39,7 +62,13 @@ onMounted(async () => {
     await s2.render();
 
     // 初始默认在今天
-    handleScroll(SHORTCUT.TODAY);
+    handleScrollToDate(SHORTCUT.TODAY);
+
+    // 监听尺寸变化
+    resizeObserver.observe(container);
+    s2.on(S2Event.LAYOUT_DESTROY, () => {
+        resizeObserver.disconnect();
+    });
 });
 </script>
 
