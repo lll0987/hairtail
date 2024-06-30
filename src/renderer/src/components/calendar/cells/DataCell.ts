@@ -9,7 +9,7 @@ import { Circle, Line, Rect } from '@antv/g';
 
 import type { IShapeData } from '../hooks/useData';
 import { isLastHour } from '../hooks/useRow';
-import { LIME, RED, SKY, YELLOW } from '../theme/colors';
+import { LIME, SKY, YELLOW } from '../theme/colors';
 
 import { DateTimeGrain } from '@t/enum';
 
@@ -78,12 +78,19 @@ export class ShapeDataCell extends DataCell {
     }
 
     // 根据数值获取尺寸
-    private getValueSize(size: number, value?: number) {
+    private getValueSize(maxSize: number, minSize?: number, value?: number) {
+        // 默认使用本单元格数据
         if (value === undefined) value = this.getCellData()?.value ?? 0;
+        // 尺寸
+        minSize = minSize || 0;
+        const size = maxSize - minSize;
+        // 数据范围
         const { max, min } = this.getValueRange();
+
         return new BigNumber(size)
             .times(value - min)
             .div(max - min)
+            .plus(minSize)
             .toNumber();
     }
 
@@ -112,7 +119,7 @@ export class ShapeDataCell extends DataCell {
         const colorMap: Record<DateTimeGrain, string> = {
             [DateTimeGrain.DATE]: YELLOW,
             [DateTimeGrain.DATE_RANGE]: SKY,
-            [DateTimeGrain.TIME]: RED,
+            [DateTimeGrain.TIME]: SKY,
             [DateTimeGrain.TIME_RANGE]: LIME
         };
         return colorMap[data.grain];
@@ -132,6 +139,34 @@ export class ShapeDataCell extends DataCell {
         }
         this.drawBorders();
         this.update();
+    }
+
+    // 获取时间散点图的样式
+    private getTimeShapeStyle() {
+        const lineWidth = 2;
+        const maxR = this.meta.height / 2;
+        const minR = lineWidth * 2;
+
+        return {
+            fill: this.getShapeColor(),
+            stroke: this.getTextStyle().fill,
+            r: this.getValueSize(maxR, minR),
+            lineWidth,
+            zIndex: 40
+        };
+    }
+
+    // *绘制时间散点图
+    drawTimeShape() {
+        const { time_start } = this.getCellData()!;
+        const { y } = this.meta;
+        const cy = this.getTimeRangeHeight(dayjs(time_start).minute(), 'm') + y;
+
+        const { x: cx } = this.getCellCenterPosition();
+
+        const style = this.getTimeShapeStyle();
+
+        this.appendChild(new Circle({ style: { ...style, cx, cy } }));
     }
 
     // 获取时间范围柱状图的样式
@@ -170,37 +205,12 @@ export class ShapeDataCell extends DataCell {
         this.appendChild(new Rect({ style: { ...style, x, y, width, height } }));
     }
 
-    // 获取时间散点图的样式
-    private getTimeShapeStyle() {
-        const maxR = this.meta.width / 2;
-        return {
-            fill: this.getShapeColor(),
-            stroke: this.getTextStyle().fill,
-            r: this.getValueSize(maxR),
-            lineWidth: 2,
-            zIndex: 40
-        };
-    }
-
-    // *绘制时间散点图
-    drawTimeShape() {
-        const { time_start } = this.getCellData()!;
-        const { y } = this.meta;
-        const cy = this.getTimeRangeHeight(dayjs(time_start).minute(), 'm') + y;
-
-        const { x: cx } = this.getCellCenterPosition();
-
-        const style = this.getTimeShapeStyle();
-
-        this.appendChild(new Circle({ style: { ...style, cx, cy } }));
-    }
-
     // 根据数值获取高度
     private getValueHeight(value?: number) {
         const { height } = this.meta;
         const { r, lineWidth } = this.getDateShapePointStyle();
 
-        const size = this.getValueSize(height - r * 2 - lineWidth, value);
+        const size = this.getValueSize(height - r * 2 - lineWidth, 0, value);
         return height - size - r - lineWidth / 2;
     }
 
