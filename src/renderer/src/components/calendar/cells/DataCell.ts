@@ -9,7 +9,7 @@ import { DataCell, QueryDataType } from '@antv/s2';
 import { Circle, Line, Rect } from '@antv/g';
 
 import type { IShapeData } from '../hooks/useData';
-import { isLastHour } from '../hooks/useRow';
+import { getTimeSpan, isLastHour } from '../hooks/useRow';
 
 import { DateTimeGrain } from '@t/enum';
 
@@ -145,7 +145,7 @@ export class ShapeDataCell extends DataCell {
     // 获取时间散点图的样式
     private getTimeShapeStyle() {
         const lineWidth = 2;
-        const maxR = this.meta.height / 2;
+        const maxR = (this.meta.height / 2) * getTimeSpan();
         const minR = lineWidth * 2;
 
         return {

@@ -65,3 +65,9 @@ export const isFirstHour = (hour: number) => !((hour * hour_count) % HOUR_LENGTH
  * @returns
  */
 export const isLastHour = (hour: number) => hour_count === HOUR_LENGTH || !isFirstHour(hour);
+
+/**
+ * 获取每段时间的跨度
+ * @returns
+ */
+export const getTimeSpan = () => HOUR_LENGTH / hour_count;
