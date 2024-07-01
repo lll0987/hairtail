@@ -1,6 +1,6 @@
 export enum DateTimeGrain {
-    DATE = 'd',
-    DATE_RANGE = 'dr',
-    TIME = 't',
-    TIME_RANGE = 'tr'
+    DATE = '2300',
+    DATE_RANGE = '2314',
+    TIME = '1500',
+    TIME_RANGE = '1514'
 }
