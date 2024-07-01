@@ -1,6 +1,6 @@
 <template>
-    <div class="w-full h-full grid grid-rows-[auto_1fr] grid-cols-1 gap-8">
-        <bar @scroll="handleScrollToDate"></bar>
+    <div class="w-full h-full grid grid-rows-[auto_1fr] grid-cols-1">
+        <bar class="py-8" @scroll="handleScrollToDate"></bar>
         <div ref="canvasRef" class="w-full h-full overflow-hidden"></div>
     </div>
 </template>
