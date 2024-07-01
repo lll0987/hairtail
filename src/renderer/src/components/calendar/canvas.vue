@@ -41,13 +41,9 @@ const resizeObserver = new ResizeObserver(([entry] = []) => {
     handleResize(size.inlineSize, size.blockSize);
 });
 
-/**
- * ?优化
- * 大尺寸缩小到小尺寸时，滚动位置会保持不变，即按最左侧位置，因此会有一部分右侧信息丢失
- * 是否需要按右侧？
- * 同理：月份计算、滚动到日期是否也要调整？
- * 配置项？
- */
+// RE 按左侧/右侧配置项？
+// 大尺寸缩小到小尺寸时，滚动位置会保持不变，即按最左侧位置，因此会有一部分右侧信息丢失
+// 月份计算、滚动到日期同理
 
 onMounted(async () => {
     const container = canvasRef.value as HTMLDivElement;

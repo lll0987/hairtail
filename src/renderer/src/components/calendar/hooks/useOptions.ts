@@ -72,7 +72,7 @@ export const initOptions = (width: number, height: number): S2Options => {
                 }
             }
         },
-        // TODO tooltip
+        // NEXT tooltip
         interaction: {
             // 禁止修改尺寸
             resize: {
