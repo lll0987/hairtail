@@ -24,6 +24,7 @@
         "@antv/s2": "^2.0.0-next.24",
         "@electron-toolkit/preload": "^3.0.0",
         "@electron-toolkit/utils": "^3.0.0",
+        "@vicons/tabler": "^0.12.0",
         "autoprefixer": "^10.4.19",
         "bignumber.js": "^9.1.2",
         "dayjs": "^1.11.11",
