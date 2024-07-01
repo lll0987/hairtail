@@ -1,18 +1,17 @@
 import type { S2Theme } from '@antv/s2';
 import colors from 'tailwindcss/colors';
 
-const BG_COLOR = colors.neutral[100];
-const BORDER_COLOR = colors.zinc[950];
-const TEXT_COLOR = colors.zinc[950];
-const SUB_TEXT_COLOR = colors.zinc[800];
+const light = colors.neutral[100];
+const dark = colors.zinc[950];
+const dark2 = colors.zinc[800];
 
 const hasBorderCell = {
     // 水平边框
-    horizontalBorderColor: BORDER_COLOR,
+    horizontalBorderColor: dark,
     horizontalBorderColorOpacity: 1,
     horizontalBorderWidth: 1,
     // 垂直边框
-    verticalBorderColor: BORDER_COLOR,
+    verticalBorderColor: dark,
     verticalBorderColorOpacity: 0,
     verticalBorderWidth: 0,
     // 边框设置为虚线
@@ -33,14 +32,14 @@ const noBorderCell = {
 };
 
 export const LightTheme: S2Theme = {
-    background: { color: BG_COLOR },
+    background: { color: colors.transparent },
     splitLine: {
         // 水平有边框
-        horizontalBorderColor: BORDER_COLOR,
+        horizontalBorderColor: dark,
         horizontalBorderColorOpacity: 1,
         horizontalBorderWidth: 1,
         // 垂直无边框
-        verticalBorderColor: BORDER_COLOR,
+        verticalBorderColor: dark,
         verticalBorderColorOpacity: 0,
         verticalBorderWidth: 0,
         // 显示阴影
@@ -48,20 +47,20 @@ export const LightTheme: S2Theme = {
     },
     dataCell: {
         cell: noBorderCell,
-        text: { fill: TEXT_COLOR },
-        bolderText: { fill: TEXT_COLOR }
+        text: { fill: dark },
+        bolderText: { fill: dark }
     },
     rowCell: {
         cell: hasBorderCell,
-        text: { fill: TEXT_COLOR, textBaseline: 'middle', textAlign: 'center' },
-        bolderText: { fill: TEXT_COLOR, textBaseline: 'middle', textAlign: 'center' }
+        text: { fill: dark, textBaseline: 'middle', textAlign: 'center' },
+        bolderText: { fill: dark, textBaseline: 'middle', textAlign: 'center' }
     },
     colCell: {
         cell: noBorderCell,
-        text: { fill: TEXT_COLOR },
-        bolderText: { fill: TEXT_COLOR, fontSize: 20, textBaseline: 'top', textAlign: 'center' },
+        text: { fill: dark },
+        bolderText: { fill: dark, fontSize: 20, textBaseline: 'top', textAlign: 'center' },
         measureText: {
-            fill: SUB_TEXT_COLOR,
+            fill: dark2,
             fontSize: 12,
             textBaseline: 'top',
             textAlign: 'center',
@@ -70,10 +69,10 @@ export const LightTheme: S2Theme = {
     },
     cornerCell: {
         cell: noBorderCell,
-        text: { fill: TEXT_COLOR, fontSize: 32, textBaseline: 'middle', textAlign: 'center' },
-        bolderText: { fill: BG_COLOR, fontSize: 28, textBaseline: 'middle', textAlign: 'center' },
+        text: { fill: dark, fontSize: 32, textBaseline: 'middle', textAlign: 'center' },
+        bolderText: { fill: light, fontSize: 28, textBaseline: 'middle', textAlign: 'center' },
         measureText: {
-            fill: TEXT_COLOR,
+            fill: dark,
             fontSize: 12,
             textBaseline: 'middle',
             textAlign: 'center',

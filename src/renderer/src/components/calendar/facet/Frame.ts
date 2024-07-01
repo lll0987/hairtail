@@ -10,11 +10,11 @@ import { Line } from '@antv/g';
 export class ShapeFrame extends Frame {
     layout(): void {
         super.layout();
-        this.addBottomBorder();
+        this.addTopAndBottomBorder();
     }
 
-    // 增加底部边框
-    private addBottomBorder() {
+    // 增加顶部和底部边框
+    private addTopAndBottomBorder() {
         const { spreadsheet } = this.cfg;
         const { horizontalBorderColor, horizontalBorderColorOpacity, horizontalBorderWidth } =
             spreadsheet.theme?.splitLine!;
@@ -23,15 +23,27 @@ export class ShapeFrame extends Frame {
 
         const x1 = position.x;
         const x2 = x1 + cornerWidth + viewportWidth;
-        const y = position.y + cornerHeight + viewportHeight + horizontalBorderWidth / 2;
+        const yt = horizontalBorderWidth / 2;
+        const yb = position.y + cornerHeight + viewportHeight + yt;
 
-        this.appendChild(
+        this.append(
             new Line({
                 style: {
                     x1,
-                    y1: y,
+                    y1: yb,
                     x2,
-                    y2: y,
+                    y2: yb,
+                    stroke: horizontalBorderColor,
+                    lineWidth: horizontalBorderWidth,
+                    opacity: horizontalBorderColorOpacity
+                }
+            }),
+            new Line({
+                style: {
+                    x1,
+                    y1: yt,
+                    x2,
+                    y2: yt,
                     stroke: horizontalBorderColor,
                     lineWidth: horizontalBorderWidth,
                     opacity: horizontalBorderColorOpacity
