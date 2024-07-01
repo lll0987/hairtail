@@ -1,3 +1,4 @@
+import { Component } from 'vue';
 import { DateTimeGrain } from './enum';
 
 export interface IEvent {
@@ -13,4 +14,11 @@ export interface IRecord {
     out: string;
     e?: number;
     i?: number;
+}
+
+export interface IRoute {
+    key: string;
+    label: string;
+    icon: Component;
+    component?: Component;
 }
