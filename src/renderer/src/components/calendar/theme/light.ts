@@ -1,10 +1,10 @@
 import type { S2Theme } from '@antv/s2';
-import { DARK, DARK_2, LIGHT } from './colors';
+import colors from 'tailwindcss/colors';
 
-const BG_COLOR = LIGHT;
-const TEXT_COLOR = DARK;
-const BORDER_COLOR = DARK;
-const SUB_TEXT_COLOR = DARK_2;
+const BG_COLOR = colors.neutral[100];
+const BORDER_COLOR = colors.zinc[950];
+const TEXT_COLOR = colors.zinc[950];
+const SUB_TEXT_COLOR = colors.zinc[800];
 
 const hasBorderCell = {
     // 水平边框
@@ -81,3 +81,5 @@ export const LightTheme: S2Theme = {
         }
     }
 };
+
+// NEXT 选中态样式

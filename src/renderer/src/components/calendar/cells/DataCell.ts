@@ -3,13 +3,13 @@
 
 import dayjs from 'dayjs';
 import BigNumber from 'bignumber.js';
+import colors from 'tailwindcss/colors';
 
 import { DataCell, QueryDataType } from '@antv/s2';
 import { Circle, Line, Rect } from '@antv/g';
 
 import type { IShapeData } from '../hooks/useData';
 import { isLastHour } from '../hooks/useRow';
-import { LIME, SKY, YELLOW } from '../theme/colors';
 
 import { DateTimeGrain } from '@t/enum';
 
@@ -112,15 +112,15 @@ export class ShapeDataCell extends DataCell {
         return { x: x + cx, y: y + cy };
     }
 
-    // TODO 获取颜色
+    // NEXT 获取颜色的逻辑
     private getShapeColor() {
         const data = this.getCellData();
         if (!data) return this.getTextStyle().fill;
         const colorMap: Record<DateTimeGrain, string> = {
-            [DateTimeGrain.DATE]: YELLOW,
-            [DateTimeGrain.DATE_RANGE]: SKY,
-            [DateTimeGrain.TIME]: SKY,
-            [DateTimeGrain.TIME_RANGE]: LIME
+            [DateTimeGrain.DATE]: colors.amber[400],
+            [DateTimeGrain.DATE_RANGE]: colors.sky[500],
+            [DateTimeGrain.TIME]: colors.violet[400],
+            [DateTimeGrain.TIME_RANGE]: colors.lime[400]
         };
         return colorMap[data.grain];
     }
@@ -138,6 +138,7 @@ export class ShapeDataCell extends DataCell {
             drawShapeMap[data.grain].call(this);
         }
         this.drawBorders();
+        // NEXT 图形以外需要显示的信息
         this.update();
     }
 
@@ -202,6 +203,7 @@ export class ShapeDataCell extends DataCell {
         const width = w - px * 2 - style.lineWidth;
         const height = h0 - style.lineWidth;
 
+        // NEXT 时间范围重叠时的逻辑
         this.appendChild(new Rect({ style: { ...style, x, y, width, height } }));
     }
 
@@ -282,6 +284,7 @@ export class ShapeDataCell extends DataCell {
         const width = w * date_length - style.lineWidth;
         const height = h - py * 2 - style.lineWidth;
 
+        // NEXT 按可显示的列数拆分渲染
         this.appendChild(new Rect({ style: { x, y, width, height, ...style } }));
     }
 
