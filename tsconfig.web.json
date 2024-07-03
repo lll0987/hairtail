@@ -1,19 +1,20 @@
 {
-  "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
-  "include": [
-    "src/renderer/src/env.d.ts",
-    "src/renderer/src/**/*",
-    "src/renderer/src/**/*.vue",
-    "src/preload/*.d.ts",
-    "src/types/*.d.ts",
-    "src/types/*.ts"
-  ],
-  "compilerOptions": {
-    "composite": true,
-    "baseUrl": ".",
-    "paths": {
-      "@renderer/*": ["src/renderer/src/*"],
-      "@t/*": ["src/types/*"],
+    "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
+    "include": [
+        "src/renderer/src/env.d.ts",
+        "src/renderer/src/**/*",
+        "src/renderer/src/**/*.vue",
+        "src/preload/*.d.ts",
+        "src/types/*",
+        "src/main/logger/*"
+    ],
+    "compilerOptions": {
+        "composite": true,
+        "baseUrl": ".",
+        "paths": {
+            "@renderer/*": ["src/renderer/src/*"],
+            "@t/*": ["src/types/*"],
+            "@logger": ["src/main/logger"]
+        }
     }
-  }
 }
