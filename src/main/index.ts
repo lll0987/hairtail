@@ -2,6 +2,7 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron';
 import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
+import { handleService } from './database';
 
 function createWindow(): void {
     // Create the browser window.
@@ -34,7 +35,7 @@ function createWindow(): void {
         mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
     }
 
-    // 默认最大化打开
+    // #默认最大化打开
     mainWindow.maximize();
 }
 
@@ -54,6 +55,8 @@ app.whenReady().then(() => {
 
     // IPC test
     ipcMain.on('ping', () => console.log('pong'));
+    // #数据库操作
+    handleService();
 
     createWindow();
 
