@@ -1,3 +1,9 @@
+import { model as tagModel, name as tagName } from './tag.model';
+export { tagModel, tagName };
+
+import { model as topicModel, name as topicName } from './topic.model';
+export { topicModel, topicName };
+
 import { model as infoModel, name as infoName } from './info.model';
 export { infoModel, infoName };
 
