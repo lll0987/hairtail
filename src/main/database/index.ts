@@ -1,9 +1,11 @@
 import { ipcMain } from 'electron';
 
 import { RecordService } from './services/record.service';
+import { EventService } from './services/event.service';
 
 const services = {
-    [RecordService.name]: new RecordService()
+    [RecordService.name]: new RecordService(),
+    [EventService.name]: new EventService()
 };
 
 export const serviceNames = Object.keys(services);
