@@ -22,6 +22,7 @@ export const LATEST_HOUR = (START_HOUR || HOUR_LENGTH) - 1;
 const hour_count_arr = [24, 12, 6, 3];
 // 时间段数量
 let hour_count = hour_count_arr[0];
+// NEXT 通过 pinia 存储设置
 
 // 滚动条尺寸
 const ScrollBarSize = 16;
@@ -57,14 +58,14 @@ export const useHeight = (height: number) => {
  * @param hour 小时
  * @returns
  */
-export const isFirstHour = (hour: number) => !((hour * hour_count) % HOUR_LENGTH);
+export const isFirstHour = (hour: number) => (hour * hour_count) % HOUR_LENGTH === 0;
 
 /**
  * 是否为每段时间中最后的小时
  * @param hour 小时
  * @returns
  */
-export const isLastHour = (hour: number) => hour_count === HOUR_LENGTH || !isFirstHour(hour);
+export const isLastHour = (hour: number) => hour_count === HOUR_LENGTH || isFirstHour(hour + 1);
 
 /**
  * 获取每段时间的跨度
