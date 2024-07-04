@@ -3,6 +3,7 @@ import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
 import { handleService } from './database';
+import { handleNLP } from './nlp/v0';
 
 function createWindow(): void {
     // Create the browser window.
@@ -55,8 +56,11 @@ app.whenReady().then(() => {
 
     // IPC test
     ipcMain.on('ping', () => console.log('pong'));
+
     // #数据库操作
     handleService();
+    // #提取信息
+    handleNLP();
 
     createWindow();
 

@@ -29,14 +29,14 @@ import { onMounted, ref } from 'vue';
 import { IRecord } from '@t/interface';
 import Editor from '../components/editor';
 import PrimaryButton from '../components/button';
-import { create, list } from '../api/record';
+import { list } from '../api/record';
 
 const records = ref<IRecord[]>([]);
 const text = ref('');
 
 const handleSend = async () => {
     if (!text.value) return;
-    await create({ in: text.value, out: '<(＿　＿)>' });
+    await window.electron.ipcRenderer.invoke('handleInput', text.value);
     const status = await getList();
     if (status) text.value = '';
 };
