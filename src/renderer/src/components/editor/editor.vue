@@ -7,6 +7,7 @@
             placeholder=""
             :value="modelValue"
             @input="onInput"
+            @keydown="onKeydown"
         ></textarea>
         <!-- 字数 -->
         <!-- <span class="absolute bottom-0 right-12 text-stone-600">{{ modelValue.length }}</span> -->
@@ -19,7 +20,7 @@ import { onMounted, ref } from 'vue';
 const props = withDefaults(defineProps<{ modelValue?: string }>(), {
     modelValue: ''
 });
-const emits = defineEmits(['update:modelValue']);
+const emits = defineEmits(['update:modelValue', 'enter']);
 
 const textareaValue = ref('');
 const onValueChange = (value: string) => {
@@ -42,6 +43,13 @@ const onInput = (e: InputEvent | CompositionEvent | Event): void => {
     onValueChange(targetValue);
     // handleAutoHeight();
     emits('update:modelValue', targetValue);
+};
+
+const onKeydown = (e: KeyboardEvent): void => {
+    // NEXT ctrl + enter 换行
+    // key='Control' 延时固定间隔后出现 enter
+    if (e.key !== 'Enter') return;
+    emits('enter');
 };
 
 onMounted(() => {

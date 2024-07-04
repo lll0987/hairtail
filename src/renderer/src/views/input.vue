@@ -16,7 +16,7 @@
             </div>
         </div>
         <div class="grid grid-cols-1 grid-rows-[1fr_auto] border-t-2 border-zinc-950 gap-8 py-8">
-            <Editor v-model="text"></Editor>
+            <Editor v-model="text" @enter="handleSend"></Editor>
             <div class="flex flex-row items-center justify-end">
                 <PrimaryButton class="mr-16" @click="handleSend">保存</PrimaryButton>
             </div>
