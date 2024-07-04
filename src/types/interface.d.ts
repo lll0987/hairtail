@@ -12,8 +12,6 @@ export interface IEvent {
 export interface IRecord {
     in: string;
     out: string;
-    e?: number;
-    i?: number;
 }
 
 export interface IRoute {

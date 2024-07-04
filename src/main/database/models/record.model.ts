@@ -1,15 +1,16 @@
 import { model as Model, Schema } from 'mongoose';
-import { IRecord } from '@t/interface';
-import { eventName, infoName } from '.';
+import { eventName, infoName, tagName, topicName } from '.';
 
 export const name = 'Record';
 
-const schema = new Schema<IRecord>(
+const schema = new Schema(
     {
         in: { type: String, required: true },
         out: { type: String, required: true },
-        e: [{ type: Schema.Types.ObjectId, ref: eventName, required: false }],
-        i: [{ type: Schema.Types.ObjectId, ref: infoName, required: false }]
+        event: [{ type: Schema.Types.ObjectId, ref: eventName, required: false }],
+        info: [{ type: Schema.Types.ObjectId, ref: infoName, required: false }],
+        tag: [{ type: Schema.Types.ObjectId, ref: tagName, required: false }],
+        topic: [{ type: Schema.Types.ObjectId, ref: topicName, required: false }]
     },
     { collection: name, timestamps: true }
 );
