@@ -16,8 +16,7 @@
             </div>
         </div>
         <div class="grid grid-cols-1 grid-rows-[1fr_auto] border-t-2 border-zinc-950 gap-8 py-8">
-            <!-- TODO 改为 wangeditor -->
-            <FullTextarea v-model="text" class="mx-6"></FullTextarea>
+            <Editor v-model="text"></Editor>
             <div class="flex flex-row items-center justify-end">
                 <PrimaryButton class="mr-16" @click="handleSend">保存</PrimaryButton>
             </div>
@@ -28,7 +27,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { IRecord } from '@t/interface';
-import FullTextarea from '../components/textarea';
+import Editor from '../components/editor';
 import PrimaryButton from '../components/button';
 import { create, list } from '../api/record';
 

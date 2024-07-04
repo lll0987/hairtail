@@ -1,5 +1,5 @@
 <template>
-    <div ref="divRef">
+    <div ref="divRef" class="mx-8">
         <textarea
             ref="textareaRef"
             class="w-full h-full resize-none block bg-transparent focus-within:outline-none"
