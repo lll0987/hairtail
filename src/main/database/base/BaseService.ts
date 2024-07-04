@@ -4,6 +4,7 @@ import mongodb from 'mongodb';
 import { Model } from 'mongoose';
 import { Logger } from '../../logger';
 import { connect } from './db';
+import { MsgType, ResType } from '@t/types';
 
 export class BaseService {
     protected model;
@@ -15,7 +16,7 @@ export class BaseService {
     }
 
     protected connect() {
-        return new Promise<[string | null, boolean | null]>(resolve => {
+        return new Promise<ResType<boolean>>(resolve => {
             connect()
                 .then(() => {
                     resolve([null, true]);
@@ -29,7 +30,7 @@ export class BaseService {
 
     async list() {
         const [msg] = await this.connect();
-        return new Promise<[string | null, any[]]>(resolve => {
+        return new Promise<[MsgType | null, any[]]>(resolve => {
             if (msg) return resolve([msg, []]);
             this.model
                 .find()
@@ -51,7 +52,7 @@ export class BaseService {
 
     async create(data: any) {
         const [msg] = await this.connect();
-        return new Promise<[string | null, string | null]>(resolve => {
+        return new Promise<ResType<string>>(resolve => {
             if (msg) return resolve([msg, null]);
             this.model
                 .create(data)
@@ -68,7 +69,7 @@ export class BaseService {
 
     async updateById(id: string, data: any) {
         const [msg] = await this.connect();
-        return new Promise<[string | null, string | null]>(resolve => {
+        return new Promise<ResType<string>>(resolve => {
             if (msg) return resolve([msg, null]);
             this.model
                 .findByIdAndUpdate(id, data)
@@ -85,7 +86,7 @@ export class BaseService {
 
     async deleteById(id: string) {
         const [msg] = await this.connect();
-        return new Promise<[string | null, string | null]>(resolve => {
+        return new Promise<ResType<string>>(resolve => {
             if (msg) return resolve([msg, null]);
             this.model
                 .findByIdAndDelete(id)
