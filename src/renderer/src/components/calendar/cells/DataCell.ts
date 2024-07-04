@@ -145,6 +145,7 @@ export class ShapeDataCell extends DataCell {
     // 获取时间散点图的样式
     private getTimeShapeStyle() {
         const lineWidth = 2;
+        // NEXT 取宽高中的最小值
         const maxR = (this.meta.height / 2) * getTimeSpan();
         const minR = lineWidth * 2;
 

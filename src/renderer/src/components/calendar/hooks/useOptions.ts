@@ -62,6 +62,7 @@ export const initOptions = (width: number, height: number): S2Options => {
         width,
         height,
         style: {
+            // NEXT 列宽根据总宽度计算
             colCell: { width: 100, height: ColHeight, heightByField: { [EXTRA_FIELD]: 0 } },
             rowCell: {
                 width: 60,

@@ -45,6 +45,7 @@ const MinRowHeight = 30;
  * - `DateRangeRowHeight` 日期范围行行高
  */
 export const useHeight = (height: number) => {
+    // NEXT 剩余高度分配到其它行
     const DataHeight = height - ColHeight - DateRangeRowHeight - DateRowHeight - ScrollBarSize;
     const RowHeight = Math.floor(DataHeight / HOUR_LENGTH);
 
