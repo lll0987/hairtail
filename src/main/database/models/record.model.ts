@@ -11,7 +11,7 @@ const schema = new Schema<IRecord>(
         e: [{ type: Schema.Types.ObjectId, ref: eventName, required: false }],
         i: [{ type: Schema.Types.ObjectId, ref: infoName, required: false }]
     },
-    { collection: name }
+    { collection: name, timestamps: true }
 );
 
 export const model = Model(name, schema);

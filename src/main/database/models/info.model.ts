@@ -4,11 +4,11 @@ export const name = 'Info';
 
 const schema = new Schema(
     {
-        name: { type: String },
-        att: { type: String },
-        remark: { type: String }
+        name: { type: String, require: true },
+        att: { type: String, require: false },
+        remark: { type: String, require: false }
     },
-    { collection: name }
+    { collection: name, timestamps: true }
 );
 
 export const model = Model(name, schema);
