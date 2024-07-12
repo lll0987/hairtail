@@ -12,7 +12,7 @@ const schema = new Schema(
         // 颗粒度
         grain: { type: Number, require: true },
         // 主题
-        topic: { type: String, require: true },
+        topic: { type: String, require: true, index: true },
         // 标题
         title: { type: String, required: false },
         // 值
@@ -20,7 +20,7 @@ const schema = new Schema(
         // 备注
         remark: { type: String, required: false },
         // 标签
-        tags: [{ type: String, required: false }],
+        tags: [{ type: String, required: false, index: true }],
         // 关联信息
         infos: [{ type: Schema.Types.ObjectId, ref: infoName, required: false }]
     },
