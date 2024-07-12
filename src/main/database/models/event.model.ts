@@ -27,4 +27,7 @@ const schema = new Schema(
     { collection: name, timestamps: true }
 );
 
+// 为开始时间创建降序索引，提升查询性能
+schema.index({ start: -1 });
+
 export const model = Model(name, schema);
