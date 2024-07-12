@@ -14,6 +14,6 @@ import { computed, ref } from 'vue';
 import MainMenu from './components/menu/menu.vue';
 import routes from './router/routes';
 
-const actived = ref('input');
+const actived = ref('dashboard');
 const activedComponent = computed(() => routes.find(i => i.key === actived.value)?.component);
 </script>
