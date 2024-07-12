@@ -10,7 +10,8 @@
                 </div>
                 <div class="flex flex-row items-center justify-start w-full">
                     <div class="rounded max-w-full bg-white px-8 py-4">
-                        {{ item.out }}
+                        <!-- eslint-disable-next-line vue/no-v-html -->
+                        <div v-html="item.output"></div>
                     </div>
                 </div>
             </div>
@@ -26,12 +27,17 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { IRecord } from '@t/interface';
 import Editor from '../components/editor';
 import PrimaryButton from '../components/button';
-import { list } from '../api/record';
 
-const records = ref<IRecord[]>([]);
+import { IRecord } from '@t/interface';
+import { list } from '../api/record';
+import { marked } from 'marked';
+
+interface Record extends IRecord {
+    output: string;
+}
+const records = ref<Record[]>([]);
 const text = ref('');
 
 const handleSend = async () => {
@@ -44,9 +50,10 @@ const handleSend = async () => {
 const getList = async () => {
     const [msg, data] = await list();
     if (msg) {
+        // NEXT 错误提示
         console.log(msg);
     } else if (data) {
-        records.value = data;
+        records.value = data.map((i: IRecord) => ({ ...i, output: marked(i.out) }));
     }
     return !msg;
 };
