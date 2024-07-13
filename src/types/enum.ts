@@ -4,3 +4,9 @@ export enum DateTimeGrain {
     TIME = '1500',
     TIME_RANGE = '1514'
 }
+
+export enum RecordStatus {
+    INIT,
+    WAITING,
+    FINISH
+}

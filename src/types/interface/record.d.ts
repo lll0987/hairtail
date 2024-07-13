@@ -1,8 +1,10 @@
+import { RecordStatus } from '@t/enum';
 import { ObjectId } from '../types';
 
 export interface RecordModel {
     in: string;
     out: string;
+    status: RecordStatus;
     event?: ObjectId[];
     info?: ObjectId[];
     tag?: ObjectId[];

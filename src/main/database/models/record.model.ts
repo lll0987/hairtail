@@ -8,6 +8,7 @@ const schema = new Schema<RecordModel>(
     {
         in: { type: String, required: true },
         out: { type: String, required: true },
+        status: { type: Number, required: true },
         event: [{ type: Schema.Types.ObjectId, ref: eventName, required: false }],
         info: [{ type: Schema.Types.ObjectId, ref: infoName, required: false }],
         tag: [{ type: Schema.Types.ObjectId, ref: tagName, required: false }],
