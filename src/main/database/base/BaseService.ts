@@ -51,6 +51,25 @@ export class BaseService {
         });
     }
 
+    // 根据 id 查询数据
+    async findById(id: string) {
+        const [msg] = await this.connect();
+        return new Promise<ResType<any>>(resolve => {
+            if (msg) return resolve([msg, null]);
+            this.model
+                .findById(id)
+                .then(r => {
+                    const { _id, ...obj } = r;
+                    this.logger.info('success', obj);
+                    resolve([null, { obj, id: _id.toString() }]);
+                })
+                .catch(e => {
+                    this.logger.error('fail', e);
+                    resolve(['查询失败', null]);
+                });
+        });
+    }
+
     // 插入数据
     async create(data: any) {
         const [msg] = await this.connect();
