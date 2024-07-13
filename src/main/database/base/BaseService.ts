@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import mongodb from 'mongodb';
 import { Model } from 'mongoose';
 import { Logger } from '../../logger';
 import { connect } from './db';
-import { MsgType, ResType } from '@t/types';
+import { MsgType, ObjectId, ResType } from '@t/types';
 
 export class BaseService {
     protected model;
@@ -15,6 +14,7 @@ export class BaseService {
         this.logger = new Logger(`${name}Service`);
     }
 
+    // 建立数据库连接
     protected connect() {
         return new Promise<ResType<boolean>>(resolve => {
             connect()
@@ -28,6 +28,7 @@ export class BaseService {
         });
     }
 
+    // 列表查询
     async list() {
         const [msg] = await this.connect();
         return new Promise<[MsgType | null, any[]]>(resolve => {
@@ -37,7 +38,7 @@ export class BaseService {
                 .lean()
                 .then(r => {
                     const list = r.map(({ _id, ...doc }) => {
-                        const objectId = _id as mongodb.ObjectId;
+                        const objectId = _id as ObjectId;
                         return { ...doc, id: objectId.toString() };
                     });
                     this.logger.info('success', list);
@@ -50,15 +51,16 @@ export class BaseService {
         });
     }
 
+    // 插入数据
     async create(data: any) {
         const [msg] = await this.connect();
-        return new Promise<ResType<string>>(resolve => {
+        return new Promise<ResType<ObjectId | ObjectId[]>>(resolve => {
             if (msg) return resolve([msg, null]);
             this.model
                 .create(data)
                 .then(r => {
                     this.logger.info('success', r);
-                    resolve([null, r._id]);
+                    resolve([null, Array.isArray(data) ? r.map(i => i._id) : r._id]);
                 })
                 .catch(e => {
                     this.logger.error('fail', e);
@@ -67,9 +69,10 @@ export class BaseService {
         });
     }
 
+    // 根据 id 更新数据
     async updateById(id: string, data: any) {
         const [msg] = await this.connect();
-        return new Promise<ResType<string>>(resolve => {
+        return new Promise<ResType<ObjectId>>(resolve => {
             if (msg) return resolve([msg, null]);
             this.model
                 .findByIdAndUpdate(id, data)
@@ -84,9 +87,10 @@ export class BaseService {
         });
     }
 
+    // 根据 id 删除数据
     async deleteById(id: string) {
         const [msg] = await this.connect();
-        return new Promise<ResType<string>>(resolve => {
+        return new Promise<ResType<ObjectId>>(resolve => {
             if (msg) return resolve([msg, null]);
             this.model
                 .findByIdAndDelete(id)
