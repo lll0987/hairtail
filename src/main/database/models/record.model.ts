@@ -1,9 +1,10 @@
 import { model as Model, Schema } from 'mongoose';
 import { eventName, infoName, tagName, topicName } from '.';
+import { RecordModel } from '@t/interface';
 
 export const name = 'Record';
 
-const schema = new Schema(
+const schema = new Schema<RecordModel>(
     {
         in: { type: String, required: true },
         out: { type: String, required: true },

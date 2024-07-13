@@ -1,8 +1,9 @@
 import { model as Model, Schema } from 'mongoose';
+import { InfoModel } from '@t/interface';
 
 export const name = 'Info';
 
-const schema = new Schema(
+const schema = new Schema<InfoModel>(
     {
         name: { type: String, require: true },
         att: { type: String, require: false },

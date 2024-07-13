@@ -1,8 +1,9 @@
 import { model as Model, Schema } from 'mongoose';
+import { TagModel } from '@t/interface';
 
 export const name = 'Tag';
 
-const schema = new Schema(
+const schema = new Schema<TagModel>(
     {
         name: { type: String, required: true },
         alias: { type: String, required: false },

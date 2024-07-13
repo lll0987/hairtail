@@ -7,7 +7,7 @@ import { HOUR_LENGTH, START_HOUR } from './useRow';
 import { END_DATE, FORMAT_DATE, START_DATE } from './useCol';
 
 // 日历数据结构
-export interface IShapeData extends Omit<IEvent, 'start' | 'end'> {
+export interface IShapeData extends Omit<IEvent, 'start' | 'end' | 'topic'> {
     date_start: string;
     date_end?: string;
     date_length?: number;
@@ -44,12 +44,7 @@ const useEventToShape = (events: IEvent[]) => {
         let start_value = dayjs(start).valueOf();
         do {
             const s = dayjs(start_value).hour(START_HOUR).minute(0).second(0).valueOf();
-            const e = dayjs(start_value)
-                .add(1, 'day')
-                .hour(START_HOUR)
-                .minute(0)
-                .second(0)
-                .valueOf();
+            const e = dayjs(start_value).add(1, 'day').hour(START_HOUR).minute(0).second(0).valueOf();
             // 获取比开始时间晚的最早的时间
             let min = end_value;
             if (min > s && s > start_value) min = s;
@@ -92,8 +87,7 @@ const useCompleteData = (data: IShapeData[]) => {
         // #如果有这一天的数据，不进行填充
         if (d && has_day) continue;
         // 填充最小限度的数据
-        if (!has_day)
-            result.push({ key: '0', date_start, time_length: 0, grain: DateTimeGrain.TIME_RANGE });
+        if (!has_day) result.push({ key: '0', date_start, time_length: 0, grain: DateTimeGrain.TIME_RANGE });
         // #只在第一天填充时间数据
         if (d) continue;
         // *按时间填充数据

@@ -1,9 +1,10 @@
 import { model as Model, Schema } from 'mongoose';
 import { infoName } from '.';
+import { EventModel } from '@t/interface';
 
 export const name = 'Event';
 
-const schema = new Schema(
+const schema = new Schema<EventModel>(
     {
         // 开始时间
         start: { type: Number, required: true },

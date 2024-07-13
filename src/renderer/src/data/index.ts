@@ -17,13 +17,25 @@ const generateData = () => {
 
             if (d !== random_date) {
                 const d0 = day.valueOf();
-                data.push({ start: d0, end: d0, grain: DateTimeGrain.DATE, value: random(4) + 1 });
+                data.push({
+                    start: d0,
+                    end: d0,
+                    grain: DateTimeGrain.DATE,
+                    value: random(4) + 1,
+                    topic: '心情'
+                });
 
                 const d1 = day
                     .minute(random(59))
                     .hour(random(5) + 12)
                     .valueOf();
-                data.push({ start: d1, end: d1, grain: DateTimeGrain.TIME, value: random(49) + 1 });
+                data.push({
+                    start: d1,
+                    end: d1,
+                    grain: DateTimeGrain.TIME,
+                    value: random(49) + 1,
+                    topic: '吃喝'
+                });
             }
 
             day = day.minute(random(59)).hour(random(2));
@@ -33,7 +45,8 @@ const generateData = () => {
                     .add(random(2) + 6, 'hour')
                     .add(random(59), 'minute')
                     .valueOf(),
-                grain: DateTimeGrain.TIME_RANGE
+                grain: DateTimeGrain.TIME_RANGE,
+                topic: '睡眠'
             });
         }
     }

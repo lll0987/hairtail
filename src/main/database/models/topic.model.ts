@@ -1,8 +1,9 @@
 import { model as Model, Schema } from 'mongoose';
+import { TopicModel } from '@t/interface';
 
 export const name = 'Topic';
 
-const schema = new Schema(
+const schema = new Schema<TopicModel>(
     {
         name: { type: String, required: true },
         color: { type: String, required: true }
