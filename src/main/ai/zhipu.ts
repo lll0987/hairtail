@@ -4,6 +4,7 @@ import { request } from '../net';
 import { Logger } from '../logger';
 import { services } from '../database';
 import { IRequest } from '@t/interface';
+import { ResType } from '@t/types';
 
 const conf = new Conf();
 const logger = new Logger('zhipu');
@@ -16,6 +17,9 @@ const api_secret = import.meta.env.MAIN_VITE_ZP_API_SECRET;
 const assistant_id = import.meta.env.MAIN_VITE_ZP_ASSISTANT_ID;
 // const conversation_id = '';
 
+/**
+ * 刷新 token，设置 token 和过期时间
+ */
 const refreshToken = async () => {
     const { result } = (await request({
         method: 'POST',
@@ -25,13 +29,19 @@ const refreshToken = async () => {
 
     conf.set('zp.token', result.access_token);
     conf.set('zp.expires', dayjs().add(result.expires_in, 'minute').valueOf());
+
+    logger.info('refreshToken', conf.get('zp'));
 };
 
+/**
+ * 获取 token，如果 token 过期刷新 token
+ * @returns token
+ */
 const getToken = async () => {
     const now = dayjs().valueOf();
     const { token, expires } = conf.get('zp') as { token: string; expires: number };
-
     if (token && expires && now < expires) return token;
+
     await refreshToken();
     return conf.get('zp.token');
 };
@@ -54,7 +64,12 @@ interface ZPResult {
     status: ZPStatus;
 }
 
-export const sendAssistant = async (text: string) => {
+/**
+ *
+ * @param text 输入文本
+ * @returns ai 处理结果
+ */
+export const getFormattedText = async (text: string) => {
     // 今天的日期
     const today = dayjs().format('YYYY/MM/DD');
     // 所有主题
@@ -65,9 +80,11 @@ export const sendAssistant = async (text: string) => {
 
     const access_token = await getToken();
 
-    return new Promise<string>((resolve, reject) => {
-        if (msg) return reject(msg);
+    return new Promise<ResType<string>>(resolve => {
+        if (msg) return resolve([msg, null]);
+        // 记录提示文本
         logger.info('prompt', prompt);
+
         request({
             method: 'POST',
             url: `${base_url}/stream_sync`,
@@ -77,12 +94,14 @@ export const sendAssistant = async (text: string) => {
             .then(res => {
                 const { result } = res as { result: ZPResult };
                 const { content } = result.output.find(part => part.status === 'finish')!;
+                // NEXT 校验返回格式是否为 ZPText
                 const { text } = Array.isArray(content) ? content[0] : content;
-                resolve(text);
+                logger.info('success', content);
+                resolve([null, text]);
             })
             .catch(err => {
-                console.log(err);
-                reject(err);
+                logger.error('fail', err);
+                resolve(['请求遇到问题', null]);
             });
     });
 };

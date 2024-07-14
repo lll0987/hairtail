@@ -12,7 +12,10 @@
                     <div class="rounded max-w-full bg-white px-8 py-4">
                         <!-- eslint-disable-next-line vue/no-v-html -->
                         <div v-html="item.output"></div>
-                        <div class="flex flex-row items-center justify-end">
+                        <div
+                            v-if="item.status === WAIT_STATUS"
+                            class="flex flex-row items-center justify-end"
+                        >
                             <PrimaryButton class="ml-8" @click="handleAccept(item)">接受</PrimaryButton>
                             <PrimaryButton class="ml-8" @click="handleIgnore(item)">忽略</PrimaryButton>
                         </div>
@@ -34,50 +37,70 @@ import { onMounted, ref } from 'vue';
 import Editor from '../components/editor';
 import PrimaryButton from '../components/button';
 
+import { RecordStatus } from '@t/enum';
 import { IRecord } from '@t/interface';
 import { list } from '../api/record';
 import { marked } from 'marked';
+
+const WAIT_STATUS = RecordStatus.WAITING;
 
 interface Record extends IRecord {
     output: string;
 }
 const records = ref<Record[]>([]);
+const getList = async () => {
+    const [msg, data] = await list();
+    if (msg) {
+        // NEXT 错误提示
+        console.log(msg);
+    } else {
+        records.value = data.map((i: IRecord) => ({ ...i, output: marked(i.out) }));
+    }
+    return !msg;
+};
+
+onMounted(() => {
+    getList();
+});
+
 const text = ref('');
 
 const handleSend = async () => {
-    if (!text.value) return;
-    await window.electron.ipcRenderer.invoke('handleInput', text.value);
-    await getList();
+    if (!text.value) {
+        console.log('对话内容不可为空');
+        return;
+    }
+    const msg = await window.electron.ipcRenderer.invoke('handleInput', text.value);
+    if (msg) {
+        console.log(msg);
+        return;
+    }
+    getList();
 };
 window.electron.ipcRenderer.on('insert-record-success', async () => {
     const status = await getList();
     if (status) text.value = '';
 });
 
-const getList = async () => {
-    const [msg, data] = await list();
+const handleAccept = async (item: IRecord) => {
+    const id = item.id as string;
+    const msg = await window.electron.ipcRenderer.invoke('handleAccept', id);
     if (msg) {
-        // NEXT 错误提示
         console.log(msg);
-    } else if (data) {
-        records.value = data.map((i: IRecord) => ({ ...i, output: marked(i.out) }));
+        return;
     }
-    return !msg;
+    getList();
 };
 
-const handleAccept = (item: IRecord) => {
+const handleIgnore = async (item: IRecord) => {
     const id = item.id as string;
-    window.electron.ipcRenderer.invoke('handleAccept', id);
-};
-
-const handleIgnore = (item: IRecord) => {
-    const id = item.id as string;
-    window.electron.ipcRenderer.invoke('handleIgnore', id);
+    const msg = await window.electron.ipcRenderer.invoke('handleIgnore', id);
+    if (msg) {
+        console.log(msg);
+        return;
+    }
+    getList();
 };
 
 // NEXT 复制：自动添加到输入框然后调用忽略方法
-
-onMounted(() => {
-    getList();
-});
 </script>

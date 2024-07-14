@@ -11,6 +11,6 @@ export interface RecordModel {
     topic?: ObjectId[];
 }
 
-export interface IRecord extends Pick<RecordModel, 'in' | 'out'> {
+export interface IRecord extends Pick<RecordModel, 'in' | 'out' | 'status'> {
     id?: string;
 }
