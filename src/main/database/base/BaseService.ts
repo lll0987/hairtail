@@ -22,7 +22,7 @@ export class BaseService {
                     resolve([null, true]);
                 })
                 .catch(error => {
-                    this.logger.error('fail', error);
+                    this.logger.error('connect', 'fail', error);
                     resolve(['数据库连接失败', null]);
                 });
         });
@@ -41,11 +41,11 @@ export class BaseService {
                         const objectId = _id as ObjectId;
                         return { ...doc, id: objectId.toString() };
                     });
-                    this.logger.info('success', list);
+                    this.logger.info('list', 'success', list);
                     resolve([null, list]);
                 })
                 .catch(e => {
-                    this.logger.error('fail', e);
+                    this.logger.error('list', 'fail', e);
                     resolve(['查询失败', []]);
                 });
         });
@@ -58,13 +58,14 @@ export class BaseService {
             if (msg) return resolve([msg, null]);
             this.model
                 .findById(id)
-                .then(r => {
-                    const { _id, ...obj } = r;
-                    this.logger.info('success', obj);
-                    resolve([null, { obj, id: _id.toString() }]);
+                .lean()
+                .then(({ _id, ...doc }) => {
+                    const item = { ...doc, id: _id.toString() };
+                    this.logger.info('findById', 'success', item);
+                    resolve([null, item]);
                 })
                 .catch(e => {
-                    this.logger.error('fail', e);
+                    this.logger.error('findById', 'fail', e);
                     resolve(['查询失败', null]);
                 });
         });
@@ -78,11 +79,12 @@ export class BaseService {
             this.model
                 .create(data)
                 .then(r => {
-                    this.logger.info('success', r);
-                    resolve([null, Array.isArray(data) ? r.map(i => i._id) : r._id]);
+                    const ids = Array.isArray(r) ? r.map(i => i._id) : r._id;
+                    this.logger.info('create', 'success', r);
+                    resolve([null, ids]);
                 })
                 .catch(e => {
-                    this.logger.error('fail', e);
+                    this.logger.error('create', 'fail', e);
                     resolve(['保存失败', null]);
                 });
         });
@@ -96,11 +98,11 @@ export class BaseService {
             this.model
                 .findByIdAndUpdate(id, data)
                 .then(r => {
-                    this.logger.info('success', r);
+                    this.logger.info('updateById', 'success', r);
                     resolve([null, r._id]);
                 })
                 .catch(e => {
-                    this.logger.error('fail', e);
+                    this.logger.error('updateById', 'fail', e);
                     resolve(['更新失败', null]);
                 });
         });
@@ -114,11 +116,11 @@ export class BaseService {
             this.model
                 .findByIdAndDelete(id)
                 .then(r => {
-                    this.logger.info('success', r);
+                    this.logger.info('deleteById', 'success', r);
                     resolve([null, r._id]);
                 })
                 .catch(e => {
-                    this.logger.error('fail', e);
+                    this.logger.error('deleteById', 'fail', e);
                     resolve(['删除失败', null]);
                 });
         });
