@@ -38,6 +38,9 @@ function createWindow(): void {
 
     // #默认最大化打开
     mainWindow.maximize();
+
+    // #提取信息
+    handleTransformer(mainWindow);
 }
 
 // This method will be called when Electron has finished
@@ -59,8 +62,6 @@ app.whenReady().then(() => {
 
     // #数据库操作
     handleService();
-    // #提取信息
-    handleTransformer();
 
     createWindow();
 

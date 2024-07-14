@@ -1,6 +1,6 @@
 <template>
     <div class="grid grid-cols-1 grid-rows-[1fr_260px] w-full h-full">
-        <div class="p-16">
+        <div class="p-16 overflow-y-auto">
             <!-- NEXT 增加日期显示 -->
             <div v-for="(item, index) in records" :key="index">
                 <div class="flex flex-row items-center justify-end w-full">
@@ -12,6 +12,10 @@
                     <div class="rounded max-w-full bg-white px-8 py-4">
                         <!-- eslint-disable-next-line vue/no-v-html -->
                         <div v-html="item.output"></div>
+                        <div class="flex flex-row items-center justify-end">
+                            <PrimaryButton class="ml-8" @click="handleAccept(item)">接受</PrimaryButton>
+                            <PrimaryButton class="ml-8" @click="handleIgnore(item)">忽略</PrimaryButton>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -43,9 +47,12 @@ const text = ref('');
 const handleSend = async () => {
     if (!text.value) return;
     await window.electron.ipcRenderer.invoke('handleInput', text.value);
+    await getList();
+};
+window.electron.ipcRenderer.on('insert-record-success', async () => {
     const status = await getList();
     if (status) text.value = '';
-};
+});
 
 const getList = async () => {
     const [msg, data] = await list();
@@ -57,6 +64,18 @@ const getList = async () => {
     }
     return !msg;
 };
+
+const handleAccept = (item: IRecord) => {
+    const id = item.id as string;
+    window.electron.ipcRenderer.invoke('handleAccept', id);
+};
+
+const handleIgnore = (item: IRecord) => {
+    const id = item.id as string;
+    window.electron.ipcRenderer.invoke('handleIgnore', id);
+};
+
+// NEXT 复制：自动添加到输入框然后调用忽略方法
 
 onMounted(() => {
     getList();
