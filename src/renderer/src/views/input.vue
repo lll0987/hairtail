@@ -36,6 +36,7 @@
 import { onMounted, ref } from 'vue';
 import Editor from '../components/editor';
 import PrimaryButton from '../components/button';
+import { useToast } from '../components/toast';
 
 import { RecordStatus } from '@t/enum';
 import { IRecord } from '@t/interface';
@@ -43,6 +44,7 @@ import { list } from '../api/record';
 import { marked } from 'marked';
 
 const WAIT_STATUS = RecordStatus.WAITING;
+const toast = useToast();
 
 interface Record extends IRecord {
     output: string;
@@ -51,28 +53,27 @@ const records = ref<Record[]>([]);
 const getList = async () => {
     const [msg, data] = await list();
     if (msg) {
-        // NEXT 错误提示
-        console.log(msg);
+        toast.error(msg);
     } else {
         records.value = data.map((i: IRecord) => ({ ...i, output: marked(i.out) }));
     }
     return !msg;
 };
 
-onMounted(() => {
-    getList();
+onMounted(async () => {
+    await getList();
 });
 
 const text = ref('');
 
 const handleSend = async () => {
     if (!text.value) {
-        console.log('对话内容不可为空');
+        toast.warning('对话内容不可为空');
         return;
     }
     const msg = await window.electron.ipcRenderer.invoke('handleInput', text.value);
     if (msg) {
-        console.log(msg);
+        toast.error(msg);
         return;
     }
     getList();
@@ -86,7 +87,7 @@ const handleAccept = async (item: IRecord) => {
     const id = item.id as string;
     const msg = await window.electron.ipcRenderer.invoke('handleAccept', id);
     if (msg) {
-        console.log(msg);
+        toast.error(msg);
         return;
     }
     getList();
@@ -96,7 +97,7 @@ const handleIgnore = async (item: IRecord) => {
     const id = item.id as string;
     const msg = await window.electron.ipcRenderer.invoke('handleIgnore', id);
     if (msg) {
-        console.log(msg);
+        toast.error(msg);
         return;
     }
     getList();
