@@ -6,7 +6,9 @@ export enum DateTimeGrain {
 }
 
 export enum RecordStatus {
-    INIT,
+    SEND,
     WAITING,
-    FINISH
+    ACCEPT,
+    IGNORE,
+    NONE
 }

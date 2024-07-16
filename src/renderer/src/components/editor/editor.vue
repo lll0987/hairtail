@@ -47,6 +47,7 @@ const onInput = (e: InputEvent | CompositionEvent | Event): void => {
 
 const onKeydown = (e: KeyboardEvent): void => {
     // NEXT ctrl + enter 换行
+    // TODO 清除输入框中的回车
     // key='Control' 延时固定间隔后出现 enter
     if (e.key !== 'Enter') return;
     emits('enter');
