@@ -7,7 +7,11 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-const props = defineProps<{ size: number | string; color?: string }>();
+export interface IconProps {
+    size: number | string;
+    color?: string;
+}
+const props = defineProps<IconProps>();
 
 const styles = computed(() => ({
     'font-size': typeof props.size === 'string' ? props.size : `${props.size}px`
