@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { provide, ref } from 'vue';
-import { MessageProps, ToastApi } from './types';
+import { MessageProps, ToastApi, ToastApiInjectionKey } from './types';
 import Message from './message.vue';
 
 interface IMessage {
@@ -68,5 +68,5 @@ const api: ToastApi = {
     error: (message: string) => create({ message, type: 'error' })
 };
 
-provide('toast-api', api);
+provide(ToastApiInjectionKey, api);
 </script>

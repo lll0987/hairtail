@@ -1,11 +1,10 @@
 import { inject } from 'vue';
-import { ToastApi } from './types';
+import { ToastApiInjectionKey } from './src/types';
 
 export const useToast = () => {
-    const api = inject<ToastApi>('toast-api');
-    console.log(api);
+    const api = inject(ToastApiInjectionKey);
     if (api) return api;
     throw new Error('[useToast]: No outer <toast-provider /> founded.');
 };
 
-export { default as ToastProvider } from './provider.vue';
+export { default as ToastProvider } from './src/provider.vue';

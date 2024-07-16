@@ -16,7 +16,7 @@ import colors from 'tailwindcss/colors';
 
 import { MessageProps, MessageType } from './types';
 
-import icon from '../icon';
+import icon from '../../icon';
 import {
     CheckmarkCircle24Filled,
     DismissCircle24Filled,
