@@ -1,15 +1,16 @@
 <template>
-    <nav class="w-52">
-        <menu class="py-8">
-            <li v-for="(item, index) in props.routes" :key="index" class="mt-8 first:mt-0">
-                <div class="flex items-center justify-start px-6" @click="onClick(item.key)">
+    <nav>
+        <menu class="text-zinc-500">
+            <li v-for="(item, index) in props.routes" :key="index" class="mt-24">
+                <div class="flex items-center justify-start px-16" @click="onClick(item.key)">
                     <div
-                        class="hover:bg-cyan-950 hover:bg-opacity-15 bg-opacity-15 rounded flex"
-                        :class="{ 'bg-cyan-950': item.key === props.actived }"
+                        class="hover:text-zinc-950 rounded flex"
+                        :class="{ 'text-cyan-950': item.key === props.actived }"
                     >
-                        <icon :size="40"><component :is="item.icon" /></icon>
+                        <icon :size="30">
+                            <component :is="item.key === props.actived ? item.iconFilled : item.icon" />
+                        </icon>
                     </div>
-                    <!-- <span class="px-4">{{ item.label }}</span> -->
                 </div>
             </li>
         </menu>

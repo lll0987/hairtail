@@ -2,7 +2,7 @@
     <ToastProvider>
         <div class="w-screen h-screen grid grid-cols-[auto_1fr] grid-rows-1 bg-neutral-100 text-zinc-950">
             <MainMenu v-model:actived="actived" :routes="routes"></MainMenu>
-            <div class="w-full h-full border-l-2 border-zinc-950">
+            <div class="w-full h-full border-l-2 border-zinc-300">
                 <component :is="activedComponent" />
             </div>
         </div>
