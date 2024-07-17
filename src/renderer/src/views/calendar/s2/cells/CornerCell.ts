@@ -6,7 +6,7 @@ import {
     getTextHeightBounds,
     type HeaderCellUtil,
     type TextHeightBoundsProps
-} from '../hooks/useCol';
+} from '../../hooks/useCol';
 
 /**
  * 自定义角头

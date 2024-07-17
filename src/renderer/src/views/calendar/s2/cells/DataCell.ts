@@ -8,8 +8,8 @@ import colors from 'tailwindcss/colors';
 import { DataCell, QueryDataType } from '@antv/s2';
 import { Circle, Line, Rect } from '@antv/g';
 
-import type { IShapeData } from '../hooks/useData';
-import { getTimeSpan, isLastHour } from '../hooks/useRow';
+import type { IShapeData } from '../../hooks/useData';
+import { getTimeSpan, isLastHour } from '../../hooks/useRow';
 
 import { DateTimeGrain } from '@t/enum';
 

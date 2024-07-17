@@ -3,7 +3,7 @@
 import { RowCell } from '@antv/s2';
 import dayjs from 'dayjs';
 
-import { FORMAT_TIME, isFirstHour } from '../hooks/useRow';
+import { FORMAT_TIME, isFirstHour } from '../../hooks/useRow';
 import { DateTimeGrain } from '@t/enum';
 
 /**

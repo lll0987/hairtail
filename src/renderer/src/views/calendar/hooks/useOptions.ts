@@ -1,7 +1,7 @@
 import { EXTRA_FIELD, type RawData, type S2DataConfig, type S2Options } from '@antv/s2';
 
-import { DateColCell, ShapeCornerCell, TimeRowCell, ShapeDataCell } from '../cells';
-import { ShapeFrame } from '../facet/Frame';
+import { DateColCell, ShapeCornerCell, TimeRowCell, ShapeDataCell } from '../s2/cells';
+import { ShapeFrame } from '../s2/facet/Frame';
 
 import { useData } from './useData';
 import { useHeight } from './useRow';
@@ -89,8 +89,7 @@ export const initOptions = (width: number, height: number): S2Options => {
             }
         },
         dataCell: (viewMeta, spreadsheet) => new ShapeDataCell(viewMeta, spreadsheet),
-        rowCell: (node, spreadsheet, headerConfig) =>
-            new TimeRowCell(node, spreadsheet, headerConfig),
+        rowCell: (node, spreadsheet, headerConfig) => new TimeRowCell(node, spreadsheet, headerConfig),
         colCell: (viewMeta, spreadsheet, headerConfig) =>
             new DateColCell(viewMeta, spreadsheet, headerConfig),
         cornerCell: (viewMeta, spreadsheet) => new ShapeCornerCell(viewMeta, spreadsheet),

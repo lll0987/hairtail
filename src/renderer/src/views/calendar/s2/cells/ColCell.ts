@@ -7,7 +7,7 @@ import {
     getTextHeightBounds,
     type HeaderCellUtil,
     type TextHeightBoundsProps
-} from '../hooks/useCol';
+} from '../../hooks/useCol';
 
 /**
  * 日期列头

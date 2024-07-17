@@ -1,8 +1,5 @@
 <template>
-    <div class="w-full h-full grid grid-rows-[auto_1fr] grid-cols-1">
-        <bar class="py-8" @scroll="handleScrollToDate"></bar>
-        <div ref="canvasRef" class="w-full h-full overflow-hidden"></div>
-    </div>
+    <div ref="canvasRef" class="w-full h-full overflow-hidden"></div>
 </template>
 
 <script setup lang="ts">
@@ -10,12 +7,11 @@ import { onMounted, ref } from 'vue';
 import { PivotSheet, S2Event } from '@antv/s2';
 import { debounce } from 'lodash';
 
-import { initOptions, useOptions } from './hooks/useOptions';
-import { useScroll, SHORTCUT } from './hooks/useScroll';
+import { initOptions, useOptions } from '../hooks/useOptions';
+import { useScroll, SHORTCUT } from '../hooks/useScroll';
 import { LightTheme } from './theme/light';
 
 import { IEvent } from '@t/interface';
-import bar from './bar.vue';
 
 const props = defineProps<{ data: IEvent[] }>();
 const canvasRef = ref<HTMLDivElement | null>(null);
@@ -26,6 +22,7 @@ const handleScrollToDate = (date: SHORTCUT | string) => {
     if (!s2) return;
     useScroll(s2, date);
 };
+defineExpose({ handleScrollToDate });
 
 // 尺寸自适应
 const handleResize = debounce(async (width: number, height: number) => {

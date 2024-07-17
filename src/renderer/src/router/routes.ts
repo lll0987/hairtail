@@ -7,7 +7,7 @@ import {
     Home20Regular
 } from '@vicons/fluent';
 
-import calendar from '@renderer/views/calendar.vue';
+import calendar from '@renderer/views/calendar';
 import input from '@renderer/views/input.vue';
 import dashboard from '@renderer/views/dashboard.vue';
 
