@@ -3,8 +3,8 @@
         <div class="p-16 overflow-y-auto">
             <!-- NEXT 增加日期显示 -->
             <div v-for="(item, index) in records" :key="index">
-                <div class="flex flex-row items-center justify-end w-full">
-                    <div class="rounded max-w-full bg-zinc-800 text-white px-10 py-4">
+                <div class="flex flex-row items-center justify-end w-full py-12">
+                    <div class="rounded max-w-[90%] bg-zinc-800 text-white px-10 py-4">
                         {{ item.in }}
                     </div>
                 </div>

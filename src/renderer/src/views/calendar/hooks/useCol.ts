@@ -11,7 +11,7 @@ export const FORMAT_DATE = 'YYYY-MM-DD';
 /**
  * 日历开始日期
  */
-export const START_DATE = '2024-01-01';
+export const START_DATE = '2023-01-01';
 /**
  * 日历结束日期
  */
