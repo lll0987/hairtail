@@ -14,7 +14,7 @@ export const services = {
 
 export const serviceNames = Object.keys(services);
 
-export const handleService = () =>
+export const handleService = () => {
     serviceNames.forEach(serviceName => {
         const service = services[serviceName];
 
@@ -23,3 +23,7 @@ export const handleService = () =>
         ipcMain.handle(`db:${serviceName}:update`, (_, id, data) => service.updateById(id, data));
         ipcMain.handle(`db:${serviceName}:delete`, (_, id) => service.deleteById(id));
     });
+
+    const eventService = services[EventService.name] as EventService;
+    ipcMain.handle(`db:${EventService.name}:listWithColor`, () => eventService.listWithColor());
+};

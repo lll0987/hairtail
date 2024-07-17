@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { PivotSheet, S2Event } from '@antv/s2';
 import { debounce } from 'lodash';
 
@@ -18,6 +18,7 @@ const canvasRef = ref<HTMLDivElement | null>(null);
 let s2: PivotSheet | null = null;
 
 // 滚动到日期
+// TODO 从本周第一天开始
 const handleScrollToDate = (date: SHORTCUT | string) => {
     if (!s2) return;
     useScroll(s2, date);
@@ -38,11 +39,8 @@ const resizeObserver = new ResizeObserver(([entry] = []) => {
     handleResize(size.inlineSize, size.blockSize);
 });
 
-// RE 按左侧/右侧配置项？
-// 大尺寸缩小到小尺寸时，滚动位置会保持不变，即按最左侧位置，因此会有一部分右侧信息丢失
-// 月份计算、滚动到日期同理
-
-onMounted(async () => {
+// 初始化图表
+const initS2 = async () => {
     const container = canvasRef.value as HTMLDivElement;
     const { clientWidth: width, clientHeight: height } = container;
 
@@ -62,7 +60,22 @@ onMounted(async () => {
     s2.on(S2Event.LAYOUT_DESTROY, () => {
         resizeObserver.disconnect();
     });
+};
+
+// RE 按左侧/右侧配置项？
+// 大尺寸缩小到小尺寸时，滚动位置会保持不变，即按最左侧位置，因此会有一部分右侧信息丢失
+// 月份计算、滚动到日期同理
+
+onMounted(() => {
+    if (props.data?.length) initS2();
 });
+
+watch(
+    () => props.data,
+    data => {
+        if (data?.length) initS2();
+    }
+);
 </script>
 
 <style></style>

@@ -3,7 +3,6 @@
 
 import dayjs from 'dayjs';
 import BigNumber from 'bignumber.js';
-import colors from 'tailwindcss/colors';
 
 import { DataCell, QueryDataType } from '@antv/s2';
 import { Circle, Line, Rect } from '@antv/g';
@@ -64,7 +63,7 @@ export class ShapeDataCell extends DataCell {
 
         const data = this.getCellData()!;
         const values = this.spreadsheet.dataSet.originData.reduce((r, i) => {
-            if (i.grain === data.grain) {
+            if (i.topic === data.topic) {
                 const value = (i.value as number | undefined) || 0;
                 r.add(value);
             }
@@ -112,17 +111,11 @@ export class ShapeDataCell extends DataCell {
         return { x: x + cx, y: y + cy };
     }
 
-    // NEXT 获取颜色的逻辑
+    // 获取颜色
     private getShapeColor() {
         const data = this.getCellData();
         if (!data) return this.getTextStyle().fill;
-        const colorMap: Record<DateTimeGrain, string> = {
-            [DateTimeGrain.DATE]: colors.amber[400],
-            [DateTimeGrain.DATE_RANGE]: colors.sky[500],
-            [DateTimeGrain.TIME]: colors.violet[400],
-            [DateTimeGrain.TIME_RANGE]: colors.lime[400]
-        };
-        return colorMap[data.grain];
+        return data.color;
     }
 
     // *重写单元格绘制方法
@@ -145,8 +138,8 @@ export class ShapeDataCell extends DataCell {
     // 获取时间散点图的样式
     private getTimeShapeStyle() {
         const lineWidth = 2;
-        // NEXT 取宽高中的最小值
-        const maxR = (this.meta.height / 2) * getTimeSpan();
+        const size = Math.min(this.meta.width, this.meta.height);
+        const maxR = (size / 2) * getTimeSpan();
         const minR = lineWidth * 2;
 
         return {
@@ -317,9 +310,7 @@ export class ShapeDataCell extends DataCell {
     private isShorterShape() {
         if (this.isAllDayCell()) return true;
         const hour = Number(this.meta.rowQuery?.key);
-        return this.getCollData().some(
-            item => item.time_end && dayjs(item.time_end).hour() === hour
-        );
+        return this.getCollData().some(item => item.time_end && dayjs(item.time_end).hour() === hour);
     }
 
     // 是否为最后的节点
@@ -330,6 +321,7 @@ export class ShapeDataCell extends DataCell {
 
     // *重写边框绘制方法
     drawBorders(): void {
+        // FIX 可能没有 DATE 数据，不能断定 DATE_RANGE 不绘制
         if (
             this.meta.rowQuery?.key === DateTimeGrain.DATE_RANGE ||
             !this.isLastNode() ||

@@ -1,13 +1,14 @@
 import dayjs from 'dayjs';
+import colors from 'tailwindcss/colors';
 
 import { DateTimeGrain } from '@t/enum';
-import { IEvent } from '@t/interface';
+import { EventRawData } from '@t/interface';
 
 import { HOUR_LENGTH, START_HOUR } from './useRow';
 import { END_DATE, FORMAT_DATE, START_DATE } from './useCol';
 
 // 日历数据结构
-export interface IShapeData extends Omit<IEvent, 'start' | 'end' | 'topic'> {
+export interface IShapeData extends Omit<EventRawData, 'start' | 'end'> {
     date_start: string;
     date_end?: string;
     date_length?: number;
@@ -21,10 +22,10 @@ export interface IShapeData extends Omit<IEvent, 'start' | 'end' | 'topic'> {
 
 /**
  * 将【活动】数据按日期转换为日历数据
- * @param events IEvent数组
+ * @param events EventRawData数组
  * @returns IShapeData数组
  */
-const useEventToShape = (events: IEvent[]) => {
+const useEventToShape = (events: EventRawData[]) => {
     return events.reduce((result, { start, end, ...item }) => {
         // *全天活动
         if ([DateTimeGrain.DATE, DateTimeGrain.DATE_RANGE].includes(item.grain)) {
@@ -67,6 +68,15 @@ const useEventToShape = (events: IEvent[]) => {
 };
 
 /**
+ * 获取最小限度填充数据
+ */
+const getFillData = (date_start: string, key?: string, grain?: DateTimeGrain): IShapeData => {
+    key = key || '0';
+    grain = grain || DateTimeGrain.TIME_RANGE;
+    return { date_start, key, grain, time_length: 0, topic: '', color: colors.transparent };
+};
+
+/**
  * 填充数据，确保每一个小时单元格都可以显示
  * @param data IShapeData数组
  * @returns IShapeData数组
@@ -87,7 +97,7 @@ const useCompleteData = (data: IShapeData[]) => {
         // #如果有这一天的数据，不进行填充
         if (d && has_day) continue;
         // 填充最小限度的数据
-        if (!has_day) result.push({ key: '0', date_start, time_length: 0, grain: DateTimeGrain.TIME_RANGE });
+        if (!has_day) result.push(getFillData(date_start));
         // #只在第一天填充时间数据
         if (d) continue;
         // *按时间填充数据
@@ -97,8 +107,10 @@ const useCompleteData = (data: IShapeData[]) => {
             // #如果这一天有这个小时的数据，不进行填充
             if (has_hour || (!h && !has_day)) continue;
             // 填充最小限度的数据
-            result.push({ key, date_start, time_length: 0, grain: DateTimeGrain.TIME_RANGE });
+            result.push(getFillData(date_start, key));
         }
+        // *填充全天数据为0点留出渲染空间
+        result.push(getFillData(date_start, DateTimeGrain.DATE_RANGE, DateTimeGrain.DATE_RANGE));
     }
 
     return result;
@@ -109,6 +121,6 @@ const useCompleteData = (data: IShapeData[]) => {
  * @param events 【活动】数据
  * @returns 日历数据
  */
-export const useData = (events: IEvent[]) => {
+export const useData = (events: EventRawData[]) => {
     return useCompleteData(useEventToShape(events));
 };

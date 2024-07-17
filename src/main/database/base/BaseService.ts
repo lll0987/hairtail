@@ -34,15 +34,10 @@ export class BaseService {
         return new Promise<[MsgType | null, any[]]>(resolve => {
             if (msg) return resolve([msg, []]);
             this.model
-                .find()
-                .lean()
+                .aggregate([{ $addFields: { id: { $toString: '$_id' } } }])
                 .then(r => {
-                    const list = r.map(({ _id, ...doc }) => {
-                        const objectId = _id as ObjectId;
-                        return { ...doc, id: objectId.toString() };
-                    });
-                    this.logger.info('list', 'success', list);
-                    resolve([null, list]);
+                    this.logger.info('list', 'success', r);
+                    resolve([null, r]);
                 })
                 .catch(e => {
                     this.logger.error('list', 'fail', e);

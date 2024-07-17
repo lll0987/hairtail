@@ -22,3 +22,7 @@ export interface EventBody extends Omit<EventModel, 'tags' | 'infos' | 'grain' |
     end: string;
     grain: DateTimeGrain;
 }
+
+export interface EventRawData extends IEvent {
+    color: string;
+}
