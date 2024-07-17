@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
 import { Conf } from 'electron-conf/main';
-import { request } from '../net';
-import { Logger } from '../logger';
-import { services } from '../database';
+import { request } from '../../net';
+import { Logger } from '../../logger';
+import { services } from '../../database';
 import { IRequest } from '@t/interface';
 import { ResType } from '@t/types';
 

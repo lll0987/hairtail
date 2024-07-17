@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
-import { BrowserWindow, ipcMain } from 'electron';
+import { BrowserWindow } from 'electron';
 
-import { services } from '../database';
+import { services } from '../../database';
 import { getFormattedText } from './zhipu';
 import { IEvent, IResponse, RecordModel } from '@t/interface';
 import { MsgType, ObjectId, ResType } from '@t/types';
@@ -72,7 +72,7 @@ const handleAutoInsert = async (out: string) => {
  * @param callback 清空输入框
  * @returns
  */
-const handleCache = async (text: string, window: BrowserWindow): Promise<MsgType | null> => {
+export const handleCache = async (text: string, window: BrowserWindow): Promise<MsgType | null> => {
     // 添加记录
     const [msg, id] = (await services.record.create({
         in: text,
@@ -101,7 +101,7 @@ const handleCache = async (text: string, window: BrowserWindow): Promise<MsgType
  * @param id
  * @returns
  */
-const handleAccept = async (id: string): Promise<MsgType | null> => {
+export const handleAccept = async (id: string): Promise<MsgType | null> => {
     const [m, { status, out }] = await services.record.findById(id);
     if (m) return m;
     if (status !== RecordStatus.WAITING) return '当前结果不可执行接受操作';
@@ -122,7 +122,7 @@ const handleAccept = async (id: string): Promise<MsgType | null> => {
  * @param str
  * @returns
  */
-const handleIgnore = async (id: string): Promise<MsgType | null> => {
+export const handleIgnore = async (id: string): Promise<MsgType | null> => {
     const [m, { status }] = await services.record.findById(id);
     if (m) return m;
     if (status !== RecordStatus.WAITING) return '当前结果不可执行忽略操作';
@@ -132,14 +132,4 @@ const handleIgnore = async (id: string): Promise<MsgType | null> => {
     if (msg) return msg;
 
     return null;
-};
-
-/**
- * 向渲染进程暴露方法
- * @param window
- */
-export const handleTransformer = (window: BrowserWindow) => {
-    ipcMain.handle(`handleInput`, (_, data) => handleCache(data, window));
-    ipcMain.handle(`handleAccept`, (_, data) => handleAccept(data));
-    ipcMain.handle(`handleIgnore`, (_, data) => handleIgnore(data));
 };
