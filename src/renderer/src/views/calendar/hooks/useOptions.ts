@@ -1,15 +1,14 @@
 import { EXTRA_FIELD, type RawData, type S2DataConfig, type S2Options } from '@antv/s2';
 
 import { DateColCell, ShapeCornerCell, TimeRowCell, ShapeDataCell } from '../s2/cells';
-import { ShapeFrame } from '../s2/facet/Frame';
 
 import { useData } from './useData';
 import { useHeight } from './useRow';
 
 import { DateTimeGrain } from '@t/enum';
-import { IEvent } from '@t/interface';
+import { EventRawData } from '@t/interface';
 
-const initConfig = (events: IEvent[]): S2DataConfig => {
+const initConfig = (events: EventRawData[]): S2DataConfig => {
     const data = useData(events) as unknown as RawData[];
     return {
         fields: {
@@ -92,12 +91,11 @@ export const initOptions = (width: number, height: number): S2Options => {
         rowCell: (node, spreadsheet, headerConfig) => new TimeRowCell(node, spreadsheet, headerConfig),
         colCell: (viewMeta, spreadsheet, headerConfig) =>
             new DateColCell(viewMeta, spreadsheet, headerConfig),
-        cornerCell: (viewMeta, spreadsheet) => new ShapeCornerCell(viewMeta, spreadsheet),
-        frame: cfg => new ShapeFrame(cfg)
+        cornerCell: (viewMeta, spreadsheet) => new ShapeCornerCell(viewMeta, spreadsheet)
     };
 };
 
-export const useOptions = (width: number, height: number, data: IEvent[]) => {
+export const useOptions = (width: number, height: number, data: EventRawData[]) => {
     const dataConfig = initConfig(data);
     const options = initOptions(width, height);
     return { dataConfig, options };

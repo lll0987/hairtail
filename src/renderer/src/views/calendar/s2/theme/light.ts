@@ -1,9 +1,9 @@
-import type { S2Theme } from '@antv/s2';
+import type { S2Theme, InteractionState } from '@antv/s2';
 import colors from 'tailwindcss/colors';
 
-const light = colors.neutral[100];
-const dark = colors.zinc[950];
-const dark2 = colors.zinc[800];
+const light = colors.slate[100];
+const dark = colors.slate[950];
+const dark2 = colors.slate[800];
 
 const hasBorderCell = {
     // 水平边框
@@ -31,6 +31,13 @@ const noBorderCell = {
     backgroundColorOpacity: 0
 };
 
+// NEXT 交互态样式
+const interactionState: InteractionState = {
+    hover: { backgroundOpacity: 0 },
+    hoverFocus: { backgroundOpacity: 0 },
+    selected: { backgroundOpacity: 0 }
+};
+
 export const LightTheme: S2Theme = {
     background: { color: colors.transparent },
     splitLine: {
@@ -51,12 +58,12 @@ export const LightTheme: S2Theme = {
         bolderText: { fill: dark }
     },
     rowCell: {
-        cell: hasBorderCell,
+        cell: { ...hasBorderCell, interactionState },
         text: { fill: dark, textBaseline: 'middle', textAlign: 'center' },
         bolderText: { fill: dark, textBaseline: 'middle', textAlign: 'center' }
     },
     colCell: {
-        cell: noBorderCell,
+        cell: { ...noBorderCell, interactionState },
         text: { fill: dark },
         bolderText: { fill: dark, fontSize: 20, textBaseline: 'top', textAlign: 'center' },
         measureText: {
@@ -80,5 +87,3 @@ export const LightTheme: S2Theme = {
         }
     }
 };
-
-// NEXT 选中态样式

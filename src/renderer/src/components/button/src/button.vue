@@ -1,6 +1,6 @@
 <template>
     <button
-        class="text-white border-2 border-zinc-950 rounded px-8 h-32 inline-flex flex-row justify-center items-center"
+        class="text-slate-950 border-2 border-slate-800 rounded px-8 h-32 inline-flex flex-row justify-center items-center"
         :style="{ backgroundColor: color, ...styles }"
     >
         <span v-show="props.loading" class="flex items-center mr-6">
@@ -23,11 +23,12 @@ const props = withDefaults(defineProps<ButtonProps>(), { loading: false, type: '
 
 // 颜色
 const colorMap: Record<ButtonType, string> = {
-    default: colors.slate[500],
-    primary: colors.pink[700],
-    success: colors.lime[600],
-    warning: colors.amber[600],
-    error: colors.red[700]
+    default: colors.slate[200],
+    primary: colors.lime[300],
+    accent: colors.sky[300],
+    success: colors.green[300],
+    warning: colors.yellow[300],
+    error: colors.rose[300]
 };
 const color = computed(() => props.color || colorMap[props.type]);
 

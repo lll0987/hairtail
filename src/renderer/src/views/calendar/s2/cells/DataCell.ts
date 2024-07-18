@@ -322,6 +322,7 @@ export class ShapeDataCell extends DataCell {
     // *重写边框绘制方法
     drawBorders(): void {
         // FIX 可能没有 DATE 数据，不能断定 DATE_RANGE 不绘制
+        // FIX 结束在第二天小时更小的数据不需要边框
         if (
             this.meta.rowQuery?.key === DateTimeGrain.DATE_RANGE ||
             !this.isLastNode() ||

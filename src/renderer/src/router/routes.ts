@@ -8,7 +8,7 @@ import {
 } from '@vicons/fluent';
 
 import calendar from '@renderer/views/calendar';
-import input from '@renderer/views/input.vue';
+import chat from '@renderer/views/chat';
 import dashboard from '@renderer/views/dashboard.vue';
 
 import { IRoute } from '@t/interface';
@@ -22,11 +22,11 @@ export default [
         component: dashboard
     },
     {
-        key: 'input',
+        key: 'chat',
         label: '记录',
         icon: AddCircle16Regular,
         iconFilled: AddCircle16Filled,
-        component: input
+        component: chat
     },
     {
         key: 'calendar',

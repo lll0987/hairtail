@@ -11,6 +11,9 @@ export default {
             fontSize: ({ theme }) => ({ ...theme('spacing') }),
             gridTemplateRows: {
                 24: 'repeat(24, minmax(0, 1fr))'
+            },
+            screens: {
+                short: { raw: '(max-height: 800px)' }
             }
         }
     },
