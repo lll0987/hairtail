@@ -18,7 +18,7 @@
 </template>
 
 <script setup lang="ts">
-import icon from '../icon';
+import icon from '../../icon';
 import { IRoute } from '@t/interface';
 
 const props = defineProps<{ routes: IRoute[]; actived: string }>();
