@@ -4,12 +4,19 @@
             <!-- NEXT 增加日期显示 -->
             <div v-for="(item, index) in records" :key="index">
                 <div class="flex flex-row items-center justify-end w-full py-12">
-                    <div class="rounded-3xl max-w-[90%] rounded-tr-none bg-slate-950 text-slate-200 px-16 py-6">
+                    <div
+                        class="rounded-3xl max-w-[90%] rounded-tr-none bg-slate-950 text-slate-200 px-16 py-6"
+                    >
                         {{ item.in }}
                     </div>
                 </div>
                 <div class="flex flex-row items-center justify-start w-full">
-                    <Item :item="item" @accept="handleAccept" @ignore="handleIgnore"></Item>
+                    <OutItem
+                        :key="(item.id || '') + item.status"
+                        :item="item"
+                        @accept="handleAccept"
+                        @ignore="handleIgnore"
+                    ></OutItem>
                 </div>
             </div>
         </div>
@@ -31,7 +38,7 @@ import { onMounted, ref } from 'vue';
 import { IRecord } from '@t/interface';
 import { list } from '@renderer/api/record';
 
-import Item from './components/item';
+import OutItem from './components/item';
 import Editor from './components/editor.vue';
 import IButton from '@renderer/components/button';
 import { useToast } from '@renderer/components/toast';
