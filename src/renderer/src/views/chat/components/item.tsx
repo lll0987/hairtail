@@ -27,7 +27,6 @@ const IGNORE = RecordStatus.IGNORE;
 
 const classes = [
     'max-w-[90%]',
-    'min-w-400',
     'px-16',
     'py-6',
     'rounded-3xl',
@@ -38,6 +37,7 @@ const classes = [
 const BG = 'bg-white';
 const ACCEPT_BG = 'bg-green-300';
 const IGNORE_BG = 'bg-slate-300';
+const FONT_WEIGHT = 'font-semibold';
 
 export default defineComponent({
     inheritAttrs: false,
@@ -57,7 +57,7 @@ export default defineComponent({
                     { class: [...classes, BG] },
                     h('div', { class: ['flex', 'items-center'] }, [
                         h(Loading, { size: 24, class: 'mr-6' }),
-                        h('span', { class: 'font-semibold' }, '转换中')
+                        h('span', { class: FONT_WEIGHT }, '转换中')
                     ])
                 );
 
@@ -82,7 +82,7 @@ export default defineComponent({
                                 'span',
                                 {
                                     class: [
-                                        'font-semibold',
+                                        FONT_WEIGHT,
                                         'pl-8',
                                         'relative',
                                         'after:absolute',
@@ -118,9 +118,11 @@ export default defineComponent({
 
         // NEXT 收起展开结果
         // 已接受
-        if (status.value === ACCEPT) return () => h('div', { class: [...classes, ACCEPT_BG] }, '已接受');
+        if (status.value === ACCEPT)
+            return () => h('div', { class: [...classes, ACCEPT_BG, FONT_WEIGHT] }, '已接受');
         // 已忽略
-        if (status.value === IGNORE) return () => h('div', { class: [...classes, IGNORE_BG] }, '已忽略');
+        if (status.value === IGNORE)
+            return () => h('div', { class: [...classes, IGNORE_BG, FONT_WEIGHT] }, '已忽略');
 
         return () => h('div', { class: [...classes, BG] }, out.value);
     }
