@@ -11,14 +11,14 @@ import { initOptions, useOptions } from '../hooks/useOptions';
 import { useScroll, SHORTCUT } from '../hooks/useScroll';
 import { LightTheme } from './theme/light';
 
-import { IEvent } from '@t/interface';
+import { EventRawData } from '@t/interface';
 
-const props = defineProps<{ data: IEvent[] }>();
+const props = defineProps<{ data: EventRawData[] }>();
 const canvasRef = ref<HTMLDivElement | null>(null);
 let s2: PivotSheet | null = null;
 
 // 滚动到日期
-// TODO 从本周第一天开始
+// NEXT 从本周第一天开始
 const handleScrollToDate = (date: SHORTCUT | string) => {
     if (!s2) return;
     useScroll(s2, date);
