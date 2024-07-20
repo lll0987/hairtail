@@ -17,7 +17,7 @@ export interface IEvent extends Omit<EventModel, 'tags' | 'infos' | 'grain'> {
     id?: string;
 }
 
-export interface EventBody extends Omit<EventModel, 'tags' | 'infos' | 'grain' | 'start' | 'end'> {
+export interface EventBody extends Omit<EventModel, 'infos' | 'grain' | 'start' | 'end'> {
     start: string;
     end: string;
     grain: DateTimeGrain;

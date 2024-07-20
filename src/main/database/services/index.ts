@@ -4,12 +4,14 @@ import { RecordService } from './record.service';
 import { EventService } from './event.service';
 import { TagService } from './tag.service';
 import { TopicService } from './topic.service';
+import { SettingService } from './setting.service';
 
 export const services = {
     [RecordService.name]: new RecordService(),
     [EventService.name]: new EventService(),
     [TagService.name]: new TagService(),
-    [TopicService.name]: new TopicService()
+    [TopicService.name]: new TopicService(),
+    [SettingService.name]: new SettingService()
 };
 
 export const serviceNames = Object.keys(services);

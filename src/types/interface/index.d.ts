@@ -3,6 +3,7 @@ export * from './info';
 export * from './record';
 export * from './tag';
 export * from './topic';
+export * from './setting';
 
 import { Component } from 'vue';
 export interface IRoute {

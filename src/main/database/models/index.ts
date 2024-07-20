@@ -12,3 +12,6 @@ export { eventModel, eventName };
 
 import { model as recordModel, name as recordName } from './record.model';
 export { recordModel, recordName };
+
+import { model as settingModel, name as settingName } from './setting.model';
+export { settingModel, settingName };
