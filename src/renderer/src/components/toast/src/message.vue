@@ -1,12 +1,10 @@
 <template>
     <div
-        class="bg-neutral-800 bg-opacity-85 rounded-lg border max-w-[80%] p-8 flex items-center gap-8"
+        class="bg-zinc-800 bg-opacity-85 rounded-lg border max-w-[80vw] flex items-center p-8 gap-8"
         :style="{ borderColor: color }"
     >
-        <div class="h-full flex items-start" :style="{ color: color }">
-            <icon :size="24"><component :is="iconComponent" /></icon>
-        </div>
-        <div class="text-neutral-50 flex-1 flex-wrap pr-4">{{ message }}</div>
+        <icon :size="22" :style="{ color: color }"><component :is="iconComponent" /></icon>
+        <p class="text-slate-50 flex-1 flex items-center justify-center flex-wrap mr-8">{{ message }}</p>
     </div>
 </template>
 
@@ -31,7 +29,7 @@ const colorMap: Record<MessageType, string> = {
     info: colors.sky[400],
     success: colors.green[400],
     warning: colors.yellow[400],
-    error: colors.red[500]
+    error: colors.rose[400]
 };
 const color = computed(() => colorMap[props.type]);
 
