@@ -79,7 +79,7 @@ export default defineComponent({
                             ]
                         },
                         [
-                            h(Title, '转换结果'),
+                            h(Title, () => '转换结果'),
                             h(
                                 Button,
                                 {
@@ -87,12 +87,12 @@ export default defineComponent({
                                     size: 'small',
                                     onClick: () => ctx.emit('accept', props.item)
                                 },
-                                '接受'
+                                () => '接受'
                             ),
                             h(
                                 Button,
                                 { size: 'small', onClick: () => ctx.emit('ignore', props.item) },
-                                '忽略'
+                                () => '忽略'
                             )
                         ]
                     ),
