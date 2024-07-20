@@ -5,4 +5,5 @@ out
 *.log*
 *.lock
 .env
-docs/unity.*
+
+docs/u.*
