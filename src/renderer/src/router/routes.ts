@@ -4,12 +4,15 @@ import {
     CalendarRtl24Filled,
     CalendarRtl24Regular,
     Home20Filled,
-    Home20Regular
+    Home20Regular,
+    Settings24Filled,
+    Settings24Regular
 } from '@vicons/fluent';
 
 import calendar from '@renderer/views/calendar';
 import chat from '@renderer/views/chat';
 import dashboard from '@renderer/views/dashboard.vue';
+import setting from '@renderer/views/setting';
 
 import { IRoute } from '@t/interface';
 
@@ -34,5 +37,12 @@ export default [
         icon: CalendarRtl24Regular,
         iconFilled: CalendarRtl24Filled,
         component: calendar
+    },
+    {
+        key: 'setting',
+        label: '设置',
+        icon: Settings24Regular,
+        iconFilled: Settings24Filled,
+        component: setting
     }
 ] as IRoute[];
