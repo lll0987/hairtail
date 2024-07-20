@@ -9,6 +9,7 @@ import { RecordStatus } from '@t/enum';
 
 import Loading from '@renderer/components/loading';
 import Button from '@renderer/components/button';
+import Title from '@renderer/components/title';
 
 const marked = new Marked(
     markedHighlight({
@@ -78,25 +79,7 @@ export default defineComponent({
                             ]
                         },
                         [
-                            h(
-                                'span',
-                                {
-                                    class: [
-                                        FONT_WEIGHT,
-                                        'pl-8',
-                                        'relative',
-                                        'after:absolute',
-                                        'after:left-0',
-                                        'after:top-1/2',
-                                        'after:-translate-y-1/2',
-                                        'after:w-4',
-                                        'after:h-[1.2em]',
-                                        'after:bg-sky-400',
-                                        'after:rounded-sm'
-                                    ]
-                                },
-                                '转换结果'
-                            ),
+                            h(Title, '转换结果'),
                             h(
                                 Button,
                                 {
