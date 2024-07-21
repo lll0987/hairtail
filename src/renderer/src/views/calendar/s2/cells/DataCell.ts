@@ -8,7 +8,7 @@ import { DataCell, QueryDataType } from '@antv/s2';
 import { Circle, Line, Rect } from '@antv/g';
 
 import type { IShapeData } from '../../hooks/useData';
-import { getTimeSpan, isLastHour } from '../../hooks/useRow';
+import { getTimeSpan, isLastHour, START_HOUR } from '../../hooks/useRow';
 
 import { DateTimeGrain } from '@t/enum';
 
@@ -20,7 +20,7 @@ export class ShapeDataCell extends DataCell {
     }
 
     // 获取当前列的数据
-    private getCollData() {
+    private getColData() {
         const data = this.spreadsheet.dataSet.getCellMultiData({
             query: this.meta.colQuery,
             queryType: QueryDataType.DetailOnly
@@ -282,54 +282,41 @@ export class ShapeDataCell extends DataCell {
         this.appendChild(new Rect({ style: { x, y, width, height, ...style } }));
     }
 
-    // 是否为全天单元格
-    private isAllDayCell() {
+    // 是否需要绘制边框
+    private isBorder() {
         const { key } = this.meta.rowQuery!;
-        return [DateTimeGrain.DATE_RANGE, DateTimeGrain.DATE].includes(key);
-    }
 
-    // 是否为空闲时间
-    private isFreeTime() {
-        // 1.全天数据 -> 空闲
-        if (this.isAllDayCell()) return true;
-        // 2.当前小时有数据 -> 忙碌
+        // 1.全天数据 -> 不绘制边框
+        if ([DateTimeGrain.DATE_RANGE, DateTimeGrain.DATE].includes(key)) return false;
+
+        const hour = Number(key);
+        // 2.不是最后的节点 -> 不绘制边框
+        if (!isLastHour(hour)) return false;
+
+        // 3.当前小时有数据 & 能占满当前单元格 -> 不绘制边框
         const cellData = this.getCellData();
-        if (cellData && cellData.time_end) return false;
-        // 当前列全部数据
-        const data = this.getCollData();
-        // 3.当前列没有时间范围数据 -> 空闲
-        if (data.every(item => !item.time_end)) return true;
-        // 4.有在当前小时或以后结束的数据 -> 忙碌
-        const hour = Number(this.meta.rowQuery?.key);
-        return !data.some(
-            item => item.time_end && Number(item.key) <= hour && dayjs(item.time_end).hour() >= hour
-        );
-    }
+        if (cellData && cellData.time_end && dayjs(cellData.time_end).hour() > hour) return false;
 
-    // 是否不能占满当前单元格
-    private isShorterShape() {
-        if (this.isAllDayCell()) return true;
-        const hour = Number(this.meta.rowQuery?.key);
-        return this.getCollData().some(item => item.time_end && dayjs(item.time_end).hour() === hour);
-    }
+        const colData = this.getColData().filter(item => item.time_end);
+        if (this.meta.rowIndex === 20) console.log(colData);
+        // 4.当前列没有时间范围数据 -> 绘制边框
+        if (colData.length < 1) return true;
+        // 5.有在当前小时以后结束的数据 -> 不绘制边框
+        if (
+            colData.some(item => {
+                const k = Number(item.key);
+                let h = dayjs(item.time_end).hour();
+                if (k > 0 && h === 0) h = 24;
+                return k <= hour && h > hour;
+            })
+        )
+            return false;
 
-    // 是否为最后的节点
-    private isLastNode() {
-        if (this.isAllDayCell()) return true;
-        return isLastHour(Number(this.meta.rowQuery?.key));
+        return true;
     }
 
     // *重写边框绘制方法
     drawBorders(): void {
-        // FIX 可能没有 DATE 数据，不能断定 DATE_RANGE 不绘制
-        // FIX 结束在第二天小时更小的数据不需要边框
-        if (
-            this.meta.rowQuery?.key === DateTimeGrain.DATE_RANGE ||
-            !this.isLastNode() ||
-            (!this.isFreeTime() && !this.isShorterShape())
-        )
-            return;
-
         const { x, y, width, height } = this.meta;
         const {
             horizontalBorderWidth = 0,
@@ -342,20 +329,41 @@ export class ShapeDataCell extends DataCell {
         const x2 = x1 + width;
         const y1 = y + height - horizontalBorderWidth / 2;
 
-        this.appendChild(
-            new Line({
-                style: {
-                    x1,
-                    y1,
-                    x2,
-                    y2: y1,
-                    lineWidth: horizontalBorderWidth,
-                    stroke: horizontalBorderColor,
-                    strokeOpacity: horizontalBorderColorOpacity,
-                    lineDash: borderDash,
-                    zIndex: 0
-                }
-            })
-        );
+        if (this.isBorder()) {
+            this.appendChild(
+                new Line({
+                    style: {
+                        x1,
+                        y1,
+                        x2,
+                        y2: y1,
+                        lineWidth: horizontalBorderWidth,
+                        stroke: horizontalBorderColor,
+                        strokeOpacity: horizontalBorderColorOpacity,
+                        lineDash: borderDash,
+                        zIndex: 0
+                    }
+                })
+            );
+        }
+
+        if (START_HOUR === Number(this.meta.rowQuery?.key)) {
+            const _y = y1 - height;
+            this.appendChild(
+                new Line({
+                    style: {
+                        x1,
+                        y1: _y,
+                        x2,
+                        y2: _y,
+                        lineWidth: horizontalBorderWidth,
+                        stroke: horizontalBorderColor,
+                        strokeOpacity: horizontalBorderColorOpacity,
+                        lineDash: borderDash,
+                        zIndex: 0
+                    }
+                })
+            );
+        }
     }
 }
