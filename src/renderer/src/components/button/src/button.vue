@@ -37,7 +37,14 @@ const color = computed(() => props.color || colorMap[props.type]);
 
 // 样式
 const styles = computed(() => {
-    const style: { height?: string; fontSize?: string; paddingLeft?: string; paddingRight?: string } = {};
+    const style: {
+        height?: string;
+        fontSize?: string;
+        paddingLeft?: string;
+        paddingRight?: string;
+        cursor: string;
+    } = { cursor: loading.value ? 'wait' : 'pointer' };
+
     if (props.size === 'small') {
         style.height = '28px';
         style.fontSize = '14px';
@@ -47,6 +54,7 @@ const styles = computed(() => {
         style.paddingLeft = '12px';
         style.paddingRight = '12px';
     }
+
     return style;
 });
 </script>

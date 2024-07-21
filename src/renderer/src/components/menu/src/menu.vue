@@ -1,7 +1,7 @@
 <template>
     <nav>
         <menu class="text-slate-950 flex flex-col gap-20">
-            <li v-for="(item, index) in props.routes" :key="index">
+            <li v-for="(item, index) in props.routes" :key="index" class="cursor-pointer">
                 <div class="flex items-center justify-start" @click="onClick(item.key)">
                     <div
                         class="hover:bg-lime-300 bg-transparent border-transparent border-2 rounded-xl flex px-4 py-6"
