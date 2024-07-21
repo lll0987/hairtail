@@ -3,7 +3,7 @@
         class="bg-zinc-800 bg-opacity-85 rounded-lg border max-w-[80vw] flex items-center p-8 gap-8"
         :style="{ borderColor: color }"
     >
-        <icon :size="22" :style="{ color: color }"><component :is="iconComponent" /></icon>
+        <AgIcon :size="22" :style="{ color: color }"><component :is="iconComponent" /></AgIcon>
         <p class="text-slate-50 flex-1 flex items-center justify-center flex-wrap mr-8">{{ message }}</p>
     </div>
 </template>
@@ -14,7 +14,7 @@ import colors from 'tailwindcss/colors';
 
 import { MessageProps, MessageType } from './types';
 
-import icon from '../../icon';
+import { AgIcon } from '@renderer/components';
 import {
     CheckmarkCircle24Filled,
     DismissCircle24Filled,

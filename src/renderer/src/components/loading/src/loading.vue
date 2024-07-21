@@ -1,5 +1,5 @@
 <template>
-    <icon v-bind="props">
+    <AgIcon v-bind="props">
         <svg
             xmlns="http://www.w3.org/2000/svg"
             xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -27,10 +27,10 @@
                 <path d="M20.31 15.44A9 9 0 0 0 12 3"></path>
             </g>
         </svg>
-    </icon>
+    </AgIcon>
 </template>
 
 <script setup lang="ts">
-import icon, { IconProps } from '../../icon';
+import { AgIcon, IconProps } from '@renderer/components';
 const props = defineProps<IconProps>();
 </script>

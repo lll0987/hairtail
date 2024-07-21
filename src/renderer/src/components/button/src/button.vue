@@ -4,7 +4,7 @@
         :style="{ backgroundColor: color, ...styles }"
     >
         <span v-show="props.loading" class="flex items-center mr-6">
-            <LoadingIcon size="1em"></LoadingIcon>
+            <AgLoading size="1em"></AgLoading>
         </span>
         <span class="flex items-center flex-nowrap min-w-0">
             <slot></slot>
@@ -16,7 +16,7 @@
 import { computed } from 'vue';
 import colors from 'tailwindcss/colors';
 
-import LoadingIcon from '../../loading';
+import { AgLoading } from '@renderer/components';
 import { ButtonProps, ButtonType } from './types';
 
 const props = withDefaults(defineProps<ButtonProps>(), { loading: false, type: 'default', size: 'medium' });

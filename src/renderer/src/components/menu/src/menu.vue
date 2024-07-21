@@ -11,9 +11,9 @@
                                 : {}
                         "
                     >
-                        <icon :size="30">
+                        <AgIcon :size="30">
                             <component :is="item.iconFilled" />
-                        </icon>
+                        </AgIcon>
                     </div>
                 </div>
             </li>
@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import icon from '../../icon';
+import { AgIcon } from '@renderer/components';
 import { IRoute } from '@t/interface';
 
 import colors from 'tailwindcss/colors';

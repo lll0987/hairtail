@@ -11,7 +11,7 @@ import {
 
 import calendar from '@renderer/views/calendar';
 import chat from '@renderer/views/chat';
-import dashboard from '@renderer/views/dashboard.vue';
+import dashboard from '@renderer/views/dashboard';
 import setting from '@renderer/views/setting';
 
 import { IRoute } from '@t/interface';
