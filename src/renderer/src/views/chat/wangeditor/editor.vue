@@ -1,19 +1,54 @@
 <template>
     <div class="overflow-auto">
         <Toolbar :editor="editorRef" :default-config="toolbarConfig" :mode="mode" />
-        <Editor v-model="valueHtml" :default-config="editorConfig" :mode="mode" @on-created="handleCreated" />
+        <Editor
+            v-model="valueHtml"
+            :default-config="editorConfig"
+            :mode="mode"
+            @on-created="handleCreated"
+            @on-change="handleChange"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
+import { onBeforeUnmount, ref, shallowRef, watch } from 'vue';
+import { debounce } from 'lodash';
+
 import '@wangeditor/editor/dist/css/style.css';
-
-import { onBeforeUnmount, ref, shallowRef } from 'vue';
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue';
-import { IDomEditor, IToolbarConfig, IEditorConfig } from '@wangeditor/editor';
+import { Boot, IDomEditor, IToolbarConfig, IEditorConfig } from '@wangeditor/editor';
 
+import { EnterModule } from './plugin';
+Boot.registerModule(EnterModule);
+
+// 使用 v-model 绑定输入文本
+const props = withDefaults(defineProps<{ modelValue?: string }>(), {
+    modelValue: ''
+});
+const emits = defineEmits(['update:modelValue', 'enter']);
+// 内容变化时更新文本值
+const handleChange = (editor: IDomEditor): void => {
+    const targetValue = editor.getText();
+    if (targetValue === props.modelValue) return;
+    emits('update:modelValue', targetValue);
+};
+// 文本传递给编辑器
+const valueHtml = ref(props.modelValue);
+watch(
+    () => props.modelValue,
+    (value: string) => {
+        const editor = editorRef.value;
+        if (!editor || editor.getText() === value) return;
+        valueHtml.value = value;
+    }
+);
+
+// 不需要太复杂的功能，使用简洁模式
 const mode = 'simple';
+// 隐藏工具栏
 const toolbarConfig = ref<Partial<IToolbarConfig>>({
+    // NEXT 动态更新需要再研究，暂时写死
     excludeKeys: [
         'blockquote',
         'header1',
@@ -47,20 +82,26 @@ const toolbarConfig = ref<Partial<IToolbarConfig>>({
         'fullScreen'
     ]
 });
+// 编辑器使用默认配置
 const editorConfig = ref<Partial<IEditorConfig>>({});
 
+// 记录编辑器实例
 const editorRef = shallowRef<IDomEditor>();
-const handleCreated = editor => {
+const handleCreated = (editor: IDomEditor): void => {
     editorRef.value = editor;
+    editorRef.value.on('cusEnter', handleEnter);
 };
-
+// 组件销毁时，销毁编辑器
 onBeforeUnmount(() => {
     const editor = editorRef.value;
     if (editor == null) return;
     editor.destroy();
 });
 
-const valueHtml = ref('');
+// 回车事件
+const handleEnter = debounce(() => {
+    emits('enter');
+}, 1000);
 </script>
 
 <style>

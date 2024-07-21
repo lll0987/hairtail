@@ -11,12 +11,7 @@
                     </div>
                 </div>
                 <div class="flex flex-row items-center justify-start w-full">
-                    <OutItem
-                        :key="(item.id || '') + item.status"
-                        :item="item"
-                        @accept="handleAccept"
-                        @ignore="handleIgnore"
-                    ></OutItem>
+                    <OutItem v-bind="item"></OutItem>
                 </div>
             </div>
         </div>
@@ -26,7 +21,7 @@
             >
                 <Editor v-model="text" @enter="handleSend"></Editor>
                 <div class="flex flex-row items-center justify-end">
-                    <IButton type="primary" size="large" @click="handleSend">保存</IButton>
+                    <AgButton type="primary" @click="handleSend">发送</AgButton>
                 </div>
             </div>
         </div>
@@ -34,14 +29,17 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { h, onMounted, ref } from 'vue';
+
+import { RecordStatus } from '@t/enum';
 import { IRecord } from '@t/interface';
 import { list } from '@renderer/api/record';
 
-import OutItem from './components/item';
-import Editor from './components/editor.vue';
-import IButton from '@renderer/components/button';
-import { useToast } from '@renderer/components/toast';
+import { AgButton, AgLoading, AgTitle, useToast } from '@renderer/components';
+import Editor from './wangeditor';
+
+import marked from './marked';
+import 'highlight.js/styles/an-old-hope.min.css';
 
 const toast = useToast();
 
@@ -68,7 +66,7 @@ const handleSend = async () => {
         toast.warning('对话内容不可为空');
         return;
     }
-    // TODO 增加 loading
+    // NEXT 增加 loading
     const msg = await window.electron.ipcRenderer.invoke('handleInput', text.value);
     if (msg) {
         toast.error(msg);
@@ -100,6 +98,81 @@ const handleIgnore = async (item: IRecord) => {
     }
     getList();
 };
+
+const classes = [
+    'max-w-[90%]',
+    'px-16',
+    'py-6',
+    'rounded-3xl',
+    'rounded-tl-none',
+    'border-slate-800',
+    'border-2'
+];
+const BG = 'bg-white';
+const ACCEPT_BG = 'bg-green-300';
+const IGNORE_BG = 'bg-slate-300';
+const FONT_WEIGHT = 'font-semibold';
+
+const OutItem = (item: IRecord) => {
+    const { status, out } = item;
+
+    // 等待外部 api 结果
+    if (status === RecordStatus.SEND)
+        return h(
+            'div',
+            { class: [...classes, BG] },
+            h('div', { class: ['flex', 'items-center'] }, [
+                h(AgLoading, { size: 24, class: 'mr-6' }),
+                h('span', { class: FONT_WEIGHT }, '转换中')
+            ])
+        );
+
+    // 等待用户接受/忽略
+    if (status === RecordStatus.WAITING)
+        return h('div', { class: [...classes, BG] }, [
+            h(
+                'div',
+                {
+                    class: [
+                        'grid',
+                        'grid-rows-1',
+                        'grid-cols-[1fr_auto_auto]',
+                        'gap-8',
+                        'items-center',
+                        'py-10'
+                    ]
+                },
+                [
+                    h(AgTitle, () => '转换结果'),
+                    h(
+                        AgButton,
+                        {
+                            type: 'success',
+                            size: 'small',
+                            onClick: () => handleAccept(item)
+                        },
+                        () => '接受'
+                    ),
+                    h(AgButton, { size: 'small', onClick: () => handleIgnore(item) }, () => '忽略')
+                ]
+            ),
+            h('div', { innerHTML: marked(out) })
+        ]);
+
+    // NEXT 收起展开结果
+    // 已接受
+    if (status === RecordStatus.ACCEPT)
+        return h('div', { class: [...classes, ACCEPT_BG, FONT_WEIGHT] }, '已接受');
+    // 已忽略
+    if (status === RecordStatus.IGNORE)
+        return h('div', { class: [...classes, IGNORE_BG, FONT_WEIGHT] }, '已忽略');
+
+    return h('div', { class: [...classes, BG] }, out);
+};
+
+// TODO 根据配置添加 tag
+// 1.增加 tag 输入栏，范围选择，自动填充
+// 2.自动创建数据时根据 tag 查表填充默认值
 
 // NEXT 复制：自动添加到输入框然后调用忽略方法
 </script>

@@ -39,8 +39,6 @@ const handleAutoInsert = async (out: string) => {
     const messages: string[] = [];
 
     if (obj.status === 1) {
-        // TODO 支出类型的活动增加支出方式
-        // TODO 根据配置自动添加 tag
         if (obj.data.events) {
             const events = obj.data.events.map(({ start, end, ...item }) => ({
                 ...item,
