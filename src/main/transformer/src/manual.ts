@@ -86,7 +86,7 @@ export const handleCache = async (text: string, window: BrowserWindow): Promise<
 
     // 记录处理结果，更新状态
     const obj = getResponseObject(result!);
-    const out = obj.status === 1 ? result : '无法转化为某种数据结构';
+    const out = obj.status === 1 ? result : '无法转化为某种数据';
     const status = obj.status === 1 ? RecordStatus.WAITING : RecordStatus.NONE;
     const [m] = await services.record.updateById(id.toString(), { out, status });
     if (m) return m;

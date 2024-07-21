@@ -99,6 +99,7 @@ onBeforeUnmount(() => {
 });
 
 // 回车事件
+// NEXT 回车后很久才触发父组件事件，原因 & 解决
 const handleEnter = debounce(() => {
     emits('enter');
 }, 1000);

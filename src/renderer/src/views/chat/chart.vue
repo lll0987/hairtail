@@ -1,6 +1,6 @@
 <template>
     <div class="grid grid-cols-1 grid-rows-[1fr_auto] w-full h-full">
-        <div class="p-16 overflow-y-auto">
+        <div ref="listRef" class="p-16 overflow-y-auto">
             <!-- NEXT 增加日期显示 -->
             <div v-for="(item, index) in records" :key="index">
                 <div class="flex flex-row items-center justify-end w-full py-12">
@@ -21,7 +21,7 @@
             >
                 <Editor v-model="text" @enter="handleSend"></Editor>
                 <div class="flex flex-row items-center justify-end">
-                    <AgButton type="primary" @click="handleSend">发送</AgButton>
+                    <AgButton type="primary" :loading="sendLoading" @click="handleSend">发送</AgButton>
                 </div>
             </div>
         </div>
@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { h, onMounted, ref } from 'vue';
+import { h, nextTick, onMounted, ref } from 'vue';
 
 import { RecordStatus } from '@t/enum';
 import { IRecord } from '@t/interface';
@@ -43,15 +43,19 @@ import 'highlight.js/styles/an-old-hope.min.css';
 
 const toast = useToast();
 
+const listRef = ref<HTMLDivElement | null>(null);
 const records = ref<IRecord[]>([]);
 const getList = async () => {
-    // TODO 滚动到最下方
     const [msg, data] = await list();
     if (msg) {
         toast.error(msg);
     } else {
         records.value = data;
     }
+    // 滚动到最下方
+    nextTick(() => {
+        listRef.value?.scrollTo({ top: listRef.value?.scrollHeight, behavior: 'smooth' });
+    });
     return !msg;
 };
 
@@ -61,11 +65,14 @@ onMounted(async () => {
 
 const text = ref('');
 
+const sendLoading = ref(false);
 const handleSend = async () => {
+    if (sendLoading.value) return;
     if (!text.value) {
         toast.warning('对话内容不可为空');
         return;
     }
+    sendLoading.value = true;
     // NEXT 增加 loading
     const msg = await window.electron.ipcRenderer.invoke('handleInput', text.value);
     if (msg) {
@@ -77,6 +84,7 @@ const handleSend = async () => {
 window.electron.ipcRenderer.on('insert-record-success', async () => {
     const status = await getList();
     if (status) text.value = '';
+    sendLoading.value = false;
 });
 
 const handleAccept = async (item: IRecord) => {

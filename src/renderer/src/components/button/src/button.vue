@@ -3,7 +3,7 @@
         class="text-slate-950 border-2 border-slate-800 rounded px-8 h-32 inline-flex flex-row justify-center items-center"
         :style="{ backgroundColor: color, ...styles }"
     >
-        <span v-show="props.loading" class="flex items-center mr-6">
+        <span v-show="loading" class="flex items-center mr-6">
             <AgLoading size="1em"></AgLoading>
         </span>
         <span class="flex items-center flex-nowrap min-w-0">
@@ -20,6 +20,9 @@ import { AgLoading } from '@renderer/components';
 import { ButtonProps, ButtonType } from './types';
 
 const props = withDefaults(defineProps<ButtonProps>(), { loading: false, type: 'default', size: 'medium' });
+
+// 加载状态
+const loading = computed(() => props.loading);
 
 // 颜色
 const colorMap: Record<ButtonType, string> = {
