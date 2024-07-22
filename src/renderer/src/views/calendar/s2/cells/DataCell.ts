@@ -298,7 +298,6 @@ export class ShapeDataCell extends DataCell {
         if (cellData && cellData.time_end && dayjs(cellData.time_end).hour() > hour) return false;
 
         const colData = this.getColData().filter(item => item.time_end);
-        if (this.meta.rowIndex === 20) console.log(colData);
         // 4.当前列没有时间范围数据 -> 绘制边框
         if (colData.length < 1) return true;
         // 5.有在当前小时以后结束的数据 -> 不绘制边框
