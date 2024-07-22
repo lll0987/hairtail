@@ -8,6 +8,7 @@
             @on-created="handleCreated"
             @on-change="handleChange"
         />
+        <popover :show="showPopover"></popover>
     </div>
 </template>
 
@@ -19,8 +20,11 @@ import '@wangeditor/editor/dist/css/style.css';
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue';
 import { Boot, IDomEditor, IToolbarConfig, IEditorConfig } from '@wangeditor/editor';
 
-import { EnterModule } from './plugin';
+import popover from './popover.vue';
+
+import { EnterModule, MentionModule } from '../plugin';
 Boot.registerModule(EnterModule);
+Boot.registerModule(MentionModule);
 
 // 使用 v-model 绑定输入文本
 const props = withDefaults(defineProps<{ modelValue?: string }>(), {
@@ -43,6 +47,22 @@ watch(
         valueHtml.value = value;
     }
 );
+
+// 回车事件
+// NEXT 回车后很久才触发父组件事件，原因 & 解决
+const handleEnter = debounce(() => {
+    console.log('handleEnter');
+    // emits('enter');
+}, 1000);
+
+// 显示/隐藏预设选项
+const showPopover = ref(false);
+const showMention = () => {
+    showPopover.value = true;
+};
+const hideMention = () => {
+    showPopover.value = false;
+};
 
 // 不需要太复杂的功能，使用简洁模式
 const mode = 'simple';
@@ -83,7 +103,14 @@ const toolbarConfig = ref<Partial<IToolbarConfig>>({
     ]
 });
 // 编辑器使用默认配置
-const editorConfig = ref<Partial<IEditorConfig>>({});
+const editorConfig: Partial<IEditorConfig> = {
+    EXTEND_CONF: {
+        mentionConfig: {
+            showPopover: showMention,
+            hidePopover: hideMention
+        }
+    }
+};
 
 // 记录编辑器实例
 const editorRef = shallowRef<IDomEditor>();
@@ -97,12 +124,6 @@ onBeforeUnmount(() => {
     if (editor == null) return;
     editor.destroy();
 });
-
-// 回车事件
-// NEXT 回车后很久才触发父组件事件，原因 & 解决
-const handleEnter = debounce(() => {
-    emits('enter');
-}, 1000);
 </script>
 
 <style>
