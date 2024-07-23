@@ -82,6 +82,7 @@ export const handleCache = async (text: string, window: BrowserWindow): Promise<
 
     // 获取 ai 处理结果，等待下一步操作
     const [message, result] = await getFormattedText(text);
+    // TODO 错误时也要修改状态
     if (message) return message;
 
     // 记录处理结果，更新状态

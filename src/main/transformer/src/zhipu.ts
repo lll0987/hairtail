@@ -92,6 +92,7 @@ export const getFormattedText = async (text: string) => {
             body: { assistant_id, prompt }
         })
             .then(res => {
+                // TODO 增加错误处理
                 const { result } = res as { result: ZPResult };
                 const { content } = result.output.find(part => part.status === 'finish')!;
                 // NEXT 校验返回格式是否为 ZPText

@@ -1,40 +1,82 @@
-import { DomEditor, IDomEditor } from '@wangeditor/editor';
-import { IExtendConfig } from '../types';
+import { DomEditor, IDomEditor, SlateEditor, SlateRange, SlateTransforms } from '@wangeditor/editor';
+import { IExtendConfig, IMention, MentionChild, MentionConfig, MentionElement } from '../types';
 import { MENTION_TAG_TYPE, MENTION_TYPE } from '../lib';
 
+// 获取插件配置
+interface IConfig extends Omit<MentionConfig, 'prefix'> {
+    prefix: string[];
+}
+const getConfig = (editor: IDomEditor): IConfig => {
+    const { EXTEND_CONF } = editor.getConfig();
+    const { mentionConfig } = EXTEND_CONF as IExtendConfig;
+    const { prefix = '#' } = mentionConfig;
+    const _prefix = typeof prefix === 'string' ? [prefix] : prefix;
+
+    return { ...mentionConfig, prefix: _prefix };
+};
+
+// 获取光标位置
+const getCursorPosition = () => {
+    const domSelection = document.getSelection();
+    const domRange = domSelection?.getRangeAt(0);
+    if (!domRange) return { top: 0, left: 0 };
+    const rect = domRange.getBoundingClientRect();
+    return { top: rect.top, left: rect.left + 4 };
+};
+
+// 获取快捷短语内容
+const getPrefixLabel = (editor: IDomEditor) => {
+    // MEMO 当锚点和焦点重合时，选区就表示一个光标
+    const { selection } = editor;
+    if (selection === null) return null;
+    // 选区有内容时，执行默认操作
+    if (SlateRange.isExpanded(selection)) return null;
+    if (DomEditor.getSelectedNodeByType(editor, 'paragraph') == null) return null;
+
+    const { anchor } = selection;
+    const { path } = anchor;
+    const text = SlateEditor.string(editor, { anchor, focus: { path, offset: 0 } });
+
+    const { prefix } = getConfig(editor);
+    const index = prefix.reduceRight((_, cur) => text.indexOf(cur), -1);
+
+    if (index === -1) return null;
+
+    return { text: text.slice(index + 1), at: { anchor, focus: { path, offset: index } } };
+};
+
 const withMention = <T extends IDomEditor>(editor: T) => {
-    const { insertText, isInline, isVoid } = editor;
+    const { insertText, isInline } = editor;
     const newEditor = editor;
 
+    // 重写是否为行内元素的判断
+    const types = [MENTION_TYPE, MENTION_TAG_TYPE] as string[];
+    newEditor.isInline = elem => {
+        const type = DomEditor.getNodeType(elem);
+        if (types.includes(type)) return true;
+        return isInline(elem);
+    };
+
+    // 重写插入文本的方法，识别到前缀时向外暴露光标位置和输入文本
     newEditor.insertText = t => {
-        const elems = DomEditor.getSelectedElems(newEditor);
+        insertText(t);
 
-        const isSelectedVoidElem = elems.some(elem => newEditor.isVoid(elem));
-
-        const { EXTEND_CONF } = newEditor.getConfig();
-        const { mentionConfig } = EXTEND_CONF as IExtendConfig;
-        const { showPopover, hidePopover, prefix = '#' } = mentionConfig;
-        const _prefix = typeof prefix === 'string' ? [prefix] : prefix;
-
-        if (isSelectedVoidElem || !_prefix.includes(t)) {
-            insertText(t);
-            return;
-        }
+        const label = getPrefixLabel(newEditor);
+        if (label === null) return;
 
         setTimeout(() => {
-            if (showPopover) showPopover(newEditor);
+            const position = getCursorPosition();
+            newEditor.emit('cusInsert', position, label.text);
 
+            // 暴露隐藏事件，方便外部组件关闭弹窗等组件
             const _hide = () => {
-                if (hidePopover) hidePopover(newEditor);
+                newEditor.emit('cusHide', position);
             };
-
             const hideOnChange = () => {
-                if (newEditor.selection !== null) {
-                    _hide();
-                    newEditor.off('change', hideOnChange);
-                }
+                if (newEditor.selection === null) return;
+                _hide();
+                newEditor.off('change', hideOnChange);
             };
-
             setTimeout(() => {
                 newEditor.once('fullScreen', _hide);
                 newEditor.once('unFullScreen', _hide);
@@ -47,19 +89,34 @@ const withMention = <T extends IDomEditor>(editor: T) => {
         });
     };
 
-    const types = [MENTION_TYPE, MENTION_TAG_TYPE] as string[];
+    // 监听提交事件，将文本替换为 mention 节点
+    newEditor.on('cusPositive', (data: IMention) => {
+        const label = getPrefixLabel(newEditor);
+        if (label === null) return;
 
-    newEditor.isInline = elem => {
-        const type = DomEditor.getNodeType(elem);
-        if (types.includes(type)) return true;
-        return isInline(elem);
-    };
+        const { tags, text } = data;
+        const node: MentionElement = {
+            type: MENTION_TYPE,
+            children: [
+                ...tags.reduce(
+                    (acc: MentionChild[], { color, text }) =>
+                        acc.concat(
+                            {
+                                type: MENTION_TAG_TYPE,
+                                color,
+                                children: [{ text }]
+                            },
+                            { text: ' ' }
+                        ),
+                    [] as MentionChild[]
+                ),
+                ...text
+            ]
+        };
 
-    newEditor.isVoid = elem => {
-        const type = DomEditor.getNodeType(elem);
-        if (types.includes(type)) return true;
-        return isVoid(elem);
-    };
+        SlateTransforms.insertNodes(newEditor, node, { at: label.at });
+        newEditor.move(1);
+    });
 
     return newEditor;
 };

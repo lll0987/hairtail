@@ -9,6 +9,7 @@ const renderMention = (_elem: SlateElement, children: VNode[] | null): VNode => 
 };
 export const renderMentionConf = { type: MENTION_TYPE, renderElem: renderMention };
 
+// FIX 没有背景色
 const renderTag = (elem: SlateElement, children: VNode[] | null, editor: IDomEditor): VNode => {
     const isSelected = DomEditor.isNodeSelected(editor, elem);
     const { color = '#fff' } = elem as MentionTag;

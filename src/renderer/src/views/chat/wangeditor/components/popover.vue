@@ -12,7 +12,12 @@
                     <AgLoading :size="24"></AgLoading>
                 </div>
                 <ul v-else class="min-w-48">
-                    <li v-for="item in settings" :key="item.id">
+                    <li
+                        v-for="item in filterList"
+                        :key="item.id"
+                        class="my-4 py-4 bg-opacity-10 bg-slate-50"
+                        :style="selectedId !== item.id ? { background: 'transparent' } : ''"
+                    >
                         <span>{{ item.label }}</span>
                     </li>
                 </ul>
@@ -27,17 +32,31 @@ import { useZIndex } from '@renderer/hooks';
 import { ISetting } from '@t/interface';
 import { list } from '@renderer/api/setting';
 import { AgLoading, useToast } from '@renderer/components';
-import { useTransform } from '../hooks';
 
-const props = withDefaults(defineProps<{ show: boolean }>(), { show: false });
+const props = withDefaults(defineProps<{ show: boolean; left: number; top: number; text: string }>(), {
+    show: false,
+    left: 0,
+    top: 0,
+    text: ''
+});
+const emits = defineEmits(['selected']);
+
+// 显示隐藏
 const show = computed(() => props.show);
 
+// 位置
+const transformStyles = computed(() => ({
+    transform: `translateX(${props.left}px) translateY(${props.top}px)`
+}));
+// 层级
 const { nextZIndex } = useZIndex();
 const zIndex = ref(0);
-const transformStyles = ref({});
 
+// 提示组件
 const toast = useToast();
+// 数据加载状态
 const loading = ref(true);
+// 全部数据
 const settings = ref<ISetting[]>([]);
 const getList = async () => {
     loading.value = true;
@@ -49,11 +68,33 @@ const getList = async () => {
         settings.value = data;
     }
 };
+// 过滤后的数据
+const filterList = computed(() =>
+    props.text ? settings.value.filter(item => item.label.includes(props.text)) : settings.value
+);
 
+// 选中的数据
+const selected = ref<ISetting>();
+// 选中ID，增加样式
+const selectedId = computed(() => selected.value?.id ?? '');
+const changeSelected = (item: ISetting) => {
+    selected.value = item;
+    emits('selected', selected.value);
+};
+// 监听文本变化，自动选中第一个
+watch(
+    () => props.text,
+    value => {
+        if (!value || !filterList.value.length) return;
+        changeSelected(filterList.value[0]);
+    }
+);
+// NEXT 增加方向键选择和点击选中
+
+// 监听显示状态，显示时获取数据和层级
 watch(show, val => {
     if (!val) return;
     zIndex.value = nextZIndex();
-    transformStyles.value = useTransform();
     getList();
 });
 </script>

@@ -1,14 +1,12 @@
-import { IDomEditor } from '@wangeditor/editor';
-
-export interface IExtendConfig {
-    mentionConfig: {
-        showPopover: (editor: IDomEditor) => void;
-        hidePopover: (editor: IDomEditor) => void;
-        prefix?: string | string[];
-    };
+export interface MentionConfig {
+    prefix?: string | string[];
 }
 
-type PureText = { text: string };
+export interface IExtendConfig {
+    mentionConfig: MentionConfig;
+}
+
+export type PureText = { text: string };
 
 export type MentionType = 'mention';
 export type MentionTagType = 'mention-tag';
@@ -25,3 +23,9 @@ export type MentionElement = {
     type: MentionType;
     children: MentionChild[];
 };
+
+type IMentionTag = PureText & Pick<MentionTag, 'color'>;
+export interface IMention {
+    tags: IMentionTag[];
+    text: PureText[];
+}

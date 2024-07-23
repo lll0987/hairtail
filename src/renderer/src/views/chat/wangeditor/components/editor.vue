@@ -8,13 +8,20 @@
             @on-created="handleCreated"
             @on-change="handleChange"
         />
-        <popover :show="showPopover"></popover>
+        <popover
+            :show="showPopover"
+            :left="popoverProps.left"
+            :top="popoverProps.top"
+            :text="popoverProps.text"
+            @selected="handleSelected"
+        ></popover>
     </div>
 </template>
 
 <script setup lang="ts">
 import { onBeforeUnmount, ref, shallowRef, watch } from 'vue';
-import { debounce } from 'lodash';
+
+import { ISetting } from '@t/interface';
 
 import '@wangeditor/editor/dist/css/style.css';
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue';
@@ -22,7 +29,7 @@ import { Boot, IDomEditor, IToolbarConfig, IEditorConfig } from '@wangeditor/edi
 
 import popover from './popover.vue';
 
-import { EnterModule, MentionModule } from '../plugin';
+import { EnterModule, MentionModule, IMention, PureText } from '../plugin';
 Boot.registerModule(EnterModule);
 Boot.registerModule(MentionModule);
 
@@ -33,6 +40,7 @@ const props = withDefaults(defineProps<{ modelValue?: string }>(), {
 const emits = defineEmits(['update:modelValue', 'enter']);
 // 内容变化时更新文本值
 const handleChange = (editor: IDomEditor): void => {
+    // TODO 得到的文字可能不对，zhipu 接口调用报错
     const targetValue = editor.getText();
     if (targetValue === props.modelValue) return;
     emits('update:modelValue', targetValue);
@@ -48,20 +56,45 @@ watch(
     }
 );
 
-// 回车事件
-// NEXT 回车后很久才触发父组件事件，原因 & 解决
-const handleEnter = debounce(() => {
-    console.log('handleEnter');
-    // emits('enter');
-}, 1000);
-
 // 显示/隐藏预设选项
 const showPopover = ref(false);
-const showMention = () => {
-    showPopover.value = true;
+const popoverProps = ref({ left: 0, top: 0, text: '' });
+const showMention = (position: { top: number; left: number }, text: string) => {
+    popoverProps.value.left = position.left;
+    popoverProps.value.top = position.top;
+    popoverProps.value.text = text;
+    if (text === '') showPopover.value = true;
 };
 const hideMention = () => {
     showPopover.value = false;
+};
+
+// 选中的预设
+const mentionSelected = ref<ISetting>();
+const handleSelected = (item: ISetting) => {
+    mentionSelected.value = item;
+};
+
+// 回车事件
+const handleEnter = () => {
+    // TODO 有 mention 时很容易连续回车，增加延迟
+    // 弹窗不显示时 == 回车
+    if (!showPopover.value) emits('enter');
+    // 弹窗显示 && 有选中数据 == 插入
+    if (showPopover.value && mentionSelected.value) {
+        const { value } = mentionSelected.value;
+        const data: IMention = {
+            tags: value.tags?.map(tag => ({ color: '', text: tag })) ?? [],
+            text: [value.topic, value.value, value.text].reduce((pre, cur) => {
+                if (cur !== undefined) {
+                    pre.push({ text: cur + '' });
+                }
+                return pre;
+            }, [] as PureText[])
+        };
+        editorRef.value?.emit('cusPositive', data);
+        hideMention();
+    }
 };
 
 // 不需要太复杂的功能，使用简洁模式
@@ -103,20 +136,14 @@ const toolbarConfig = ref<Partial<IToolbarConfig>>({
     ]
 });
 // 编辑器使用默认配置
-const editorConfig: Partial<IEditorConfig> = {
-    EXTEND_CONF: {
-        mentionConfig: {
-            showPopover: showMention,
-            hidePopover: hideMention
-        }
-    }
-};
+const editorConfig: Partial<IEditorConfig> = { EXTEND_CONF: { mentionConfig: {} } };
 
 // 记录编辑器实例
 const editorRef = shallowRef<IDomEditor>();
 const handleCreated = (editor: IDomEditor): void => {
     editorRef.value = editor;
     editorRef.value.on('cusEnter', handleEnter);
+    editorRef.value.on('cusInsert', showMention);
 };
 // 组件销毁时，销毁编辑器
 onBeforeUnmount(() => {

@@ -19,7 +19,7 @@
             <div
                 class="h-full grid grid-cols-1 grid-rows-[1fr_auto] gap-8 p-16 short:p-12 border-2 border-slate-800 rounded-3xl"
             >
-                <Editor v-model="text" @enter="handleSend"></Editor>
+                <Editor v-model="text" @enter="handleEnter"></Editor>
                 <div class="flex flex-row items-center justify-end">
                     <AgButton type="primary" :loading="sendLoading" @click="handleSend">发送</AgButton>
                 </div>
@@ -30,6 +30,7 @@
 
 <script setup lang="ts">
 import { h, nextTick, onMounted, ref } from 'vue';
+import { debounce } from 'lodash';
 
 import { RecordStatus } from '@t/enum';
 import { IRecord } from '@t/interface';
@@ -86,6 +87,10 @@ window.electron.ipcRenderer.on('insert-record-success', async () => {
     if (status) text.value = '';
     sendLoading.value = false;
 });
+
+const handleEnter = debounce(() => {
+    handleSend();
+}, 1000);
 
 const handleAccept = async (item: IRecord) => {
     const id = item.id as string;
