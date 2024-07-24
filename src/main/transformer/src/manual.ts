@@ -12,7 +12,8 @@ enum RecordStatus {
     WAITING,
     ACCEPT,
     IGNORE,
-    NONE
+    NONE,
+    ERROR
 }
 
 /**
@@ -82,8 +83,13 @@ export const handleCache = async (text: string, window: BrowserWindow): Promise<
 
     // 获取 ai 处理结果，等待下一步操作
     const [message, result] = await getFormattedText(text);
-    // TODO 错误时也要修改状态
-    if (message) return message;
+    if (message) {
+        const [m] = await services.record.updateById(id.toString(), {
+            out: '转换出错了',
+            status: RecordStatus.ERROR
+        });
+        return message + (m ? `，${m}` : '');
+    }
 
     // 记录处理结果，更新状态
     const obj = getResponseObject(result!);

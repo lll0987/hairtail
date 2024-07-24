@@ -28,7 +28,7 @@ const refreshToken = async () => {
     })) as { result: { access_token: string; expires_in: number } };
 
     conf.set('zp.token', result.access_token);
-    conf.set('zp.expires', dayjs().add(result.expires_in, 'minute').valueOf());
+    conf.set('zp.expires', Date.now() + result.expires_in * 1000);
 
     logger.info('refreshToken', conf.get('zp'));
 };
@@ -64,6 +64,13 @@ interface ZPResult {
     status: ZPStatus;
 }
 
+interface ZPResponse {
+    result: ZPResult;
+    status: number;
+    code: number;
+    message: string;
+}
+
 /**
  *
  * @param text 输入文本
@@ -92,8 +99,11 @@ export const getFormattedText = async (text: string) => {
             body: { assistant_id, prompt }
         })
             .then(res => {
-                // TODO 增加错误处理
-                const { result } = res as { result: ZPResult };
+                const { result, status, code, message } = res as ZPResponse;
+                if (status !== 0) {
+                    logger.error('fail', code, message);
+                    return resolve(['请求遇到问题', null]);
+                }
                 const { content } = result.output.find(part => part.status === 'finish')!;
                 // NEXT 校验返回格式是否为 ZPText
                 const { text } = Array.isArray(content) ? content[0] : content;

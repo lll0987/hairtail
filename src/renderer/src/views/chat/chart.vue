@@ -76,10 +76,7 @@ const handleSend = async () => {
     sendLoading.value = true;
     // NEXT 增加 loading
     const msg = await window.electron.ipcRenderer.invoke('handleInput', text.value);
-    if (msg) {
-        toast.error(msg);
-        return;
-    }
+    if (msg) toast.error(msg);
     getList();
 };
 window.electron.ipcRenderer.on('insert-record-success', async () => {
