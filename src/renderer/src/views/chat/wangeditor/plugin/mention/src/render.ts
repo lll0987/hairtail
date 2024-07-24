@@ -1,5 +1,5 @@
 import { h, VNode } from 'snabbdom';
-import { DomEditor, IDomEditor, SlateElement } from '@wangeditor/editor';
+import { SlateElement } from '@wangeditor/editor';
 
 import { borderColor, MENTION_TAG_TYPE, MENTION_TYPE } from '../lib';
 import { MentionTag } from '../types';
@@ -9,10 +9,13 @@ const renderMention = (_elem: SlateElement, children: VNode[] | null): VNode => 
 };
 export const renderMentionConf = { type: MENTION_TYPE, renderElem: renderMention };
 
-// FIX 没有背景色
-const renderTag = (elem: SlateElement, children: VNode[] | null, editor: IDomEditor): VNode => {
-    const isSelected = DomEditor.isNodeSelected(editor, elem);
-    const { color = '#fff' } = elem as MentionTag;
+// const isLight = (color: string) => {
+//     return 0.213 * rgb[0] + 0.715 * rgb[1] + 0.072 * rgb[2] > 255 / 2;
+// };
+
+const renderTag = (elem: SlateElement, children: VNode[] | null): VNode => {
+    const { color } = elem as MentionTag;
+    const backgroundColor = color || '#1e293b';
 
     return h(
         'span',
@@ -21,13 +24,21 @@ const renderTag = (elem: SlateElement, children: VNode[] | null, editor: IDomEdi
                 contentEditable: false // 不可编辑
             },
             style: {
-                backgroundColor: color,
-                borderColor: isSelected ? borderColor : color,
-                borderWidth: '1px',
+                color: '#fff',
+                backgroundColor,
+                borderColor,
+                borderWidth: '2px',
                 borderStyle: 'solid',
                 borderRadius: '0.25rem',
+                display: 'inline-flex',
+                alignItems: 'center',
+                flexWrap: 'nowrap',
                 fontSize: '14px',
-                padding: '4px 6px'
+                padding: '4px 6px',
+                lineHeight: '1',
+                cursor: 'default',
+                whiteSpace: 'nowrap',
+                boxSizing: 'border-box'
             }
         },
         children

@@ -180,10 +180,6 @@ const OutItem = (item: IRecord) => {
     return h('div', { class: [...classes, BG] }, out);
 };
 
-// TODO 根据配置添加 tag
-// 1.增加 tag 输入栏，范围选择，自动填充
-// 2.自动创建数据时根据 tag 查表填充默认值
-
 // NEXT 复制：自动添加到输入框然后调用忽略方法
 </script>
 
