@@ -40,7 +40,7 @@ const props = withDefaults(defineProps<{ modelValue?: string }>(), {
 const emits = defineEmits(['update:modelValue', 'enter']);
 // 内容变化时更新文本值
 const handleChange = (editor: IDomEditor): void => {
-    // TODO 得到的文字可能不对，zhipu 接口调用报错
+    // FIX 得到的文字不包括 tag
     const targetValue = editor.getText();
     if (targetValue === props.modelValue) return;
     emits('update:modelValue', targetValue);
@@ -84,7 +84,7 @@ const handleEnter = () => {
     if (showPopover.value && mentionSelected.value) {
         const { value } = mentionSelected.value;
         const data: IMention = {
-            tags: value.tags?.map(tag => ({ color: '', text: tag })) ?? [],
+            tags: value.tags?.map(tag => ({ color: '', label: tag })) ?? [],
             text: [value.topic, value.value, value.text].reduce((pre, cur) => {
                 if (cur !== undefined) {
                     pre.push({ text: cur + '' });

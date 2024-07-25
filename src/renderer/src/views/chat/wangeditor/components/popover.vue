@@ -7,7 +7,7 @@
         <div
             class="relative bg-zinc-800 bg-opacity-85 border-sky-400 border rounded-lg max-w-[80vw] w-max pointer-events-auto"
         >
-            <div class="p-12 text-slate-50">
+            <div class="p-6 text-slate-50">
                 <div v-if="loading" class="w-48 text-center">
                     <AgLoading :size="24"></AgLoading>
                 </div>
@@ -15,7 +15,7 @@
                     <li
                         v-for="item in filterList"
                         :key="item.id"
-                        class="my-4 py-4 bg-opacity-10 bg-slate-50"
+                        class="my-4 py-4 px-6 bg-opacity-10 bg-slate-50 rounded"
                         :style="selectedId !== item.id ? { background: 'transparent' } : ''"
                     >
                         <span>{{ item.label }}</span>

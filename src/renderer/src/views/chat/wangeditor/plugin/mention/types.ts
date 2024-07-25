@@ -1,21 +1,33 @@
 export interface MentionConfig {
     prefix?: string | string[];
+    separator?: string;
 }
 
 export interface IExtendConfig {
     mentionConfig: MentionConfig;
 }
 
-export type PureText = { text: string };
+export interface PureText {
+    text: string;
+}
+
+export interface IMentionTag {
+    color?: string;
+    label: string;
+}
+
+export interface IMention {
+    tags: IMentionTag[];
+    text: PureText[];
+}
 
 export type MentionType = 'mention';
 export type MentionTagType = 'mention-tag';
 
-export type MentionTag = {
+export interface MentionTag extends IMentionTag {
     type: MentionTagType;
-    color: string;
-    children: PureText[];
-};
+    children: [{ text: '' }];
+}
 
 export type MentionChild = MentionTag | PureText;
 
@@ -23,9 +35,3 @@ export type MentionElement = {
     type: MentionType;
     children: MentionChild[];
 };
-
-type IMentionTag = PureText & Pick<MentionTag, 'color'>;
-export interface IMention {
-    tags: IMentionTag[];
-    text: PureText[];
-}

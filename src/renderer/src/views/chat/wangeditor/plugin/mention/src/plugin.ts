@@ -1,18 +1,18 @@
 import { DomEditor, IDomEditor, SlateEditor, SlateRange, SlateTransforms } from '@wangeditor/editor';
-import { IExtendConfig, IMention, MentionChild, MentionConfig, MentionElement } from '../types';
+import { IExtendConfig, IMention, MentionChild, MentionConfig } from '../types';
 import { MENTION_TAG_TYPE, MENTION_TYPE } from '../lib';
 
 // 获取插件配置
-interface IConfig extends Omit<MentionConfig, 'prefix'> {
+interface IConfig extends Required<Omit<MentionConfig, 'prefix'>> {
     prefix: string[];
 }
 const getConfig = (editor: IDomEditor): IConfig => {
     const { EXTEND_CONF } = editor.getConfig();
     const { mentionConfig } = EXTEND_CONF as IExtendConfig;
-    const { prefix = '#' } = mentionConfig;
+    const { prefix = '#', separator = ' ' } = mentionConfig;
     const _prefix = typeof prefix === 'string' ? [prefix] : prefix;
 
-    return { ...mentionConfig, prefix: _prefix };
+    return { ...mentionConfig, prefix: _prefix, separator };
 };
 
 // 获取光标位置
@@ -46,15 +46,21 @@ const getPrefixLabel = (editor: IDomEditor) => {
 };
 
 const withMention = <T extends IDomEditor>(editor: T) => {
-    const { insertText, isInline } = editor;
+    const { insertText, isInline, isVoid } = editor;
     const newEditor = editor;
 
-    // 重写是否为行内元素的判断
     const types = [MENTION_TYPE, MENTION_TAG_TYPE] as string[];
+    // 重写是否为行内元素的判断
     newEditor.isInline = elem => {
         const type = DomEditor.getNodeType(elem);
         if (types.includes(type)) return true;
         return isInline(elem);
+    };
+    // 重写是否为空元素的判断
+    newEditor.isVoid = elem => {
+        const type = DomEditor.getNodeType(elem);
+        if (types.includes(type)) return true;
+        return isVoid(elem);
     };
 
     // 重写插入文本的方法，识别到前缀时向外暴露光标位置和输入文本
@@ -95,27 +101,27 @@ const withMention = <T extends IDomEditor>(editor: T) => {
         if (label === null) return;
 
         const { tags, text } = data;
-        const node: MentionElement = {
-            type: MENTION_TYPE,
-            children: [
-                ...tags.reduce(
-                    (acc: MentionChild[], { color, text }) =>
-                        acc.concat(
-                            {
-                                type: MENTION_TAG_TYPE,
-                                color,
-                                children: [{ text }]
-                            },
-                            { text: ' ' }
-                        ),
-                    [] as MentionChild[]
-                ),
-                ...text
-            ]
-        };
+        const { separator } = getConfig(editor);
 
-        SlateTransforms.insertNodes(newEditor, node, { at: label.at });
-        newEditor.move(1);
+        const nodes = [
+            ...tags.reduce(
+                (acc, { color, label }) =>
+                    acc.concat(
+                        { type: MENTION_TAG_TYPE, color, label, children: [{ text: '' }] },
+                        { text: separator }
+                    ),
+                [] as MentionChild[]
+            ),
+            ...text.reduce((acc, { text }) => acc.concat({ text }, { text: separator }), [] as MentionChild[])
+        ];
+
+        // newEditor.select(label.at);
+        // newEditor.deselect();
+        // newEditor.insertFragment(nodes);
+        // SlateTransforms.insertNodes(newEditor, nodes);
+        SlateTransforms.insertNodes(newEditor, nodes, { at: label.at });
+
+        // newEditor.move(nodes.length);
     });
 
     return newEditor;
