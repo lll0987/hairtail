@@ -13,6 +13,7 @@
             :left="popoverProps.left"
             :top="popoverProps.top"
             :text="popoverProps.text"
+            @change="onSelected"
             @selected="handleSelected"
         ></popover>
     </div>
@@ -29,7 +30,7 @@ import { Boot, IDomEditor, IToolbarConfig, IEditorConfig } from '@wangeditor/edi
 
 import popover from './popover.vue';
 
-import { EnterModule, MentionModule, IMention, PureText } from '../plugin';
+import { EnterModule, MentionModule, IMention, PureText, MentionEvent } from '../plugin';
 Boot.registerModule(EnterModule);
 Boot.registerModule(MentionModule);
 
@@ -40,7 +41,6 @@ const props = withDefaults(defineProps<{ modelValue?: string }>(), {
 const emits = defineEmits(['update:modelValue', 'enter']);
 // 内容变化时更新文本值
 const handleChange = (editor: IDomEditor): void => {
-    // FIX 得到的文字不包括 tag
     const targetValue = editor.getText();
     if (targetValue === props.modelValue) return;
     emits('update:modelValue', targetValue);
@@ -67,33 +67,44 @@ const showMention = (position: { top: number; left: number }, text: string) => {
 };
 const hideMention = () => {
     showPopover.value = false;
+    popoverProps.value.text = '';
 };
 
 // 选中的预设
 const mentionSelected = ref<ISetting>();
-const handleSelected = (item: ISetting) => {
+const onSelected = (item: ISetting) => {
     mentionSelected.value = item;
 };
+const handleSelected = () => {
+    if (!mentionSelected.value) return;
+    const { value } = mentionSelected.value;
+    const data: IMention = {
+        tags: value.tags?.map(tag => ({ color: '', label: tag })) ?? [],
+        text: [value.topic, value.value, value.text].reduce((pre, cur) => {
+            if (cur !== undefined) {
+                pre.push({ text: cur + '' });
+            }
+            return pre;
+        }, [] as PureText[])
+    };
+    editorRef.value?.emit(MentionEvent.POSITIVE, data);
+    hideMention();
+};
 
+let timer: number | null = null;
 // 回车事件
 const handleEnter = () => {
-    // TODO 有 mention 时很容易连续回车，增加延迟
-    // 弹窗不显示时 == 回车
-    if (!showPopover.value) emits('enter');
-    // 弹窗显示 && 有选中数据 == 插入
-    if (showPopover.value && mentionSelected.value) {
-        const { value } = mentionSelected.value;
-        const data: IMention = {
-            tags: value.tags?.map(tag => ({ color: '', label: tag })) ?? [],
-            text: [value.topic, value.value, value.text].reduce((pre, cur) => {
-                if (cur !== undefined) {
-                    pre.push({ text: cur + '' });
-                }
-                return pre;
-            }, [] as PureText[])
-        };
-        editorRef.value?.emit('cusPositive', data);
-        hideMention();
+    if (showPopover.value) {
+        // 弹窗显示 && 有选中数据 == 插入
+        handleSelected();
+        timer = window.setTimeout(() => {
+            timer = null;
+        }, 1000);
+    } else {
+        // 弹窗不显示时 == 回车
+        if (timer === null) {
+            emits('enter');
+        }
     }
 };
 
@@ -143,7 +154,8 @@ const editorRef = shallowRef<IDomEditor>();
 const handleCreated = (editor: IDomEditor): void => {
     editorRef.value = editor;
     editorRef.value.on('cusEnter', handleEnter);
-    editorRef.value.on('cusInsert', showMention);
+    editorRef.value.on(MentionEvent.INSERT, showMention);
+    // editorRef.value.on(MentionEvent.HIDE, hideMention);
 };
 // 组件销毁时，销毁编辑器
 onBeforeUnmount(() => {

@@ -1,5 +1,5 @@
 import { DomEditor, IDomEditor, SlateEditor, SlateRange, SlateTransforms } from '@wangeditor/editor';
-import { IExtendConfig, IMention, MentionChild, MentionConfig } from '../types';
+import { IExtendConfig, IMention, MentionChild, MentionConfig, MentionEvent, MentionTag } from '../types';
 import { MENTION_TAG_TYPE, MENTION_TYPE } from '../lib';
 
 // 获取插件配置
@@ -46,7 +46,7 @@ const getPrefixLabel = (editor: IDomEditor) => {
 };
 
 const withMention = <T extends IDomEditor>(editor: T) => {
-    const { insertText, isInline, isVoid } = editor;
+    const { insertText, isInline, isVoid, getText } = editor;
     const newEditor = editor;
 
     const types = [MENTION_TYPE, MENTION_TAG_TYPE] as string[];
@@ -72,11 +72,11 @@ const withMention = <T extends IDomEditor>(editor: T) => {
 
         setTimeout(() => {
             const position = getCursorPosition();
-            newEditor.emit('cusInsert', position, label.text);
+            newEditor.emit(MentionEvent.INSERT, position, label.text);
 
             // 暴露隐藏事件，方便外部组件关闭弹窗等组件
             const _hide = () => {
-                newEditor.emit('cusHide', position);
+                newEditor.emit(MentionEvent.HIDE, position);
             };
             const hideOnChange = () => {
                 if (newEditor.selection === null) return;
@@ -96,7 +96,7 @@ const withMention = <T extends IDomEditor>(editor: T) => {
     };
 
     // 监听提交事件，将文本替换为 mention 节点
-    newEditor.on('cusPositive', (data: IMention) => {
+    newEditor.on(MentionEvent.POSITIVE, (data: IMention) => {
         const label = getPrefixLabel(newEditor);
         if (label === null) return;
 
@@ -115,14 +115,19 @@ const withMention = <T extends IDomEditor>(editor: T) => {
             ...text.reduce((acc, { text }) => acc.concat({ text }, { text: separator }), [] as MentionChild[])
         ];
 
-        // newEditor.select(label.at);
-        // newEditor.deselect();
-        // newEditor.insertFragment(nodes);
-        // SlateTransforms.insertNodes(newEditor, nodes);
         SlateTransforms.insertNodes(newEditor, nodes, { at: label.at });
 
-        // newEditor.move(nodes.length);
+        const { anchor } = label.at;
+        newEditor.move(anchor.offset + nodes.length);
     });
+
+    // 重写获取文本的方法，增加 tag 文本
+    newEditor.getText = () => {
+        const elems = newEditor.getElemsByType(MENTION_TAG_TYPE) as unknown as MentionTag[];
+        if (!elems.length) return getText();
+        const tags = [...new Set(elems.map(elem => elem.label))];
+        return [...tags.map(label => `tag:${label}`), getText()].join(',');
+    };
 
     return newEditor;
 };

@@ -17,6 +17,7 @@
                         :key="item.id"
                         class="my-4 py-4 px-6 bg-opacity-10 bg-slate-50 rounded"
                         :style="selectedId !== item.id ? { background: 'transparent' } : ''"
+                        @click="onSelected(item)"
                     >
                         <span>{{ item.label }}</span>
                     </li>
@@ -27,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref, nextTick, watch } from 'vue';
 import { useZIndex } from '@renderer/hooks';
 import { ISetting } from '@t/interface';
 import { list } from '@renderer/api/setting';
@@ -39,7 +40,7 @@ const props = withDefaults(defineProps<{ show: boolean; left: number; top: numbe
     top: 0,
     text: ''
 });
-const emits = defineEmits(['selected']);
+const emits = defineEmits(['change', 'selected']);
 
 // 显示隐藏
 const show = computed(() => props.show);
@@ -79,14 +80,24 @@ const selected = ref<ISetting>();
 const selectedId = computed(() => selected.value?.id ?? '');
 const changeSelected = (item: ISetting) => {
     selected.value = item;
-    emits('selected', selected.value);
+    emits('change', selected.value);
+};
+const onSelected = (item: ISetting) => {
+    changeSelected(item);
+    nextTick(() => {
+        emits('selected');
+    });
 };
 // 监听文本变化，自动选中第一个
 watch(
     () => props.text,
     value => {
-        if (!value || !filterList.value.length) return;
-        changeSelected(filterList.value[0]);
+        if (!value) {
+            selected.value = undefined;
+        }
+        if (filterList.value.length) {
+            changeSelected(filterList.value[0]);
+        }
     }
 );
 // NEXT 增加方向键选择和点击选中

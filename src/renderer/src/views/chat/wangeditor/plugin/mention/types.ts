@@ -35,3 +35,9 @@ export type MentionElement = {
     type: MentionType;
     children: MentionChild[];
 };
+
+export enum MentionEvent {
+    INSERT = 'cusInsert',
+    HIDE = 'cusHide',
+    POSITIVE = 'cusPositive'
+}
