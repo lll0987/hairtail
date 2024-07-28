@@ -17,7 +17,7 @@
                         :key="item.id"
                         class="my-4 py-4 px-6 bg-opacity-10 bg-slate-50 rounded"
                         :style="selectedId !== item.id ? { background: 'transparent' } : ''"
-                        @click="onSelected(item)"
+                        @dblclick="onSelected(item)"
                     >
                         <span>{{ item.label }}</span>
                     </li>
@@ -28,22 +28,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, nextTick, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useZIndex } from '@renderer/hooks';
 import { ISetting } from '@t/interface';
 import { list } from '@renderer/api/setting';
 import { AgLoading, useToast } from '@renderer/components';
 
-const props = withDefaults(defineProps<{ show: boolean; left: number; top: number; text: string }>(), {
-    show: false,
-    left: 0,
-    top: 0,
-    text: ''
-});
-const emits = defineEmits(['change', 'selected']);
-
-// 显示隐藏
-const show = computed(() => props.show);
+const props = withDefaults(
+    defineProps<{ modelValue: ISetting | null; show?: boolean; left?: number; top?: number; text: string }>(),
+    { show: false, left: 0, top: 0 }
+);
+const emits = defineEmits(['update:modelValue', 'selected']);
 
 // 位置
 const transformStyles = computed(() => ({
@@ -69,43 +64,61 @@ const getList = async () => {
         settings.value = data;
     }
 };
+
+// 显示隐藏
+const show = ref(props.show);
+const open = () => {
+    // 显示时获取数据和层级
+    getList();
+    zIndex.value = nextZIndex();
+    // 重置选中数据
+    selected.value = props.modelValue;
+    // 打开弹窗
+    show.value = true;
+};
+const close = () => {
+    show.value = false;
+};
+watch(
+    () => props.show,
+    val => {
+        if (val === show.value) return;
+        if (val) open();
+        else close();
+    }
+);
+
+// 选中的数据
+const selected = ref<ISetting | null>(props.modelValue);
+const updateSelected = (item: ISetting) => {
+    selected.value = item;
+    emits('update:modelValue', item);
+};
+
+// 选中ID，增加样式
+const selectedId = computed(() => selected.value?.id ?? null);
+
 // 过滤后的数据
 const filterList = computed(() =>
     props.text ? settings.value.filter(item => item.label.includes(props.text)) : settings.value
 );
-
-// 选中的数据
-const selected = ref<ISetting>();
-// 选中ID，增加样式
-const selectedId = computed(() => selected.value?.id ?? '');
-const changeSelected = (item: ISetting) => {
-    selected.value = item;
-    emits('change', selected.value);
-};
-const onSelected = (item: ISetting) => {
-    changeSelected(item);
-    nextTick(() => {
-        emits('selected');
-    });
-};
 // 监听文本变化，自动选中第一个
 watch(
     () => props.text,
     value => {
         if (!value) {
-            selected.value = undefined;
+            selected.value = null;
         }
         if (filterList.value.length) {
-            changeSelected(filterList.value[0]);
+            updateSelected(filterList.value[0]);
         }
     }
 );
-// NEXT 增加方向键选择和点击选中
 
-// 监听显示状态，显示时获取数据和层级
-watch(show, val => {
-    if (!val) return;
-    zIndex.value = nextZIndex();
-    getList();
-});
+// NEXT 增加方向键选择
+// 选中
+const onSelected = (item: ISetting) => {
+    updateSelected(item);
+    emits('selected', item);
+};
 </script>

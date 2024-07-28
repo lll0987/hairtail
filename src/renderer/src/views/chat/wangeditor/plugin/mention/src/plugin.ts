@@ -45,8 +45,31 @@ const getPrefixLabel = (editor: IDomEditor) => {
     return { text: text.slice(index + 1), at: { anchor, focus: { path, offset: index } } };
 };
 
+const handleChange = (editor: IDomEditor, close: boolean = false) => {
+    const _hide = () => {
+        editor.emit(MentionEvent.HIDE);
+    };
+
+    const label = getPrefixLabel(editor);
+    if (label === null) return close ? _hide() : void 0;
+
+    setTimeout(() => {
+        const position = getCursorPosition();
+        editor.emit(MentionEvent.INSERT, position, label.text);
+
+        // 暴露隐藏事件，方便外部组件关闭弹窗等组件
+        setTimeout(() => {
+            editor.once('fullScreen', _hide);
+            editor.once('unFullScreen', _hide);
+            editor.once('scroll', _hide);
+            editor.once('modalOrPanelShow', _hide);
+            editor.once('modalOrPanelHide', _hide);
+        });
+    });
+};
+
 const withMention = <T extends IDomEditor>(editor: T) => {
-    const { insertText, isInline, isVoid, getText } = editor;
+    const { deleteBackward, deleteForward, insertText, isInline, isVoid, getText } = editor;
     const newEditor = editor;
 
     const types = [MENTION_TYPE, MENTION_TAG_TYPE] as string[];
@@ -66,33 +89,16 @@ const withMention = <T extends IDomEditor>(editor: T) => {
     // 重写插入文本的方法，识别到前缀时向外暴露光标位置和输入文本
     newEditor.insertText = t => {
         insertText(t);
-
-        const label = getPrefixLabel(newEditor);
-        if (label === null) return;
-
-        setTimeout(() => {
-            const position = getCursorPosition();
-            newEditor.emit(MentionEvent.INSERT, position, label.text);
-
-            // 暴露隐藏事件，方便外部组件关闭弹窗等组件
-            const _hide = () => {
-                newEditor.emit(MentionEvent.HIDE, position);
-            };
-            const hideOnChange = () => {
-                if (newEditor.selection === null) return;
-                _hide();
-                newEditor.off('change', hideOnChange);
-            };
-            setTimeout(() => {
-                newEditor.once('fullScreen', _hide);
-                newEditor.once('unFullScreen', _hide);
-                newEditor.once('scroll', _hide);
-                newEditor.once('modalOrPanelShow', _hide);
-                newEditor.once('modalOrPanelHide', _hide);
-
-                newEditor.on('change', hideOnChange);
-            });
-        });
+        handleChange(newEditor);
+    };
+    // 重写删除方法
+    newEditor.deleteBackward = unit => {
+        deleteBackward(unit);
+        handleChange(newEditor, true);
+    };
+    newEditor.deleteForward = unit => {
+        deleteForward(unit);
+        handleChange(newEditor, true);
     };
 
     // 监听提交事件，将文本替换为 mention 节点
@@ -118,15 +124,17 @@ const withMention = <T extends IDomEditor>(editor: T) => {
         SlateTransforms.insertNodes(newEditor, nodes, { at: label.at });
 
         const { anchor } = label.at;
-        newEditor.move(anchor.offset + nodes.length);
+        const length = text.reduce((r, i) => (r += i.text.length + 1), tags.length * 2);
+        newEditor.move(anchor.offset + length);
     });
 
     // 重写获取文本的方法，增加 tag 文本
     newEditor.getText = () => {
+        const text = getText();
         const elems = newEditor.getElemsByType(MENTION_TAG_TYPE) as unknown as MentionTag[];
-        if (!elems.length) return getText();
+        if (!elems.length) return text;
         const tags = [...new Set(elems.map(elem => elem.label))];
-        return [...tags.map(label => `tag:${label}`), getText()].join(',');
+        return [...tags.map(label => `tag:${label}`), text].join(',');
     };
 
     return newEditor;

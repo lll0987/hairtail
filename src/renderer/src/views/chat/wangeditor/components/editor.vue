@@ -9,11 +9,11 @@
             @on-change="handleChange"
         />
         <popover
+            v-model="mentionSelected"
             :show="showPopover"
             :left="popoverProps.left"
             :top="popoverProps.top"
             :text="popoverProps.text"
-            @change="onSelected"
             @selected="handleSelected"
         ></popover>
     </div>
@@ -67,17 +67,13 @@ const showMention = (position: { top: number; left: number }, text: string) => {
 };
 const hideMention = () => {
     showPopover.value = false;
-    popoverProps.value.text = '';
 };
 
 // 选中的预设
-const mentionSelected = ref<ISetting>();
-const onSelected = (item: ISetting) => {
-    mentionSelected.value = item;
-};
-const handleSelected = () => {
-    if (!mentionSelected.value) return;
-    const { value } = mentionSelected.value;
+const mentionSelected = ref<ISetting | null>(null);
+const handleSelected = (selected: ISetting | null) => {
+    if (!selected) return;
+    const { value } = selected;
     const data: IMention = {
         tags: value.tags?.map(tag => ({ color: '', label: tag })) ?? [],
         text: [value.topic, value.value, value.text].reduce((pre, cur) => {
@@ -87,6 +83,7 @@ const handleSelected = () => {
             return pre;
         }, [] as PureText[])
     };
+    editorRef.value?.restoreSelection();
     editorRef.value?.emit(MentionEvent.POSITIVE, data);
     hideMention();
 };
@@ -96,7 +93,7 @@ let timer: number | null = null;
 const handleEnter = () => {
     if (showPopover.value) {
         // 弹窗显示 && 有选中数据 == 插入
-        handleSelected();
+        handleSelected(mentionSelected.value);
         timer = window.setTimeout(() => {
             timer = null;
         }, 1000);
@@ -155,7 +152,7 @@ const handleCreated = (editor: IDomEditor): void => {
     editorRef.value = editor;
     editorRef.value.on('cusEnter', handleEnter);
     editorRef.value.on(MentionEvent.INSERT, showMention);
-    // editorRef.value.on(MentionEvent.HIDE, hideMention);
+    editorRef.value.on(MentionEvent.HIDE, hideMention);
 };
 // 组件销毁时，销毁编辑器
 onBeforeUnmount(() => {
