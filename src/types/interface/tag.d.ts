@@ -1,6 +1,7 @@
 export interface TagModel {
     name: string;
     color: string;
+    c2?: string;
     alias?: string;
 }
 
