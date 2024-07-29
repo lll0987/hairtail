@@ -41,9 +41,18 @@
         如果只有日期，默认为0点0分0秒。
         如果只有时间，默认为今天。
     - end
-        本次活动的结束日期或者结束时间，要求同开始时间。
-        当解析不出结束时间时，和开始时间相同。
-        请保证结束时间晚于或等于开始时间。
+        本次活动的结束日期或者结束时间，格式和默认值与start相同。
+        结束要求伪代码：
+        if(end == undefined)
+            if(time_length != undefined)
+                end = start + time_length
+            else if(date_length != undefined)
+                end = start + date_length
+            else
+                end = start
+        else
+            end = end
+        如果需要根据时长计算，请调用代码能力，此时请忽略默认值要求，按照计算结果输出。
     - grain
         ```ts
         enum DateTimeGrain {
