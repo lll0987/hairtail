@@ -7,4 +7,10 @@ export class RecordService extends BaseService {
     constructor() {
         super(recordName, recordModel);
     }
+
+    filter() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return super.list({ createdAt: { $gte: today } });
+    }
 }

@@ -29,12 +29,12 @@ export class BaseService {
     }
 
     // 列表查询
-    async list() {
+    async list(filter: object = {}) {
         const [msg] = await this.connect();
         return new Promise<[MsgType | null, any[]]>(resolve => {
             if (msg) return resolve([msg, []]);
             this.model
-                .aggregate([{ $addFields: { id: { $toString: '$_id' } } }])
+                .aggregate([{ $match: filter }, { $addFields: { id: { $toString: '$_id' } } }])
                 .then(r => {
                     this.logger.info('list', 'success', r);
                     resolve([null, r]);

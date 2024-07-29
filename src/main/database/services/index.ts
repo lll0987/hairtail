@@ -28,4 +28,7 @@ export const handleService = () => {
 
     const eventService = services[EventService.name] as EventService;
     ipcMain.handle(`db:${EventService.name}:listWithColor`, () => eventService.listWithColor());
+
+    const recordService = services[RecordService.name] as RecordService;
+    ipcMain.handle(`db:${RecordService.name}:filter`, () => recordService.filter());
 };
