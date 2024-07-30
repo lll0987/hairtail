@@ -17,3 +17,6 @@ export * from './toast';
 
 export * from './title';
 export { default as AgTitle } from './title';
+
+export * from './input';
+export { default as AgInput } from './input';
