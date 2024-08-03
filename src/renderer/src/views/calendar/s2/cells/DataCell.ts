@@ -139,6 +139,7 @@ export class ShapeDataCell extends DataCell {
     private getTimeShapeStyle() {
         const lineWidth = 2;
         const size = Math.min(this.meta.width, this.meta.height);
+        // NEXT 最大最小值设置，超出数值范围使用 max min
         const maxR = (size / 2) * getTimeSpan();
         const minR = lineWidth * 2;
 
