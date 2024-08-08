@@ -10,6 +10,7 @@ const tagMap = computed(() =>
         return acc;
     }, new Map<string, ITag>())
 );
+const tagOptions = computed(() => tagList.value.map(tag => ({ label: tag.name, value: tag.name })));
 
 export const useTag = () => {
     const refreshTagList = async () => {
@@ -21,5 +22,5 @@ export const useTag = () => {
         }
     };
 
-    return { tagList, tagMap, refreshTagList };
+    return { tagList, tagMap, tagOptions, refreshTagList };
 };

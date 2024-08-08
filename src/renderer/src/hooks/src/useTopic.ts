@@ -10,6 +10,7 @@ const topicMap = computed(() =>
         return acc;
     }, new Map<string, ITopic>())
 );
+const topicOptions = computed(() => topicList.value.map(tag => ({ label: tag.name, value: tag.name })));
 
 export const useTopic = () => {
     const refreshTopicList = async () => {
@@ -21,5 +22,5 @@ export const useTopic = () => {
         }
     };
 
-    return { topicList, topicMap, refreshTopicList };
+    return { topicList, topicMap, topicOptions, refreshTopicList };
 };
