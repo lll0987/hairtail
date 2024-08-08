@@ -2,4 +2,4 @@ import InputNumber from './src/input-number.vue';
 
 export default InputNumber;
 
-export * from './src/types';
+export * from './src/input-number.type';

@@ -3,10 +3,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, toRef, useAttrs } from 'vue';
-import { InputNumberProps } from './types';
-import { useMergedState } from '@renderer/hooks';
-import { AgInput } from '@renderer/components';
+import { computed, ref, useAttrs } from 'vue';
+import { useModelValue } from '@renderer/hooks';
+import { InputNumberProps, InputNumberType } from '..';
+import { AgInput } from '../..';
 
 const props = withDefaults(defineProps<InputNumberProps>(), { defaultValue: null });
 const emits = defineEmits(['update:modelValue']);
@@ -19,22 +19,19 @@ const bindProps = computed(() => {
 });
 
 const parse = (value: string) => {
-    let val: number | null = parseFloat(value);
+    let val: InputNumberType = parseFloat(value);
     if (isNaN(val)) val = null;
     return val;
 };
 
-const controlledValue = toRef(props, 'modelValue');
-const uncontrolledValue = ref(props.defaultValue);
-const mergedValue = useMergedState(controlledValue, uncontrolledValue);
+const { mergedValue, updateValue } = useModelValue<InputNumberType>(props, emits);
 
 const inputValue = ref(mergedValue.value === null ? '' : mergedValue.value + '');
 const handleValue = (value: string) => {
     inputValue.value = value;
 
     const targetValue = parse(value);
-    emits('update:modelValue', targetValue);
-    uncontrolledValue.value = targetValue;
+    updateValue(targetValue);
 };
 
 const onBlur = () => {
