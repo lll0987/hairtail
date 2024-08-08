@@ -5,7 +5,7 @@
             <div v-for="(item, index) in records" :key="index">
                 <div class="flex flex-row items-center justify-end w-full py-12">
                     <div
-                        class="rounded-3xl max-w-[90%] rounded-tr-none bg-slate-950 text-slate-200 px-16 py-6"
+                        class="rounded-3xl max-w-[90%] rounded-br-none bg-slate-950 text-slate-200 px-16 py-6"
                     >
                         {{ item.in }}
                     </div>
