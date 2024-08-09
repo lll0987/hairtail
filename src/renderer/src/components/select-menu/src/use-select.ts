@@ -51,16 +51,16 @@ export const useSelect = (props: ValueRequired<SelectMenuProps>, emits): SelectA
     const handleItemSelect = (item: SelectItem): void => {
         const { value } = item;
         let val: SelectValue = selectValue.value;
-        const ind = val.indexOf(value);
 
         if (state.multiple) {
+            const ind = val.indexOf(value);
             if (ind === -1) {
                 val.push(value);
             } else {
                 val.splice(ind, 1);
             }
         } else {
-            val = ind === -1 ? value : '';
+            val = value;
         }
 
         updateValue(val);

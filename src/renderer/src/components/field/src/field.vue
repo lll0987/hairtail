@@ -3,9 +3,8 @@
         <label v-if="props.inline" class="text-nowrap" :for="id">{{ props.label }}</label>
         <fieldset
             ref="fieldRef"
-            class="px-6 pb-4 transition-color duration-200 ease-out motion-reduce:transition-none rounded border-slate-800 has-[:focus]:border-lime-500"
+            class="flex-1 px-6 pb-4 transition-color duration-200 ease-out motion-reduce:transition-none rounded border-slate-800 has-[:focus]:border-lime-500"
             :style="styles"
-            v-bind="$attrs"
         >
             <slot :id="id"></slot>
             <p class="block text-12" :style="{ color: colorMap[status] }">{{ msg }}</p>
@@ -25,7 +24,7 @@ import colors from 'tailwindcss/colors';
 import { FieldProps, ItemStatus } from '..';
 import { useId } from '@renderer/hooks';
 
-defineOptions({ inheritAttrs: false });
+// defineOptions({ inheritAttrs: false });
 const props = withDefaults(defineProps<FieldProps>(), { borderWidth: 2, status: 'default' });
 
 const id = useId().next() + '';

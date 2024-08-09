@@ -1,12 +1,17 @@
 <template>
-    <ag-field ref="fieldRef" v-bind="props">
+    <ag-field
+        ref="fieldRef"
+        v-bind="props"
+        @mousedown.prevent.stop="handleFocus"
+        @focusout.prevent.stop="handleBlur"
+    >
         <template #default="{ id }">
             <div
                 :id="id"
                 ref="focusRef"
                 tabindex="0"
                 class="peer flex flex-row items-center flex-wrap gap-4 min-w-100 bg-transparent border-0 outline-none"
-                @click.prevent.stop="onClick"
+                @mousedown.prevent.stop="onMousedown"
                 @keydown.enter.stop.prevent="onEnter"
                 @keydown.down.stop.prevent="onArrow(EVENT_KEY.DOWN)"
                 @keydown.up.stop.prevent="onArrow(EVENT_KEY.UP)"
@@ -44,22 +49,24 @@ onMounted(() => {
 // 提示语
 const placeholder = computed(() => '请选择' + props.label);
 
-// 显示隐藏
+// 焦点
 const show = ref(false);
-
-// 点击
 const focusRef = ref<HTMLDivElement | null>(null);
-const onClick = () => {
-    if (!show.value) {
-        show.value = true;
-        focusRef.value?.focus();
+const handleFocus = () => {
+    show.value = true;
+    focusRef.value?.focus();
+};
+const handleBlur = () => {
+    show.value = false;
+    focusRef.value?.blur();
+};
+const onMousedown = () => {
+    if (show.value) {
+        handleBlur();
     } else {
-        show.value = false;
-        focusRef.value?.blur();
+        handleFocus();
     }
 };
-// TODO 支持更多关闭弹窗的方式
-// NEXT 焦点保持
 
 // 键盘事件
 const onArrow = (key: ArrowKey): void => {
@@ -68,18 +75,25 @@ const onArrow = (key: ArrowKey): void => {
 
 // 回车
 const onEnter = () => {
-    api.onItemSelect();
-    if (!api.state.multiple) show.value = false;
+    if (show.value) {
+        api.onItemSelect();
+        if (!api.state.multiple) show.value = false;
+    } else {
+        handleFocus();
+    }
 };
 
+// TODO 增加清空按钮
+// NEXT 高度固定，不再依赖文字行高
 // content
 const child = () => {
     const value = api.selectValue.value;
     // 没有选中值显示提示语
-    if (!value.length) return h('p', { class: 'text-zinc-400' }, placeholder.value);
+    if (!value.length) return h('p', { class: ['text-zinc-400', 'pointer-events-none'] }, placeholder.value);
     // 单选直接显示选中值
-    if (!api.state.multiple) return h('p', value[0]);
+    if (!api.state.multiple) return h('p', {}, value[0]);
     // 多选显示 tag 样式
+    // FIX 多选会在点击其它 tag 时触发事件，导致菜单收起
     return value.map(item => h('p', { class: ['bg-slate-200', 'px-5', 'rounded-sm'] }, item));
 };
 </script>
