@@ -2,6 +2,7 @@ import { app, shell, BrowserWindow } from 'electron';
 import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
+import { handleService } from './database';
 
 function createWindow(): void {
     // Create the browser window.
@@ -48,6 +49,9 @@ app.whenReady().then(() => {
     app.on('browser-window-created', (_, window) => {
         optimizer.watchWindowShortcuts(window);
     });
+
+    // 提供数据库相关 api
+    handleService();
 
     createWindow();
 
