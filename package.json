@@ -30,6 +30,7 @@
         "@wangeditor/editor": "^5.1.23",
         "@wangeditor/editor-for-vue": "^1.0.2",
         "bignumber.js": "^9.1.2",
+        "cron-parser": "^4.9.0",
         "dayjs": "^1.11.13",
         "electron-updater": "^6.1.7",
         "highlight.js": "^11.10.0",
