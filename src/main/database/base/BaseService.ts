@@ -69,7 +69,7 @@ export class BaseService {
     // 插入数据
     async create(data: any) {
         const [msg] = await this.connect();
-        return new Promise<TApiResponse<Types.ObjectId>>(resolve => {
+        return new Promise<TApiResponse<Types.ObjectId | Types.ObjectId[]>>(resolve => {
             if (msg) return resolve([msg, null]);
             this.model
                 .create(data)

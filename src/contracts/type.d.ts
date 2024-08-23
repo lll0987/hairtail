@@ -1,8 +1,6 @@
 import { Types } from 'mongoose';
 import type { IModel } from './interface';
-
-// 数据库模块
-export type TModuleName = 'cron' | 'event' | 'info' | 'record' | 'setting' | 'tag' | 'topic';
+import type { TModuleName } from '../main/database';
 
 // 数据库接口
 export type TBaseApiName = 'add' | 'list' | 'remove' | 'update';
