@@ -7,7 +7,6 @@ export interface IRoute {
     key: string;
     label: string;
     icon: Component;
-    iconFilled: Component;
     component?: Component;
 }
 

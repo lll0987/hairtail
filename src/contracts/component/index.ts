@@ -1,3 +1,6 @@
+export * from './colors';
+export * from './status';
+
 export enum KEYBOARD_EVENT {
     DOWN = 'ArrowDown',
     ENTER = 'Enter',
@@ -5,4 +8,3 @@ export enum KEYBOARD_EVENT {
 }
 
 export type TCSize = 'small' | 'large';
-export type TCStatus = 'error' | 'success' | 'warning';

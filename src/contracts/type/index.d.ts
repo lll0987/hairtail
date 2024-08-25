@@ -2,6 +2,8 @@ import { Types } from 'mongoose';
 import type { IModel } from './interface';
 import type { TModuleName } from '../main/database';
 
+export { TModuleName };
+
 // 数据库接口
 export type TBaseApiName = 'add' | 'list' | 'remove' | 'update';
 export type TCronApiName = TBaseApiName | 'list:today';
