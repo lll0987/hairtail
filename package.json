@@ -24,7 +24,7 @@
         "@antv/s2": "^1.55.8",
         "@electron-toolkit/preload": "^3.0.0",
         "@electron-toolkit/utils": "^3.0.0",
-        "@vicons/tabler": "^0.12.0",
+        "@tabler/icons-vue": "^3.12.0",
         "@vitejs/plugin-vue-jsx": "^4.0.1",
         "@vueuse/core": "^11.0.1",
         "@wangeditor/editor": "^5.1.23",
