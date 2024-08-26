@@ -1,13 +1,15 @@
 import { defineConfig, presetUno } from 'unocss';
 import presetAttributify from '@unocss/preset-attributify';
-
 import { status_colors, shades } from './src/contracts/component';
+
+const safe_attrs = ['bg', 'text', 'border'];
+const safe_colors = status_colors
+    .map(color => shades.map(key => safe_attrs.map(attr => `${attr}-${color}-${key}`)))
+    .flat(3);
 
 export default defineConfig({
     presets: [presetUno(), presetAttributify()],
-    safelist: status_colors
-        .map(color => shades.map(key => [`bg-${color}-${key}`, `text-${color}-${key}`]))
-        .flat(2),
+    safelist: safe_colors,
     shortcuts: [
         { bdr: 'border-2 border-slate-800 has-[:focus]:border-lime-500 rounded' },
         { 'bdr-2': 'border-slate-300 border-opacity-70' },
