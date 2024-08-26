@@ -1,9 +1,9 @@
 import { computed, ComputedRef, onMounted, ref, Ref } from 'vue';
 
-// NEXT 获取弹出层实际高度
+// NEXT popover 获取弹出层实际高度
 const popover_height = 200;
 
-// MEMO 弹出层与触发元素间距 2px
+// MEMO popover 弹出层与触发元素间距 2px
 const gap = 2;
 
 export interface PopoverStyle {
@@ -31,7 +31,7 @@ export const usePopover = (el: Ref<HTMLElement | null>): ComputedRef<PopoverStyl
         }
     });
 
-    // NEXT resize 时重新计算位置
+    // NEXT popover resize 时重新计算位置
 
     const styles = computed(() => {
         if (!x.value || !y.value || !w.value) return {};

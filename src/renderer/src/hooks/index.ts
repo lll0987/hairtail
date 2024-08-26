@@ -1,12 +1,15 @@
-// api
+// datebase api
 export * from './src/useApi';
-// dom
+// attribute
 export * from './src/useId';
 export * from './src/useZIndex';
-// position
+export * from './src/useColor';
+// cursor position
 export * from './src/useCursor';
+// popover style
+export * from './src/usePopover';
 // component
 export * from './src/useModelValue';
 export * from './src/useLabel';
 export * from './src/useValidate';
-export * from './src/usePopover';
+export * from './src/useTag';
