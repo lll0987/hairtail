@@ -11,4 +11,6 @@ export * from './select';
 export { SelectMenu as AgSelectMenu } from './select';
 export { default as AgSelect } from './select';
 
+export { default as AgTag } from './tag';
+
 export * from './toast';
