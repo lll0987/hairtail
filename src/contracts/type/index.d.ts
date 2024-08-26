@@ -3,6 +3,7 @@ import type { IModel } from './interface';
 import type { TModuleName } from '../main/database';
 
 export { TModuleName };
+export * from './enum';
 
 // 数据库接口
 export type TBaseApiName = 'add' | 'list' | 'remove' | 'update';

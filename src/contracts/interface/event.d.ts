@@ -1,5 +1,5 @@
 import { IModel } from '.';
-import { DateTimeGrain } from '../enum';
+import { DateTimeGrain } from '../type';
 
 export interface IEventModel {
     start: number;

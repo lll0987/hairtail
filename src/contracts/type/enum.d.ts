@@ -1,5 +1,5 @@
-import type { TRecordStatus } from '../../main/transformer/src/manual';
-export { TRecordStatus };
+import type { RecordStatus, TRecordStatus } from '../../main/transformer/src/manual';
+export { RecordStatus, TRecordStatus };
 
 export enum DateTimeGrain {
     DATE = '2300',

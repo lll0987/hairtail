@@ -6,8 +6,9 @@ import { IEvent, IResponse, IRecordModel } from '@contracts/interface';
 import { services } from '../../database';
 import { getFormattedText } from './zhipu';
 
-const RecordStatus = { SEND: 0, WAITING: 1, ACCEPT: 2, IGNORE: 3, NONE: 4, ERROR: 5 } as const;
-export type TRecordStatus = typeof RecordStatus;
+const RECORD_STATUS = { SEND: 0, WAITING: 1, ACCEPT: 2, IGNORE: 3, NONE: 4, ERROR: 5 } as const;
+export type TRecordStatus = typeof RECORD_STATUS;
+export type RecordStatus = TRecordStatus[keyof TRecordStatus];
 
 type TIds = [string | null, Types.ObjectId[]];
 
@@ -71,7 +72,7 @@ export const handleCache = async (text: string, window: BrowserWindow): Promise<
     const [msg, id] = await services.record.create({
         in: text,
         out: 'waiting...',
-        status: RecordStatus.SEND
+        status: RECORD_STATUS.SEND
     });
     id && window.webContents.send('insert-record-success');
     if (!id) return msg;
@@ -81,7 +82,7 @@ export const handleCache = async (text: string, window: BrowserWindow): Promise<
     if (message) {
         const [m] = await services.record.updateById(id.toString(), {
             out: '转换出错了',
-            status: RecordStatus.ERROR
+            status: RECORD_STATUS.ERROR
         });
         return message + (m ? `，${m}` : '');
     }
@@ -89,7 +90,7 @@ export const handleCache = async (text: string, window: BrowserWindow): Promise<
     // 记录处理结果，更新状态
     const obj = getResponseObject(result!);
     const out = obj.status === 1 ? result : '无法转化为某种数据';
-    const status = obj.status === 1 ? RecordStatus.WAITING : RecordStatus.NONE;
+    const status = obj.status === 1 ? RECORD_STATUS.WAITING : RECORD_STATUS.NONE;
     const [m] = await services.record.updateById(id.toString(), { out, status });
     if (m) return m;
 
@@ -104,14 +105,14 @@ export const handleCache = async (text: string, window: BrowserWindow): Promise<
 export const handleAccept = async (id: string): Promise<string | null> => {
     const [m, { status, out }] = await services.record.findById(id);
     if (m) return m;
-    if (status !== RecordStatus.WAITING) return '当前结果不可执行接受操作';
+    if (status !== RECORD_STATUS.WAITING) return '当前结果不可执行接受操作';
 
     // 添加处理后的数据
     const { record, messages } = await handleAutoInsert(out);
     if (messages.length) return messages.join('，');
 
     // 记录自动创建的数据 id，更新状态
-    const [msg] = await services.record.updateById(id, { ...record, status: RecordStatus.ACCEPT });
+    const [msg] = await services.record.updateById(id, { ...record, status: RECORD_STATUS.ACCEPT });
     if (msg) return msg;
 
     return null;
@@ -125,10 +126,10 @@ export const handleAccept = async (id: string): Promise<string | null> => {
 export const handleIgnore = async (id: string): Promise<string | null> => {
     const [m, { status }] = await services.record.findById(id);
     if (m) return m;
-    if (status !== RecordStatus.WAITING) return '当前结果不可执行忽略操作';
+    if (status !== RECORD_STATUS.WAITING) return '当前结果不可执行忽略操作';
 
     // 更新状态
-    const [msg] = await services.record.updateById(id, { status: RecordStatus.IGNORE });
+    const [msg] = await services.record.updateById(id, { status: RECORD_STATUS.IGNORE });
     if (msg) return msg;
 
     return null;
