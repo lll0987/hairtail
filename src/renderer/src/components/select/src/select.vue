@@ -74,7 +74,6 @@ const updateShow = (state: boolean) => {
     popoverState.value = state;
 };
 const hidePopover = () => {
-    // FIX 无法关闭弹窗（chrome 114 支持）
     const popover = document.getElementById(popoverId);
     popover?.hidePopover();
 };
@@ -107,8 +106,11 @@ const disabled = toRef(props, 'disabled');
 const { feedback, meragedStatus } = useValidate(props);
 
 // enter event
-const handelEnter = () => {
-    if (popoverState.value) handleItemSelected();
+const handelEnter = (e: KeyboardEvent) => {
+    if (popoverState.value) {
+        handleItemSelected();
+        e.preventDefault();
+    }
 };
 
 // NEXT 增加下拉箭头
