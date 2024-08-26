@@ -1,6 +1,6 @@
 <template>
     <nav>
-        <menu class="flex flex-col gap-1.5">
+        <menu class="flex flex-col gap-3">
             <li v-for="item in routes" :key="item.key" class="cursor-pointer">
                 <div class="flex items-center justify-start" @click="updateRouter(item.key)">
                     <div
