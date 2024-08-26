@@ -44,8 +44,18 @@ import { useSelectOptions } from './use-select-options';
 import { useSelectFocus } from './use-select-focus';
 import { useSelectSelected } from './use-select-selected';
 import SelectMenu from './select-menu.vue';
-// id
+// popover
 const popoverId = useId().next();
+const popoverStyles = ref<PopoverStyle>({});
+const popoverState = ref(false);
+const updateShow = (state: boolean) => {
+    popoverState.value = state;
+};
+const hidePopover = () => {
+    const popover = document.getElementById(popoverId);
+    popover?.hidePopover();
+};
+
 // props & emits
 const props = withDefaults(defineProps<SelectProps>(), { defaultValue: '' });
 const emits = defineEmits<SelectEmits>();
@@ -67,16 +77,6 @@ const { focusValue, updateFoucus, isFocus, handleAutoFocus, handleArrowFocus } =
     matchOptions,
     selectValue
 });
-// popover
-const popoverStyles = ref<PopoverStyle>({});
-const popoverState = ref(false);
-const updateShow = (state: boolean) => {
-    popoverState.value = state;
-};
-const hidePopover = () => {
-    const popover = document.getElementById(popoverId);
-    popover?.hidePopover();
-};
 // selected
 const { handleItemSelected } = useSelectSelected({
     hidePopover,
@@ -113,5 +113,5 @@ const handelEnter = (e: KeyboardEvent) => {
     }
 };
 
-// NEXT 增加下拉箭头
+// NEXT select 增加下拉箭头
 </script>
