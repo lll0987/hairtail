@@ -6,7 +6,7 @@
         w="min-12 max-[80vw]"
         h="max-52"
         bg="white"
-        class="scrollbar-small bdr m-0 p-1.5 overflow-y-auto"
+        class="scrollbar-small bdr-all m-0 p-1.5 overflow-y-auto"
     >
         <div v-if="loading" class="text-center cursor-wait">
             <IconLoader2 size="1.5rem" class="animate-spin"></IconLoader2>

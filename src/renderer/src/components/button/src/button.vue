@@ -2,7 +2,7 @@
     <button
         p="x-3 y-1.5"
         flex="inline row center"
-        class="bdr reset h-max text-slate-950"
+        class="bdr-all reset h-max text-slate-950 font-semibold"
         :class="status === undefined ? 'bg-slate-200' : 'bg-' + getStatusColor(status, '300')"
         :size="size"
         :style="{ backgroundColor: color, cursor: loading ? 'wait' : '' }"

@@ -5,7 +5,7 @@
             ref="triggerRef"
             p="x-3 y-2"
             flex="~ row"
-            class="bdr"
+            class="bdr-all"
             :class="status === undefined ? 'bg-white' : getStatusColor(status, '100')"
         >
             <slot :id="id"></slot>
