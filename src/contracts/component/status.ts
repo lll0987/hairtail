@@ -3,9 +3,9 @@ import type { TColor, TShade } from '.';
 export type TCStatus = 'error' | 'success' | 'warning' | 'primary' | 'accent';
 
 const colorMap: Record<TCStatus, TColor> = {
-    error: 'green',
-    success: 'amber',
-    warning: 'rose',
+    error: 'rose',
+    success: 'green',
+    warning: 'amber',
     primary: 'lime',
     accent: 'sky'
 };
