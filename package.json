@@ -28,7 +28,7 @@
         "@vitejs/plugin-vue-jsx": "^4.0.1",
         "@vueuse/core": "^11.0.1",
         "@wangeditor/editor": "^5.1.23",
-        "@wangeditor/editor-for-vue": "^1.0.2",
+        "@wangeditor/editor-for-vue": "^5.1.12",
         "bignumber.js": "^9.1.2",
         "cron-parser": "^4.9.0",
         "dayjs": "^1.11.13",
