@@ -11,12 +11,29 @@ export default defineConfig({
     presets: [presetUno(), presetAttributify()],
     safelist: safe_colors,
     shortcuts: [
-        { bdr: 'border-2 border-slate-800 has-[:focus]:border-lime-500 rounded' },
+        { bdr: 'border-2 border-slate-800' },
+        { 'bdr-all': 'border-2 border-slate-800 has-[:focus]:border-lime-500 rounded' },
         { 'bdr-2': 'border-slate-300 border-opacity-70' },
         { 'flex-center': 'justify-center items-center' },
         { 'flex-between-center': 'justify-between items-center' },
         { reset: 'm-0 p-0 leading-none outline-none' },
-        { 'reset-all': 'm-0 p-0 leading-none border-0 outline-none bg-transparent' }
+        { 'reset-all': 'm-0 p-0 leading-none border-0 outline-none bg-transparent' },
+        {
+            decorative: [
+                'font-semibold',
+                'pl-2',
+                'relative',
+                'after:content-[""]',
+                'after:absolute',
+                'after:left-0',
+                'after:top-1/2',
+                'after:-translate-y-1/2',
+                'after:w-[4px]',
+                'after:h-[1.2em]',
+                'after:bg-sky-400',
+                'after:rounded-sm'
+            ]
+        }
     ],
     rules: [
         ['size-small', { 'font-size': '0.875rem', padding: '0.25rem 0.5rem' }],
