@@ -12,12 +12,12 @@ export default defineConfig({
     safelist: safe_colors,
     shortcuts: [
         { bdr: 'border-2 border-slate-800' },
-        { 'bdr-all': 'border-2 border-slate-800 has-[:focus]:border-lime-500 rounded' },
         { 'bdr-2': 'border-slate-300 border-opacity-70' },
+        { 'bdr-all': 'bdr has-[:focus]:border-lime-500 rounded' },
         { 'flex-center': 'justify-center items-center' },
         { 'flex-between-center': 'justify-between items-center' },
         { reset: 'm-0 p-0 leading-none outline-none' },
-        { 'reset-all': 'm-0 p-0 leading-none border-0 outline-none bg-transparent' },
+        { 'reset-all': 'reset border-0 bg-transparent' },
         {
             decorative: [
                 'font-semibold',
@@ -32,6 +32,21 @@ export default defineConfig({
                 'after:h-[1.2em]',
                 'after:bg-sky-400',
                 'after:rounded-sm'
+            ]
+        },
+        {
+            marker: [
+                'pl-4',
+                'relative',
+                'before:content-[""]',
+                'before:absolute',
+                'before:left-0',
+                'before:top-1/2',
+                'before:-translate-y-[0.2em]',
+                'before:w-[0.5em]',
+                'before:h-[0.5em]',
+                'before:bg-sky-400',
+                'before:rounded-full'
             ]
         }
     ],
