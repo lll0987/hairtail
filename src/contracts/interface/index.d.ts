@@ -1,7 +1,3 @@
-export interface IModel {
-    id?: string;
-}
-
 import type { Component } from 'vue';
 export interface IRoute {
     key: string;
@@ -10,10 +6,8 @@ export interface IRoute {
     component?: Component;
 }
 
-export interface IRequest {
-    text: string;
-    today: string;
-    topic: string[];
+export interface IModel {
+    id?: string;
 }
 
 export * from './cron';
@@ -23,6 +17,12 @@ export * from './record';
 export * from './setting';
 export * from './tag';
 export * from './topic';
+
+export interface IRequest {
+    text: string;
+    today: string;
+    topic: string[];
+}
 
 import type { IEventBody } from './event';
 import type { ITagBody } from './tag';

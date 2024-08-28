@@ -1,5 +1,5 @@
 import { IModel } from '.';
-import { DateTimeGrain } from '../type';
+import { EventGrain } from '../type';
 
 export interface IEventModel {
     start: number;
@@ -14,13 +14,13 @@ export interface IEventModel {
 }
 
 export interface IEvent extends Omit<IEventModel, 'tags' | 'infos' | 'grain'>, IModel {
-    grain: DateTimeGrain;
+    grain: EventGrain;
 }
 
 export interface IEventBody extends Omit<IEventModel, 'infos' | 'grain' | 'start' | 'end'> {
     start: string;
     end: string;
-    grain: DateTimeGrain;
+    grain: EventGrain;
 }
 
 export interface IEventRawData extends IEvent {

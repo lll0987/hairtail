@@ -1,8 +1,9 @@
 import { Types } from 'mongoose';
-import type { IModel } from './interface';
-import type { TModuleName } from '../main/database';
+import type { TModuleName } from '../../main/database';
+import type { EventGrain, TEventGrain, RecordStatus, TRecordStatus } from '../component';
+import type { IModel } from '../interface';
 
-export { TModuleName };
+export { EventGrain, TEventGrain, RecordStatus, TRecordStatus, TModuleName };
 export * from './enum';
 
 // 数据库接口
