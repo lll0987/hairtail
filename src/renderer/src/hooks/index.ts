@@ -13,3 +13,4 @@ export * from './src/useModelValue';
 export * from './src/useLabel';
 export * from './src/useValidate';
 export * from './src/useTag';
+export * from './src/useTopic';
