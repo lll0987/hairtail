@@ -21,7 +21,7 @@
         "build:linux": "npm run build && electron-builder --linux"
     },
     "dependencies": {
-        "@antv/s2": "^1.55.8",
+        "@antv/s2": "^2.0.0-next.27",
         "@electron-toolkit/preload": "^3.0.0",
         "@electron-toolkit/utils": "^3.0.0",
         "@tabler/icons-vue": "^3.12.0",
