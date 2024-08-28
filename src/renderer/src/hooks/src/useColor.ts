@@ -43,7 +43,7 @@ const getColor = (backgroundColor: string) => colorMap.value.get(backgroundColor
 export type ColorMode = 'light' | 'dark';
 /**
  * 获取默认背景颜色和文字颜色
- * @param light 是否为浅色主题
+ * @param mode 颜色主题（默认 dark）
  */
 export const getDefaultColor = (mode: ColorMode = 'dark') => {
     const backgroundColor = mode === 'light' ? def_bg_color_light : def_bg_color_dark;
