@@ -5,7 +5,7 @@ import type { SelectApi } from '..';
 const def_focus_index = 0;
 
 export const useSelectFocus = (
-    api: Pick<SelectApi, 'matchOptions'> & { selectValue: ComputedRef<string[]> }
+    api: Pick<SelectApi, 'matchOptions'> & { selectValue?: ComputedRef<string[]> }
 ) => {
     const { matchOptions, selectValue } = api;
 
@@ -18,6 +18,7 @@ export const useSelectFocus = (
 
     // 自动聚焦
     const handleAutoFocus = (): void => {
+        if (!selectValue) return updateFoucus(def_focus_index);
         const { value: options } = matchOptions;
         const { value } = selectValue;
         if (!options.length) return;

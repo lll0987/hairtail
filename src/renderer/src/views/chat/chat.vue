@@ -2,7 +2,7 @@
 <template>
     <div grid="~ cols-1 rows-[1fr_auto]" class="w-full h-full">
         <div ref="listRef" class="p-4 overflow-y-auto">
-            <div v-for="(item, index) in records" :key="index">
+            <div v-for="item in records" :key="(item.id || '') + item.status">
                 <div flex="~ row" items="center" w="full" class="justify-end py-3">
                     <div
                         p="x-4 y-1.5"
@@ -63,10 +63,12 @@ onMounted(async () => {
     await getList();
 });
 
-const { accept, ignore, send, sendLoading } = useChatApi(async () => {
+const handleSuccess = async () => {
     const status = await getList();
     if (status) text.value = '';
-});
+};
+const { accept, ignore, send, sendLoading } = useChatApi(handleSuccess);
+
 const text = ref('');
 const handleSend = useThrottleFn(async () => {
     if (sendLoading.value) return;

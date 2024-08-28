@@ -1,4 +1,4 @@
-import { computed, provide, reactive, ref, ShallowRef } from 'vue';
+import { provide, reactive, ref, ShallowRef } from 'vue';
 import { useThrottleFn } from '@vueuse/core';
 import { IDomEditor } from '@wangeditor/editor';
 import type { ISetting } from '@contracts/interface';
@@ -29,7 +29,7 @@ export const useMentionSelect = (editorRef: ShallowRef<IDomEditor | undefined>, 
         popoverStyle.value.left = `${x + 4}px`;
         popoverStyle.value.top = `${y}px`;
     };
-    const popoverState = ref(false);
+    const popoverState = ref<boolean>(false);
     const updateShow = (state: boolean) => {
         popoverState.value = state;
     };
@@ -39,7 +39,7 @@ export const useMentionSelect = (editorRef: ShallowRef<IDomEditor | undefined>, 
     const toast = useToast();
     const { list } = useBaseApi<ISetting>('setting');
     const settings = ref<ISetting[]>([]);
-    const loading = ref(false);
+    const loading = ref<boolean>(false);
     const getOptions = async () => {
         loading.value = true;
         const [msg, data] = await list();
@@ -53,7 +53,7 @@ export const useMentionSelect = (editorRef: ShallowRef<IDomEditor | undefined>, 
     // value
     const updateValue = (v: SelectValue) => {
         const val = v as string;
-        const item = settings.value.find(item => item.value === val);
+        const item = settings.value.find(item => item.label === val);
         if (!item) return;
         const { tags, text, topic, value } = item.value;
         const data: IMention = {
@@ -67,21 +67,11 @@ export const useMentionSelect = (editorRef: ShallowRef<IDomEditor | undefined>, 
         editorRef.value?.emit(MENTION_EVENT.POSITIVE, data);
         selectProps.match = '';
     };
-    const selectValue = computed<string[]>(() => []);
     // focus
-    const { focusValue, handleArrowFocus, updateFoucus, isFocus } = useSelectFocus({
-        matchOptions,
-        selectValue
-    });
+    const { focusValue, handleArrowFocus, updateFoucus, isFocus } = useSelectFocus({ matchOptions });
     // selected
-    const multiple = ref(false);
-    const { handleItemSelected } = useSelectSelected({
-        hidePopover,
-        updateValue,
-        selectValue,
-        focusValue,
-        multiple
-    });
+    const multiple = ref<boolean>(false);
+    const { handleItemSelected } = useSelectSelected({ hidePopover, updateValue, focusValue, multiple });
     // api
     provide(SelectApiKey, { loading, matchOptions, updateShow, updateFoucus, isFocus, handleItemSelected });
 

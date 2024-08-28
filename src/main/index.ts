@@ -3,6 +3,7 @@ import { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.png?asset';
 import { handleService } from './database';
+import { handleTransformer } from './transformer';
 
 function createWindow(): void {
     // Create the browser window.
@@ -34,6 +35,12 @@ function createWindow(): void {
     } else {
         mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
     }
+
+    // 默认最大化打开
+    mainWindow.maximize();
+
+    // 提供大语言模型相关 api
+    handleTransformer(mainWindow);
 }
 
 // This method will be called when Electron has finished

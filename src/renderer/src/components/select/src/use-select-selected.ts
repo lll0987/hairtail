@@ -5,7 +5,7 @@ export const useSelectSelected = (api: {
     hidePopover: () => void;
     updateValue: (value: SelectValue) => void;
     multiple: Ref<boolean>;
-    selectValue: ComputedRef<string[]>;
+    selectValue?: ComputedRef<string[]>;
     focusValue: ComputedRef<SelectItem>;
 }) => {
     const { hidePopover, updateValue, selectValue, focusValue, multiple } = api;
@@ -14,7 +14,7 @@ export const useSelectSelected = (api: {
         const { value } = item || focusValue.value;
         let val: SelectValue = value;
         if (multiple.value) {
-            val = selectValue.value;
+            val = selectValue?.value ?? [];
             const ind = val.indexOf(value);
             if (ind === -1) {
                 val.push(value);
