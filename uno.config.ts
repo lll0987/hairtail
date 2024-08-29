@@ -16,7 +16,7 @@ export default defineConfig({
         { 'bdr-r': 'border-r-2 border-slate-800' },
         { 'bdr-b': 'border-b-2 border-slate-800' },
         { 'bdr-l': 'border-l-2 border-slate-800' },
-        { 'bdr-all': 'bdr has-[:focus]:border-lime-500 rounded' },
+        { 'bdr-all': 'bdr has-[:focus]:border-lime-500 rounded-md' },
         { 'bdr-opacity': 'border-slate-300 border-opacity-70' },
         { 'bdr-dashed': 'border-slate-300 border-dashed' },
         { 'flex-center': 'justify-center items-center' },

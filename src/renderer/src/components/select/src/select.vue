@@ -20,11 +20,7 @@
                 <p v-if="!selectValue.length" class="text-zinc-400">{{ mergedPlaceholder }}</p>
                 <p v-else-if="!multiple">{{ selectValue[0] }}</p>
                 <template v-else>
-                    <p
-                        v-for="(value, index) in selectValue"
-                        :key="index"
-                        class="px-1.5 bg-slate-200 rounded-sm"
-                    >
+                    <p v-for="(value, index) in selectValue" :key="index" class="px-1.5 bg-slate-200 rounded">
                         {{ value }}
                     </p>
                 </template>
