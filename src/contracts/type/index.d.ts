@@ -29,7 +29,7 @@ export type TApiResponse<T> = T extends Array<IModel> ? [string | null, T] : [st
 export type TDbApiName<M extends TModuleName> = `db:${M}:${TApiName<M>}`;
 
 // 线程通信接口
-export type TIpcDbApi<M extends TModuleName, T extends IModel, R extends IModel | Types.ObjectId> = (
+export type TDbApi<M extends TModuleName, T extends IModel, R extends IModel | Types.ObjectId> = (
     name: TDbApiName<M>,
     ...args: TApiRequest<T>
 ) => Promise<TApiResponse<R | Array<R>>>;
