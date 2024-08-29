@@ -4,7 +4,7 @@
             <input
                 :id="id"
                 type="text"
-                class="reset-all h-[1em] w-full placeholder:text-zinc-400"
+                class="reset-all h-[1em] w-full placeholder:text-placeholder"
                 :placeholder="mergedPlaceholder"
                 :value="inputValue"
                 :readonly="readonly"

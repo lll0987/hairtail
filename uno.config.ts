@@ -19,6 +19,7 @@ export default defineConfig({
         { 'bdr-all': 'bdr has-[:focus]:border-lime-500 rounded-md' },
         { 'bdr-opacity': 'border-slate-300 border-opacity-70' },
         { 'bdr-dashed': 'border-slate-300 border-dashed' },
+        { 'text-placeholder': 'text-zinc-400' },
         { 'flex-center': 'justify-center items-center' },
         { 'flex-between-center': 'justify-between items-center' },
         { reset: 'm-0 p-0 leading-none outline-none' },

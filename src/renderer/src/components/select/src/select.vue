@@ -9,7 +9,6 @@
         <template #default="{ id }">
             <button
                 :id="id"
-                ref="focusRef"
                 :popovertarget="popoverId"
                 flex="1 ~ row wrap"
                 class="w-40 gap-1 items-center reset-all"
@@ -17,7 +16,7 @@
                 @keydown.down.stop.prevent="handleArrowFocus(KEYBOARD_EVENT.DOWN)"
                 @keydown.up.stop.prevent="handleArrowFocus(KEYBOARD_EVENT.UP)"
             >
-                <p v-if="!selectValue.length" class="text-zinc-400">{{ mergedPlaceholder }}</p>
+                <p v-if="!selectValue.length" class="text-placeholder">{{ mergedPlaceholder }}</p>
                 <p v-else-if="!multiple">{{ selectValue[0] }}</p>
                 <template v-else>
                     <p v-for="(value, index) in selectValue" :key="index" class="px-1.5 bg-slate-200 rounded">
