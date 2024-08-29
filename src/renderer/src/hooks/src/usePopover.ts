@@ -1,10 +1,10 @@
-import { computed, ComputedRef, onMounted, ref, Ref } from 'vue';
-
-// NEXT popover 获取弹出层实际高度
-const popover_height = 200;
+import { computed, ComputedRef, Ref } from 'vue';
+import { useElementBounding } from '@vueuse/core';
 
 // MEMO popover 弹出层与触发元素间距 2px
 const gap = 2;
+// NEXT popover 获取弹出层实际高度
+const height = 200;
 
 export interface PopoverStyle {
     left?: string;
@@ -12,34 +12,24 @@ export interface PopoverStyle {
     width?: string;
 }
 
-export const usePopover = (el: Ref<HTMLElement | null>): ComputedRef<PopoverStyle> => {
-    const x = ref(0);
-    const y = ref(0);
-    const w = ref('');
-
-    onMounted(() => {
-        if (!el.value) return;
-        const { bottom, left, top, width } = el.value.getBoundingClientRect();
-        x.value = left;
-        y.value = bottom + gap;
-        w.value = width + 'px';
-
-        // 如果下方空间不足，显示在上方
-
-        if (y.value + popover_height > window.innerHeight) {
-            y.value = top - popover_height - gap;
-        }
-    });
-
-    // NEXT popover resize 时重新计算位置
-
+export const usePopover = (
+    triggerEl: Ref<HTMLElement | null>,
+    width: 'trigger' | false = 'trigger'
+): ComputedRef<PopoverStyle> => {
+    const { bottom, left, top: t, width: w } = useElementBounding(triggerEl);
     const styles = computed(() => {
-        if (!x.value || !y.value || !w.value) return {};
-        return {
-            left: x.value + 'px',
-            top: y.value + 'px',
-            width: w.value
-        };
+        const value: PopoverStyle = { left: left.value + 'px' };
+        let top = bottom.value + gap;
+        // 如果下方空间不足，显示在上方
+        if (top + height > window.innerHeight) {
+            top = t.value - height - gap;
+        }
+        value.top = top + 'px';
+        // 与触发元素宽度一致
+        if (width === 'trigger') {
+            value.width = w.value + 'px';
+        }
+        return value;
     });
     return styles;
 };

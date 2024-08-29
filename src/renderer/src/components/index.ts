@@ -1,6 +1,9 @@
 export * from './button';
 export { default as AgButton } from './button';
 
+export * from './color-picker';
+export { default as AgColorPicker } from './color-picker';
+
 export * from './field';
 export { default as AgField } from './field';
 
