@@ -6,7 +6,7 @@
                 <ag-color-picker v-model="form.color"></ag-color-picker>
                 <ag-color-picker v-model="form.c2"></ag-color-picker>
                 <ag-input v-model="form.name" :label="false"></ag-input>
-                <ag-button status="success" @click="handleAddOrUpdate">新增</ag-button>
+                <ag-button status="success" @click="() => handleAddOrUpdate()">新增</ag-button>
                 <ag-button @click="handleReset">重置</ag-button>
             </div>
         </template>

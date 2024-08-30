@@ -5,7 +5,7 @@
             <div grid="~ rows-1 cols-[auto_1fr_auto_auto]" items="center" gap="2">
                 <ag-color-picker v-model="form.color"></ag-color-picker>
                 <ag-input v-model="form.name" :label="false"></ag-input>
-                <ag-button status="success" @click="handleAddOrUpdate">新增</ag-button>
+                <ag-button status="success" @click="() => handleAddOrUpdate()">新增</ag-button>
                 <ag-button @click="handleReset">重置</ag-button>
             </div>
         </template>
