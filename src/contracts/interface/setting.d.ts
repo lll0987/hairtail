@@ -2,7 +2,7 @@ import { IModel } from '.';
 import { IEventModel } from './event';
 
 export interface EventSetting extends Partial<Pick<IEventModel, 'tags' | 'topic' | 'value'>> {
-    value?: number | null;
+    value?: number;
     text?: string;
 }
 
