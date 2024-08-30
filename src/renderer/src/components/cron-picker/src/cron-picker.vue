@@ -24,15 +24,15 @@
                         v-show="selected === cronOptions.day"
                         class="col-start-2"
                         label="开始："
-                        :value="cronDayValue.start"
-                        @update="v => handleCronDayValue('start', v)"
+                        :value="cronDay.start"
+                        @update="v => handleCronDay('start', v)"
                     ></cron-input>
                     <cron-input
                         v-show="selected === cronOptions.day"
                         class="col-start-2"
                         label="结束："
-                        :value="cronDayValue.end"
-                        @update="v => handleCronDayValue('end', v)"
+                        :value="cronDay.end"
+                        @update="v => handleCronDay('end', v)"
                     ></cron-input>
                 </div>
             </div>
@@ -45,7 +45,7 @@ import { computed, h, ref, toRef } from 'vue';
 import { PopoverStyle, useId, useLabel, useModelValue, useValidate } from '@renderer/hooks';
 import { AgField } from '@renderer/components';
 import { CronOption, cronOptions, CronPickerEmits, CronPickerProps } from '..';
-import { useCronMenu } from './use-cron-menu';
+import { useCronValue } from './use-cron-value';
 // popover
 const popoverId = useId().next();
 const popoverStyles = ref<PopoverStyle>({});
@@ -60,7 +60,7 @@ const disabled = toRef(props, 'disabled');
 const { feedback, meragedStatus } = useValidate(props);
 // value
 const { mergedValue, updateValue } = useModelValue(props, emits);
-const { inputValue, cronDayValue, selected, handleCronDayValue, handleCronSelected } = useCronMenu(
+const { inputValue, cronDay, selected, handleCronDay, handleCronSelected } = useCronValue(
     mergedValue,
     updateValue
 );

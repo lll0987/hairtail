@@ -1,4 +1,4 @@
-import { ComputedRef, Reactive, reactive, Ref, ref, watch } from 'vue';
+import { computed, ComputedRef, Reactive, reactive, Ref, ref } from 'vue';
 import {
     CronExpression,
     CronFields,
@@ -10,7 +10,7 @@ import {
     parseExpression,
     SixtyRange
 } from 'cron-parser';
-import { CronPickerType } from '..';
+import { CronOption, cronOptions, CronPickerType } from '..';
 
 interface ICronFields {
     // 秒
@@ -47,37 +47,76 @@ const parse = (data: string, expression: Ref<CronExpression | null>, cron: React
     });
 };
 
-const stringify = (expression: Ref<CronExpression | null>, cron: Reactive<ICronFields>) => {
-    // FIX 改为响应式数据后 expression 需要重新生成
-    if (expression.value === null) {
-        expression.value = fieldsToExpression(
-            fields.reduce((pre, cur) => {
-                const { field, def } = hashMap[cur];
-                pre[field] = cron[cur] === null ? def : [cron[cur]];
-                return pre;
-            }, {} as CronFields)
-        );
-    }
-    return expression.value.stringify();
+const updateExpression = (expression: Ref<CronExpression | null>, cron: Reactive<ICronFields>) => {
+    expression.value = fieldsToExpression(
+        fields.reduce((pre, cur) => {
+            const { field, def } = hashMap[cur];
+            pre[field] = cron[cur] === null ? def : [cron[cur]];
+            return pre;
+        }, {} as CronFields)
+    );
 };
 
-export const useCronValue = (value: ComputedRef<CronPickerType>) => {
-    const expression_s = ref<CronExpression | null>(null);
-    const expression_e = ref<CronExpression | null>(null);
+const stringify = (expression: Ref<CronExpression | null>, cron: Reactive<ICronFields>) => {
+    if (expression.value === null) updateExpression(expression, cron);
+    return expression.value!.stringify();
+};
 
-    const startCron = reactive<ICronFields>(init());
-    const endCron = reactive<ICronFields>(init());
+export const useCronValue = (
+    mergedValue: ComputedRef<CronPickerType>,
+    updateValue: (value: CronPickerType) => void
+) => {
+    const cron_s = reactive<ICronFields>(init());
+    const cron_e = reactive<ICronFields>(init());
 
-    watch(value, ({ start, end }) => {
-        if (start) parse(start, expression_s, startCron);
-        if (end) parse(end, expression_e, endCron);
+    const inputValue = computed(() => {
+        if (selected.value === cronOptions.all) return '整月';
+        const s = cron_s.day === null ? '' : cron_s.day;
+        const e = cron_e.day === null ? '' : cron_e.day;
+        if (s && e) return `每月${s}号到${e}号`;
+        return '';
     });
 
-    const getCronStringifyValue = () => {
-        const start = stringify(expression_s, startCron);
-        const end = stringify(expression_e, endCron);
-        return { start, end };
+    const expression_s = ref<CronExpression | null>(null);
+    const expression_e = ref<CronExpression | null>(null);
+    // 初始化 expression
+    const { start, end } = mergedValue.value;
+    if (start) parse(start, expression_s, cron_s);
+    if (end) parse(end, expression_e, cron_e);
+
+    const handleValue = () => {
+        const start = stringify(expression_s, cron_s);
+        const end = stringify(expression_e, cron_e);
+        updateValue({ start, end });
     };
 
-    return { startCron, endCron, getCronStringifyValue };
+    const cronDay = reactive({ start: '', end: '' });
+    const handleCronDay = (key: 'start' | 'end', value?: string) => {
+        const cron = key === 'start' ? cron_s : cron_e;
+        if (value === undefined) {
+            cronDay[key] = cron.day === null ? '' : cron.day.toString();
+        } else {
+            cronDay[key] = value;
+            cron.day = value === 'L' ? value : (Number(value) as DayOfTheMonthRange);
+            updateExpression(key === 'start' ? expression_s : expression_e, cron);
+        }
+        handleValue();
+    };
+
+    const selected = ref<CronOption>();
+    const handleCronSelected = (option: CronOption) => {
+        if (option === cronOptions.all) {
+            cron_s.day = 1;
+            cron_e.day = 1;
+        } else {
+            cron_s.day = null;
+            cron_e.day = null;
+            handleCronDay('start');
+            handleCronDay('end');
+        }
+        selected.value = option;
+        handleValue();
+    };
+
+    return { inputValue, cronDay, selected, handleCronDay, handleCronSelected };
 };
