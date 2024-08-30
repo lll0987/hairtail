@@ -1,4 +1,4 @@
-import { computed, ComputedRef, Reactive, reactive, Ref, ref } from 'vue';
+import { computed, ComputedRef, reactive, Ref, ref } from 'vue';
 import {
     CronExpression,
     CronFields,
@@ -27,7 +27,7 @@ interface ICronFields {
     week: DayOfTheWeekRange | null;
 }
 
-const hashMap: Record<keyof ICronFields, { field: keyof CronFields; def: (string | number)[] }> = {
+const setting: Record<keyof ICronFields, { field: keyof CronFields; def: (string | number)[] }> = {
     second: { field: 'second', def: [0] as SixtyRange[] },
     minute: { field: 'minute', def: [0] as SixtyRange[] },
     hour: { field: 'hour', def: [0] as HourRange[] },
@@ -35,30 +35,48 @@ const hashMap: Record<keyof ICronFields, { field: keyof CronFields; def: (string
     month: { field: 'month', def: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as MonthRange[] },
     week: { field: 'dayOfWeek', def: [0, 1, 2, 3, 4, 5, 6, 7] as DayOfTheWeekRange[] }
 };
-const fields = Object.keys(hashMap);
+const keys = Object.keys(setting);
+
+export const parseCron = (cron: string) => {
+    const expression: CronExpression = parseExpression(cron);
+    const fields: ICronFields = keys.reduce((pre, cur) => {
+        const value = expression.fields[setting[cur].field];
+        pre[cur] = value?.length === 1 ? value[0] : null;
+        return pre;
+    }, {} as ICronFields);
+    return { expression, fields };
+};
+
+export const getCronLabel = (startFields: ICronFields, endFields: ICronFields, selected?: CronOption) => {
+    if (selected === cronOptions.all) return '整月';
+    const { day: s } = startFields;
+    const { day: e } = endFields;
+    if (s === 1 && s === e) return '整月';
+    if (s && e) return `每月${s}号到${e}号`;
+    return '';
+};
 
 const init = (): ICronFields => ({ second: 0, minute: 0, hour: 0, day: null, month: null, week: null });
 
-const parse = (data: string, expression: Ref<CronExpression | null>, cron: Reactive<ICronFields>) => {
-    expression.value = parseExpression(data);
-    fields.forEach(f => {
-        const value = expression.value?.fields[hashMap[f].field];
-        cron[f] = value?.length === 1 ? value[0] : null;
-    });
+const parse = (s: string, e: Ref<CronExpression | null>, f: Ref<ICronFields>) => {
+    const { expression, fields } = parseCron(s);
+    e.value = expression;
+    f.value = fields;
 };
 
-const updateExpression = (expression: Ref<CronExpression | null>, cron: Reactive<ICronFields>) => {
+const update = (expression: Ref<CronExpression | null>, fields: Ref<ICronFields>) => {
     expression.value = fieldsToExpression(
-        fields.reduce((pre, cur) => {
-            const { field, def } = hashMap[cur];
-            pre[field] = cron[cur] === null ? def : [cron[cur]];
+        keys.reduce((pre, cur) => {
+            const { field, def } = setting[cur];
+            const value = fields.value[cur];
+            pre[field] = value === null ? def : [value];
             return pre;
         }, {} as CronFields)
     );
 };
 
-const stringify = (expression: Ref<CronExpression | null>, cron: Reactive<ICronFields>) => {
-    if (expression.value === null) updateExpression(expression, cron);
+const stringify = (expression: Ref<CronExpression | null>, fields: Ref<ICronFields>) => {
+    if (expression.value === null) update(expression, fields);
     return expression.value!.stringify();
 };
 
@@ -66,39 +84,30 @@ export const useCronValue = (
     mergedValue: ComputedRef<CronPickerType>,
     updateValue: (value: CronPickerType) => void
 ) => {
-    const cron_s = reactive<ICronFields>(init());
-    const cron_e = reactive<ICronFields>(init());
-
-    const inputValue = computed(() => {
-        if (selected.value === cronOptions.all) return '整月';
-        const s = cron_s.day === null ? '' : cron_s.day;
-        const e = cron_e.day === null ? '' : cron_e.day;
-        if (s && e) return `每月${s}号到${e}号`;
-        return '';
-    });
-
+    const fields_s = ref<ICronFields>(init());
+    const fields_e = ref<ICronFields>(init());
     const expression_s = ref<CronExpression | null>(null);
     const expression_e = ref<CronExpression | null>(null);
     // 初始化 expression
     const { start, end } = mergedValue.value;
-    if (start) parse(start, expression_s, cron_s);
-    if (end) parse(end, expression_e, cron_e);
+    if (start) parse(start, expression_s, fields_s);
+    if (end) parse(end, expression_e, fields_e);
 
     const handleValue = () => {
-        const start = stringify(expression_s, cron_s);
-        const end = stringify(expression_e, cron_e);
+        const start = stringify(expression_s, fields_s);
+        const end = stringify(expression_e, fields_e);
         updateValue({ start, end });
     };
 
     const cronDay = reactive({ start: '', end: '' });
     const handleCronDay = (key: 'start' | 'end', value?: string) => {
-        const cron = key === 'start' ? cron_s : cron_e;
+        const cron = key === 'start' ? fields_s : fields_e;
         if (value === undefined) {
-            cronDay[key] = cron.day === null ? '' : cron.day.toString();
+            cronDay[key] = cron.value.day === null ? '' : cron.value.day.toString();
         } else {
             cronDay[key] = value;
-            cron.day = value === 'L' ? value : (Number(value) as DayOfTheMonthRange);
-            updateExpression(key === 'start' ? expression_s : expression_e, cron);
+            cron.value.day = value === 'L' ? value : (Number(value) as DayOfTheMonthRange);
+            update(key === 'start' ? expression_s : expression_e, cron);
         }
         handleValue();
     };
@@ -106,17 +115,19 @@ export const useCronValue = (
     const selected = ref<CronOption>();
     const handleCronSelected = (option: CronOption) => {
         if (option === cronOptions.all) {
-            cron_s.day = 1;
-            cron_e.day = 1;
+            fields_s.value.day = 1;
+            fields_e.value.day = 1;
         } else {
-            cron_s.day = null;
-            cron_e.day = null;
+            fields_s.value.day = null;
+            fields_e.value.day = null;
             handleCronDay('start');
             handleCronDay('end');
         }
         selected.value = option;
         handleValue();
     };
+
+    const inputValue = computed(() => getCronLabel(fields_s.value, fields_e.value, selected.value));
 
     return { inputValue, cronDay, selected, handleCronDay, handleCronSelected };
 };

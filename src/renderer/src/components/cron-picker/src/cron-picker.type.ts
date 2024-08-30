@@ -9,7 +9,6 @@ export type CronPickerType = {
 export interface CronPickerEmits extends ValueEmit<CronPickerType> {}
 export interface CronPickerProps extends ValueProps<CronPickerType>, Partial<ILabelProps>, IValidateProps {
     size?: TCSize;
-    readonly?: boolean;
     disabled?: boolean;
 }
 

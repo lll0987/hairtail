@@ -1,7 +1,7 @@
 <template>
     <ag-field
-        :label="mergedLabel"
         :disabled="disabled"
+        :label="mergedLabel"
         :feedback="feedback"
         :status="meragedStatus"
         @provide="v => (popoverStyles = v)"
@@ -10,6 +10,7 @@
             <button
                 :id="id"
                 :popovertarget="popoverId"
+                :disabled="disabled"
                 flex="1 ~ row wrap"
                 class="gap-1 items-center reset-all min-w-40"
             >
@@ -52,10 +53,10 @@ const popoverStyles = ref<PopoverStyle>({});
 // props & emits
 const props = withDefaults(defineProps<CronPickerProps>(), { defaultValue: () => ({ start: '', end: '' }) });
 const emits = defineEmits<CronPickerEmits>();
+// disabled
+const disabled = toRef(props, 'disabled');
 // label & placeholder
 const { mergedLabel, mergedPlaceholder } = useLabel(props, 'cron', '请选择');
-// readonly & disabled
-const disabled = toRef(props, 'disabled');
 // feedback & status
 const { feedback, meragedStatus } = useValidate(props);
 // value
