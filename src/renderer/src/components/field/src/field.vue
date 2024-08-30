@@ -1,18 +1,18 @@
 <template>
-    <div grid="~ cols-[auto_1fr] rows-[auto_auto]" gap="x-1.5 y-1" class="items-center">
-        <label v-if="label" :for="id" class="text-nowrap">{{ label }}</label>
+    <div grid="~ cols-[auto_1fr] rows-[auto_auto]" items="center">
+        <label :for="id" class="text-nowrap" :class="label ? 'mr-1.5' : ''">{{ label }}</label>
         <div
             ref="triggerRef"
             p="x-3 y-2"
             flex="~ row"
             class="bdr-all"
-            :class="status === undefined ? 'bg-white' : getStatusColor(status, '100')"
+            :class="status === undefined ? 'bg-white' : `bg-${getStatusColor(status, '100')}`"
         >
             <slot :id="id"></slot>
         </div>
         <p
             class="text-xs leading-none col-start-2"
-            :class="status === undefined ? '' : getStatusColor(status)"
+            :class="[status === undefined ? '' : `text-${getStatusColor(status)}`, feedback ? 'mt-1' : '']"
         >
             {{ feedback }}
         </p>
