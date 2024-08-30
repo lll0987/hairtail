@@ -7,6 +7,7 @@
         :h="size === undefined ? '6' : size === 'large' ? '8' : '4'"
         :style="{ background: mergedValue }"
         :popovertarget="id"
+        :disabled="readonly"
     >
         <div :id="id" popover class="m-0 p-1.5 bg-white bdr-all" :style="{ ...styles }">
             <div grid="~ rows-11 cols-[repeat(18,_minmax(0,_1fr))] flow-col" gap="1.5">
