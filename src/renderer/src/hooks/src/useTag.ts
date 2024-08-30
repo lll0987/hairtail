@@ -51,6 +51,7 @@ export const useTag = () => {
  * @param name 标签名称
  * @param component 是否为组件，默认 true
  */
+// @unocss-include
 export const useTagRender = (name: string, component = true) => {
     const tag = tagMap.value.get(name);
     const type = 'span';
@@ -67,9 +68,9 @@ export const useTagRender = (name: string, component = true) => {
             'box-border',
             'cursor-default',
             'leading-none',
-            'text-[0.875rem]',
-            'px-2.5',
-            'py-2',
+            'text-3.5',
+            'px-2',
+            'py-1.5',
             'border',
             'border-slate-950',
             'rounded'
@@ -84,7 +85,7 @@ export const useTagRender = (name: string, component = true) => {
             cursor: 'default',
             lineHeight: '1',
             fontSize: '0.875rem',
-            padding: '0.625rem 0.5rem',
+            padding: '0.5rem 0.375rem',
             border: '#020617 1px solid',
             borderRadius: '0.25rem'
         });
