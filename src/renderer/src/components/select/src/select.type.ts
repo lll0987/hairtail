@@ -27,6 +27,7 @@ export interface SelectApi {
     updateShow: (state: boolean) => void;
     updateFoucus: (index?: number) => void;
     isFocus: (index: number) => boolean;
+    isSelected: (item: SelectItem) => boolean;
     handleItemSelected: (item?: SelectItem) => void;
 }
 

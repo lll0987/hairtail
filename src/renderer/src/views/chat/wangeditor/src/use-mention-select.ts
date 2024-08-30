@@ -73,7 +73,16 @@ export const useMentionSelect = (editorRef: ShallowRef<IDomEditor | undefined>, 
     const multiple = ref<boolean>(false);
     const { handleItemSelected } = useSelectSelected({ hidePopover, updateValue, focusValue, multiple });
     // api
-    provide(SelectApiKey, { loading, matchOptions, updateShow, updateFoucus, isFocus, handleItemSelected });
+    const isSelected = () => false;
+    provide(SelectApiKey, {
+        loading,
+        matchOptions,
+        updateShow,
+        updateFoucus,
+        isFocus,
+        isSelected,
+        handleItemSelected
+    });
 
     // keyboard event
     const onKeydown = useThrottleFn((key: KEYBOARD_EVENT) => {

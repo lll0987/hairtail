@@ -34,7 +34,8 @@ import { computed, provide, ref, toRef, watch } from 'vue';
 import { KEYBOARD_EVENT } from '@contracts/component';
 import { PopoverStyle, useId, useLabel, useModelValue, useValidate } from '@renderer/hooks';
 import { AgField } from '@renderer/components';
-import { SelectApiKey, type SelectEmits, type SelectProps } from '..';
+import type { SelectItem, SelectEmits, SelectProps } from '..';
+import { SelectApiKey } from '..';
 import { useSelectOptions } from './use-select-options';
 import { useSelectFocus } from './use-select-focus';
 import { useSelectSelected } from './use-select-selected';
@@ -81,7 +82,18 @@ const { handleItemSelected } = useSelectSelected({
     multiple
 });
 // api
-provide(SelectApiKey, { loading, matchOptions, updateShow, updateFoucus, isFocus, handleItemSelected });
+const isSelected = (item: SelectItem) => {
+    return selectValue.value.includes(item.value);
+};
+provide(SelectApiKey, {
+    loading,
+    matchOptions,
+    updateShow,
+    updateFoucus,
+    isFocus,
+    isSelected,
+    handleItemSelected
+});
 // watch
 watch(matchLabel, value => {
     if (value) {

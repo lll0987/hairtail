@@ -16,7 +16,7 @@
                 v-for="(item, index) in matchOptions"
                 :key="item.value"
                 class="px-1.5 py-1 rounded cursor-pointer relative"
-                :class="isFocus(index) ? ['bg-slate-200', 'text-lime-500'] : ''"
+                :class="{ 'bg-slate-200': isFocus(index), 'text-lime-500': isSelected(item) }"
                 @click.stop="handleItemSelected(item)"
                 @dblclick.stop="handleItemSelected(item)"
                 @mouseenter.stop="updateFoucus(index)"
@@ -44,7 +44,7 @@ const props = defineProps<{ id: string }>();
 const id = toRef(props, 'id');
 
 // MEMO select-menu 不单独使用，必须 provide api
-const { loading, matchOptions, handleItemSelected, updateShow, updateFoucus, isFocus } = inject(
+const { loading, matchOptions, handleItemSelected, updateShow, updateFoucus, isFocus, isSelected } = inject(
     SelectApiKey,
     {
         loading: ref(true),
@@ -52,6 +52,7 @@ const { loading, matchOptions, handleItemSelected, updateShow, updateFoucus, isF
         updateShow: () => {},
         updateFoucus: () => {},
         isFocus: () => false,
+        isSelected: () => false,
         handleItemSelected: () => {}
     }
 );
