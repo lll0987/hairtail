@@ -1,16 +1,19 @@
 import { defineConfig, presetUno } from 'unocss';
 import presetAttributify from '@unocss/preset-attributify';
-import { status_colors, shades } from './src/contracts/component';
+import { status_colors, shades, size_shortcuts } from './src/contracts/component';
 
 const safe_attrs = ['bg', 'text', 'border'];
 const safe_colors = status_colors
     .map(color => shades.map(key => safe_attrs.map(attr => `${attr}-${color}-${key}`)))
     .flat(3);
 
+const safe_sizes = size_shortcuts.map(i => Object.keys(i)).flat(2);
+
 export default defineConfig({
     presets: [presetUno(), presetAttributify()],
-    safelist: safe_colors,
+    safelist: [...safe_colors, ...safe_sizes],
     shortcuts: [
+        ...size_shortcuts,
         { bdr: 'border-2 border-slate-800' },
         { 'bdr-t': 'border-t-2 border-slate-800' },
         { 'bdr-r': 'border-r-2 border-slate-800' },
@@ -56,9 +59,5 @@ export default defineConfig({
                 'before:rounded-full'
             ]
         }
-    ],
-    rules: [
-        ['size-small', { 'font-size': '0.875rem', padding: '0.25rem 0.5rem' }],
-        ['size-large', { 'font-size': '1.125rem', padding: '0.5rem 1rem' }]
     ]
 });

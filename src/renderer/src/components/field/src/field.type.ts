@@ -1,8 +1,9 @@
-import { TCStatus } from '@contracts/component';
+import { TCSize, TCStatus } from '@contracts/component';
 
 export interface FieldProps {
-    label?: string;
     disabled?: boolean;
+    size?: TCSize;
+    label?: string;
     status?: TCStatus;
     feedback?: string;
 }

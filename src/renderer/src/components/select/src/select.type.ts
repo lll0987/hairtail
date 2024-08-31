@@ -1,22 +1,23 @@
 import type { ComputedRef, InjectionKey, Ref } from 'vue';
 import type { ILabelProps, IValidateProps, ValueEmit, ValueProps } from '@renderer/hooks';
+import type { FieldProps } from '@renderer/components';
 
 export type SelectValue = string | string[];
 
 export interface SelectItem {
     label: string;
     value: string;
-    [k: string]: string;
+    [k: string]: string | number | boolean | null;
 }
 
 export interface SelectEmits extends ValueEmit<SelectValue> {}
-export interface SelectProps extends ValueProps<SelectValue>, Partial<ILabelProps>, IValidateProps {
-    readonly?: boolean;
-    disabled?: boolean;
+export interface SelectProps
+    extends ValueProps<SelectValue>,
+        Pick<FieldProps, 'disabled' | 'size'>,
+        Partial<ILabelProps>,
+        IValidateProps {
     options?: SelectItem[];
     loading?: boolean;
-    'label-field'?: string;
-    'value-field'?: string;
     multiple?: boolean;
     match?: string;
 }

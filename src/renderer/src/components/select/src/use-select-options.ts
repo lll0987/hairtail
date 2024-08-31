@@ -9,5 +9,5 @@ export const useSelectOptions = (props: SelectProps) => {
         if (!label) return options.value;
         return options.value.filter(item => item.label.includes(label));
     });
-    return { matchOptions, matchLabel };
+    return { matchOptions, matchLabel, options };
 };

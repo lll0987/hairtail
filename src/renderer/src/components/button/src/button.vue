@@ -1,10 +1,11 @@
 <template>
     <button
-        p="x-3 y-1.5"
         flex="inline row center"
-        class="bdr-all reset h-max text-slate-950 font-semibold"
-        :class="status === undefined ? 'bg-slate-200' : 'bg-' + getStatusColor(status, '300')"
-        :size="size"
+        class="bdr-all reset h-max font-semibold"
+        :class="[
+            'bg-' + (status ? getStatusColor(status, '300') : 'slate-200'),
+            'btn-' + (size || 'default')
+        ]"
         :style="{ backgroundColor: color, cursor: loading ? 'wait' : '' }"
     >
         <span v-show="loading" flex="inline center" class="mr-1.5">

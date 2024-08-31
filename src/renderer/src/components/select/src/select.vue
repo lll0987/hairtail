@@ -1,7 +1,8 @@
 <template>
     <ag-field
-        :label="mergedLabel"
         :disabled="disabled"
+        :size="size"
+        :label="mergedLabel"
         :feedback="feedback"
         :status="meragedStatus"
         @provide="v => (popoverStyles = v)"
@@ -10,16 +11,17 @@
             <button
                 :id="id"
                 :popovertarget="popoverId"
+                :disabled="disabled"
                 flex="1 ~ row wrap"
-                class="w-40 gap-1 items-center reset-all"
+                class="gap-1 items-center reset-all min-w-40 w-full"
                 @keydown.enter.stop="handelEnter"
                 @keydown.down.stop.prevent="handleArrowFocus(KEYBOARD_EVENT.DOWN)"
                 @keydown.up.stop.prevent="handleArrowFocus(KEYBOARD_EVENT.UP)"
             >
-                <p v-if="!selectValue.length" class="text-placeholder">{{ mergedPlaceholder }}</p>
-                <p v-else-if="!multiple">{{ selectValue[0] }}</p>
+                <p v-if="!selectLabel.length" class="text-placeholder">{{ mergedPlaceholder }}</p>
+                <p v-else-if="!multiple">{{ selectLabel[0] }}</p>
                 <template v-else>
-                    <p v-for="(value, index) in selectValue" :key="index" class="px-1.5 bg-slate-200 rounded">
+                    <p v-for="(value, index) in selectLabel" :key="index" class="px-1.5 bg-slate-200 rounded">
                         {{ value }}
                     </p>
                 </template>
@@ -30,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, provide, ref, toRef, watch } from 'vue';
+import { computed, provide, ref, toRefs, watch } from 'vue';
 import { KEYBOARD_EVENT } from '@contracts/component';
 import { PopoverStyle, useId, useLabel, useModelValue, useValidate } from '@renderer/hooks';
 import { AgField } from '@renderer/components';
@@ -51,13 +53,11 @@ const hidePopover = () => {
     const popover = document.getElementById(popoverId);
     popover?.hidePopover();
 };
-
 // props & emits
 const props = withDefaults(defineProps<SelectProps>(), { defaultValue: '' });
 const emits = defineEmits<SelectEmits>();
-// multiple & loading
-const multiple = toRef(props, 'multiple');
-const loading = toRef(props, 'loading');
+// multiple & loading & disabled & size
+const { multiple, loading, disabled, size } = toRefs(props);
 // value
 const { mergedValue, updateValue } = useModelValue(props, emits);
 const selectValue = computed(() => {
@@ -67,7 +67,8 @@ const selectValue = computed(() => {
     return value;
 });
 // match
-const { matchOptions, matchLabel } = useSelectOptions(props);
+const { matchOptions, matchLabel, options } = useSelectOptions(props);
+const selectLabel = computed(() => selectValue.value.map(v => options.value.find(i => i.value === v)?.label));
 // focus
 const { focusValue, updateFoucus, isFocus, handleAutoFocus, handleArrowFocus } = useSelectFocus({
     matchOptions,
@@ -104,14 +105,10 @@ watch(matchLabel, value => {
         updateFoucus();
     }
 });
-
 // label & placeholder
 const { mergedLabel, mergedPlaceholder } = useLabel(props, 'select', '请选择');
-// readonly & disabled
-const disabled = toRef(props, 'disabled');
 // feedback & status
 const { feedback, meragedStatus } = useValidate(props);
-
 // enter event
 const handelEnter = (e: KeyboardEvent) => {
     if (popoverState.value) {

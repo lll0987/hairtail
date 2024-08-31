@@ -1,8 +1,8 @@
-import type { TCStatus, TCSize } from '@contracts/component';
+import type { TCStatus } from '@contracts/component';
+import type { FieldProps } from '@renderer/components';
 
-export interface ButtonProps {
+export interface ButtonProps extends Pick<FieldProps, 'disabled' | 'size'> {
     status?: TCStatus;
-    size?: TCSize;
     loading?: boolean;
     color?: string;
 }

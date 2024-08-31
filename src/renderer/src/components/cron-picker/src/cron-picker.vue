@@ -1,6 +1,7 @@
 <template>
     <ag-field
         :disabled="disabled"
+        :size="size"
         :label="mergedLabel"
         :feedback="feedback"
         :status="meragedStatus"
@@ -12,7 +13,7 @@
                 :popovertarget="popoverId"
                 :disabled="disabled"
                 flex="1 ~ row wrap"
-                class="gap-1 items-center reset-all min-w-40"
+                class="gap-1 items-center reset-all min-w-40 w-full"
             >
                 <p v-if="!inputValue" class="text-placeholder">{{ mergedPlaceholder }}</p>
                 <p v-else>{{ inputValue }}</p>
@@ -40,9 +41,10 @@
         </template>
     </ag-field>
 </template>
+<!-- TODO cron picker menu 样式调整 -->
 
 <script setup lang="ts">
-import { computed, h, ref, toRef } from 'vue';
+import { computed, h, ref, toRef, toRefs } from 'vue';
 import { PopoverStyle, useId, useLabel, useModelValue, useValidate } from '@renderer/hooks';
 import { AgField } from '@renderer/components';
 import { CronOption, cronOptions, CronPickerEmits, CronPickerProps } from '..';
@@ -53,8 +55,8 @@ const popoverStyles = ref<PopoverStyle>({});
 // props & emits
 const props = withDefaults(defineProps<CronPickerProps>(), { defaultValue: () => ({ start: '', end: '' }) });
 const emits = defineEmits<CronPickerEmits>();
-// disabled
-const disabled = toRef(props, 'disabled');
+// disabled & size
+const { disabled, size } = toRefs(props);
 // label & placeholder
 const { mergedLabel, mergedPlaceholder } = useLabel(props, 'cron', '请选择');
 // feedback & status

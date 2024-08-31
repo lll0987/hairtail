@@ -1,5 +1,11 @@
 <template>
-    <ag-field :label="mergedLabel" :disabled="disabled" :feedback="feedback" :status="meragedStatus">
+    <ag-field
+        :disabled="disabled"
+        :size="size"
+        :label="mergedLabel"
+        :feedback="feedback"
+        :status="meragedStatus"
+    >
         <template #default="{ id }">
             <input
                 :id="id"
@@ -7,7 +13,6 @@
                 class="reset-all h-[1em] w-full placeholder:text-placeholder"
                 :placeholder="mergedPlaceholder"
                 :value="inputValue"
-                :readonly="readonly"
                 :disabled="disabled"
                 @input="onInput"
                 @blur="onBlur"
@@ -17,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { toRef } from 'vue';
+import { toRefs } from 'vue';
 import { useLabel, useModelValue, useValidate } from '@renderer/hooks';
 import { AgField } from '@renderer/components';
 import type { InputEmits, InputProps } from '..';
@@ -28,17 +33,12 @@ defineOptions({ inheritAttrs: false });
 // props & emits
 const props = withDefaults(defineProps<InputProps>(), { defaultValue: '' });
 const emits = defineEmits<InputEmits>();
-
+// disabled & size
+const { disabled, size } = toRefs(props);
 // label & placeholder
 const { mergedLabel, mergedPlaceholder } = useLabel(props, 'input', '请输入');
-
-// readonly & disabled
-const readonly = toRef(props, 'readonly');
-const disabled = toRef(props, 'disabled');
-
 // feedback & status
 const { feedback, meragedStatus } = useValidate(props);
-
 // value
 const { inputValue, parseValue } = useInputValue(props);
 const onInput = (e: InputEvent | Event): void => {
