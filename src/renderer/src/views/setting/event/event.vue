@@ -5,9 +5,9 @@
             <create @refresh="getList"></create>
         </template>
         <div grid="~ cols-1 md:cols-2 lg:cols-3 xl:cols-4 flow-row-dense auto-rows-max" gap="3">
-            <div v-for="item in settings" :key="item.id" class="bdr rounded">
-                <div class="bdr-b bg-white px-2 py-1.5">
-                    <span class="decorative">{{ item.label }}</span>
+            <div v-for="item in settings" :key="item.id" class="bdr rounded relative pt-3 mt-3">
+                <div absolute top="-3.5" x="center" class="bdr bg-white rounded-3xl px-4 inline-block">
+                    <span class="font-semibold">{{ item.label }}</span>
                 </div>
                 <div
                     grid="~ cols-[auto_auto_1fr] rows-[repeat(3,_auto)]"

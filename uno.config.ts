@@ -24,6 +24,8 @@ export default defineConfig({
         { 'flex-between-center': 'justify-between items-center' },
         { reset: 'm-0 p-0 leading-none outline-none' },
         { 'reset-all': 'reset border-0 bg-transparent' },
+        { 'x-center': 'left-1/2 -translate-x-1/2' },
+        { 'y-center': 'top-1/2 -translate-y-1/2' },
         {
             decorative: [
                 'font-semibold',
@@ -32,8 +34,7 @@ export default defineConfig({
                 'after:content-[""]',
                 'after:absolute',
                 'after:left-0',
-                'after:top-1/2',
-                'after:-translate-y-1/2',
+                'after:y-center',
                 'after:w-[4px]',
                 'after:h-[1.2em]',
                 'after:bg-sky-400',

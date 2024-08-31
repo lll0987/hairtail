@@ -6,7 +6,7 @@
                 <ag-input v-model="form.msg" label="提醒内容"></ag-input>
                 <ag-select v-model="form.tag" label="标签" :options="tagOptions"></ag-select>
                 <ag-cron-picker v-model="cron" label="规则"></ag-cron-picker>
-                <ag-button status="success" @click="handleAdd">新增</ag-button>
+                <ag-button status="primary" @click="handleAdd">新增</ag-button>
                 <ag-button @click="handleReset">重置</ag-button>
             </div>
         </template>
@@ -66,5 +66,6 @@ const handleReset = () => {
 const handleAdd = async () => {
     const [msg] = await add({ ...toRaw(form), ...cron.value });
     if (msg) toast.error(msg);
+    else getList();
 };
 </script>
