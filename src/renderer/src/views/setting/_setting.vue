@@ -7,7 +7,7 @@
     >
         <tag></tag>
         <topic></topic>
-        <event></event>
+        <shortcut></shortcut>
         <cron></cron>
     </div>
 </template>
@@ -16,7 +16,7 @@
 import tag from './tag.vue';
 import topic from './topic.vue';
 import cron from './cron.vue';
-import event from './event/event.vue';
+import shortcut from './shortcut/shortcut.vue';
 
 import { useTag, useTopic } from '@renderer/hooks';
 const { refreshTagList } = useTag();
