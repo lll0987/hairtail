@@ -49,7 +49,7 @@ const listRef = ref<HTMLDivElement | null>(null);
 const { y } = useScroll(listRef, { behavior: 'smooth' });
 
 const records = ref<IRecord[]>([]);
-const { list } = useBaseApi<IRecord>('record');
+const { list } = useBaseApi('record');
 const getList = async () => {
     const [msg, data] = await list();
     if (msg) toast.error(msg);

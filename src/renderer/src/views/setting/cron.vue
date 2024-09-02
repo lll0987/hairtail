@@ -40,7 +40,7 @@ type TCron = ICron & { label: string };
 const crons = ref<TCron[]>([]);
 
 const toast = useToast();
-const { list, add } = useBaseApi<ICron>('cron');
+const { list, add } = useBaseApi('cron');
 const getList = async () => {
     const [msg, data] = await list();
     if (msg) toast.error(msg);

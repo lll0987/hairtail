@@ -15,7 +15,7 @@ const tagMode = ref<ColorMode>('dark');
 const defaultColor = computed(() => getDefaultColor(tagMode.value).color);
 
 export const useTag = () => {
-    const { list, add, update, remove } = useBaseApi<ITag>('tag');
+    const { list, add, update, remove } = useBaseApi('tag');
     const toast = useToast();
     // 增 改
     const addOrUpdateTag = async (tag: ITag) => {

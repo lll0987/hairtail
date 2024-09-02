@@ -1,25 +1,28 @@
-import { Types } from 'mongoose';
 import { TApiName, TApiRequest, TApiResponse, TDbApiName, TModuleName } from '@contracts/type';
-import { IModel } from '@contracts/interface';
 
 const ipcRenderer = window.electron.ipcRenderer;
-const invoke = <T extends IModel, R>(
+const invoke = <R>(
     module: TModuleName,
     api: TApiName<typeof module>,
-    ...args: TApiRequest<T>
-): Promise<TApiResponse<R | Array<R>>> => {
+    ...args: TApiRequest<typeof module>
+): Promise<TApiResponse<typeof module, typeof api, R>> => {
     const name: TDbApiName<typeof module> = `db:${module}:${api}`;
     return ipcRenderer.invoke(name, ...args);
 };
 
-export const useBaseApi = <T extends IModel>(module: TModuleName) => {
-    const list = () => invoke<T, T>(module, 'list') as Promise<TApiResponse<T[]>>;
-    const add = (data: T | T[]) => invoke<T, Types.ObjectId>(module, 'add', data);
-    const update = (id: string, data: T) => invoke<T, Types.ObjectId>(module, 'update', id, data);
-    const remove = (id: string) => invoke<T, Types.ObjectId>(module, 'remove', id);
-    return { list, add, update, remove };
+export const useApi = <R, M extends TModuleName, N extends TApiName<M>>(module: M, api: N) => {
+    return (...args: TApiRequest<M, N>) => invoke<R>(module, api, ...args);
 };
 
-export const useApi = <T extends IModel, R>(module: TModuleName, api: TApiName<typeof module>) => {
-    return (...args: TApiRequest<T>) => invoke<T, R>(module, api, ...args);
+export const useBaseApi = <M extends TModuleName>(module: M) => {
+    // const list = (...args: TApiRequest<typeof module, 'list'>) => useApi(module, 'list')(...args);
+    const list = (...args: TApiRequest<typeof module, 'list'>) =>
+        invoke(module, 'list', ...args) as Promise<TApiResponse<typeof module, 'list'>>;
+    const add = (...args: TApiRequest<typeof module, 'add'>) =>
+        invoke(module, 'add', ...args) as Promise<TApiResponse<typeof module, 'add'>>;
+    const update = (...args: TApiRequest<typeof module, 'update'>) =>
+        invoke(module, 'update', ...args) as Promise<TApiResponse<typeof module, 'update'>>;
+    const remove = (...args: TApiRequest<typeof module, 'remove'>) =>
+        invoke(module, 'remove', ...args) as Promise<TApiResponse<typeof module, 'remove'>>;
+    return { list, add, update, remove };
 };

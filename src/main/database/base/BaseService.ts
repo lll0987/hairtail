@@ -1,22 +1,24 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-import { Model, Types } from 'mongoose';
+import { FilterQuery, Model, Types } from 'mongoose';
+import { TResponse, TDoc } from '@contracts/type';
 import { Logger } from '../../logger';
 import { connect } from './db';
-import { TApiResponse } from '@contracts/type';
 
-export class BaseService {
-    protected model;
-    protected logger;
+export class BaseService<T> {
+    protected model: Model<T>;
+    protected logger: Logger;
 
-    constructor(name: string, model: Model<any>) {
+    constructor(name: string, model: Model<T>) {
         this.model = model;
         this.logger = new Logger(`${name}Service`);
     }
 
+    get Model() {
+        return this.model;
+    }
+
     // 建立数据库连接
     protected connect() {
-        return new Promise<TApiResponse<boolean>>(resolve => {
+        return new Promise<TResponse<boolean>>(resolve => {
             connect()
                 .then(() => {
                     resolve([null, true]);
@@ -29,15 +31,20 @@ export class BaseService {
     }
 
     // 列表查询
-    async list(match: object = {}) {
+    async list(filter: FilterQuery<T> = {}) {
         const [msg] = await this.connect();
-        return new Promise<TApiResponse<any>>(resolve => {
+        return new Promise<TResponse<TDoc<T>, true>>(resolve => {
             if (msg) return resolve([msg, []]);
             this.model
-                .aggregate([{ $match: match }, { $addFields: { id: { $toString: '$_id' } } }])
-                .then(r => {
-                    this.logger.info('list', 'success', r);
-                    resolve([null, r]);
+                .find(filter)
+                .lean()
+                .then(docs => {
+                    const data = docs.map(({ _id, ...doc }) => ({
+                        ...doc,
+                        id: (_id as Types.ObjectId).toString()
+                    })) as TDoc<T>[];
+                    this.logger.info('list', 'success', data);
+                    resolve([null, data]);
                 })
                 .catch(e => {
                     this.logger.error('list', 'fail', e);
@@ -49,15 +56,21 @@ export class BaseService {
     // 根据 id 查询数据
     async findById(id: string) {
         const [msg] = await this.connect();
-        return new Promise<TApiResponse<any>>(resolve => {
+        return new Promise<TResponse<TDoc<T>>>(resolve => {
             if (msg) return resolve([msg, null]);
             this.model
                 .findById(id)
                 .lean()
-                .then(({ _id, ...doc }) => {
-                    const item = { ...doc, id: _id.toString() };
-                    this.logger.info('findById', 'success', item);
-                    resolve([null, item]);
+                .then(doc => {
+                    if (doc) {
+                        const { _id, ...item } = doc;
+                        const data = { ...item, id: (_id as Types.ObjectId).toString() } as TDoc<T>;
+                        this.logger.info('findById', 'success', data);
+                        resolve([null, data]);
+                    } else {
+                        this.logger.error('findById', 'null', id);
+                        resolve(['没有查询到相关记录', null]);
+                    }
                 })
                 .catch(e => {
                     this.logger.error('findById', 'fail', e);
@@ -67,16 +80,23 @@ export class BaseService {
     }
 
     // 插入数据
-    async create(data: any) {
+    create(doc: T): Promise<TResponse<Types.ObjectId>>;
+    create(docs: T[]): Promise<TResponse<Types.ObjectId, true>>;
+    async create(docs: T | T[]) {
         const [msg] = await this.connect();
-        return new Promise<TApiResponse<Types.ObjectId | Types.ObjectId[]>>(resolve => {
-            if (msg) return resolve([msg, null]);
+        return new Promise(resolve => {
+            if (msg) return resolve([msg, []]);
             this.model
-                .create(data)
-                .then(r => {
-                    const ids = Array.isArray(r) ? r.map(i => i._id) : r._id;
-                    this.logger.info('create', 'success', r);
-                    resolve([null, ids]);
+                .create(docs)
+                .then(result => {
+                    let data: Types.ObjectId | Types.ObjectId[];
+                    if (Array.isArray(result)) {
+                        data = result.map(({ _id }) => _id) as Types.ObjectId[];
+                    } else {
+                        data = result._id as Types.ObjectId;
+                    }
+                    this.logger.info('create', 'success', data);
+                    resolve([null, data]);
                 })
                 .catch(e => {
                     this.logger.error('create', 'fail', e);
@@ -86,16 +106,22 @@ export class BaseService {
     }
 
     // 根据 id 更新数据
-    async updateById(id: string, data: any) {
+    async updateById(id: string, doc: Partial<T>) {
         const [msg] = await this.connect();
-        return new Promise<TApiResponse<Types.ObjectId>>(resolve => {
+        return new Promise<TResponse<Types.ObjectId>>(resolve => {
             if (msg) return resolve([msg, null]);
-            data._id = undefined;
+            const _doc = { ...doc, _id: undefined };
             this.model
-                .findByIdAndUpdate(id, data)
-                .then(r => {
-                    this.logger.info('updateById', 'success', r);
-                    resolve([null, r._id]);
+                .findByIdAndUpdate(id, _doc)
+                .then(result => {
+                    if (result) {
+                        const data = result._id as Types.ObjectId;
+                        this.logger.info('updateById', 'success', data);
+                        resolve([null, data]);
+                    } else {
+                        this.logger.error('updateById', 'null', id);
+                        resolve(['没有相关记录', null]);
+                    }
                 })
                 .catch(e => {
                     this.logger.error('updateById', 'fail', e);
@@ -107,13 +133,19 @@ export class BaseService {
     // 根据 id 删除数据
     async deleteById(id: string) {
         const [msg] = await this.connect();
-        return new Promise<TApiResponse<Types.ObjectId>>(resolve => {
+        return new Promise<TResponse<Types.ObjectId>>(resolve => {
             if (msg) return resolve([msg, null]);
             this.model
                 .findByIdAndDelete(id)
-                .then(r => {
-                    this.logger.info('deleteById', 'success', r);
-                    resolve([null, r._id]);
+                .then(doc => {
+                    if (doc) {
+                        const data = doc._id as Types.ObjectId;
+                        this.logger.info('deleteById', 'success', data);
+                        resolve([null, data]);
+                    } else {
+                        this.logger.error('deleteById', 'null', id);
+                        resolve(['没有相关记录', null]);
+                    }
                 })
                 .catch(e => {
                     this.logger.error('deleteById', 'fail', e);

@@ -4,7 +4,7 @@ import { request } from '../../net';
 import { Logger } from '../../logger';
 import { services } from '../../database';
 import { IRequest, ITopic } from '@contracts/interface';
-import { TApiResponse } from '@contracts/type';
+import { TResponse } from '@contracts/type';
 import { TopicService } from '../../database/services/topic.service';
 
 const conf = new Conf();
@@ -90,7 +90,7 @@ export const getFormattedText = async (text: string) => {
 
     const access_token = await getToken();
 
-    return new Promise<TApiResponse<string>>(resolve => {
+    return new Promise<TResponse<string>>(resolve => {
         if (msg) return resolve([msg, null]);
         // 记录提示文本
         logger.info('prompt', prompt);

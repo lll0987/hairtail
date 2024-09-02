@@ -31,7 +31,7 @@ const handleReset = () => {
 
 const emits = defineEmits(['refresh']);
 const toast = useToast();
-const { add } = useBaseApi<ISetting>('setting');
+const { add } = useBaseApi('setting');
 const getSettingItem = () => {
     const { label, value, val } = form;
     const item: ISetting = { label, value: {} };

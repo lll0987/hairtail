@@ -53,7 +53,7 @@ const { topicMap } = useTopic();
 
 const settings = ref<ISetting[]>([]);
 const toast = useToast();
-const { list } = useBaseApi<ISetting>('setting');
+const { list } = useBaseApi('setting');
 const getList = async () => {
     const [msg, data] = await list();
     if (msg) toast.error(msg);

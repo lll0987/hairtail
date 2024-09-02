@@ -11,6 +11,8 @@ import { useSelectSelected } from '@renderer/components/select/src/use-select-se
 import { IMention, IPureText, MENTION_EVENT } from '../plugin';
 import { EditorEmits } from '..';
 
+// FIX 回车不能增加快捷短语，原因不明，可能是因为 tag
+
 export const useMentionSelect = (editorRef: ShallowRef<IDomEditor | undefined>, emits: EditorEmits) => {
     // popover
     const popoverId = useId().next();
@@ -37,7 +39,7 @@ export const useMentionSelect = (editorRef: ShallowRef<IDomEditor | undefined>, 
     const selectProps = reactive<SelectProps>({ match: '', options: [] });
     const { matchOptions } = useSelectOptions(selectProps);
     const toast = useToast();
-    const { list } = useBaseApi<ISetting>('setting');
+    const { list } = useBaseApi('setting');
     const settings = ref<ISetting[]>([]);
     const loading = ref<boolean>(false);
     const getOptions = async () => {

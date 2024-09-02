@@ -12,7 +12,7 @@ const topicOptions = computed<SelectItem[]>(() =>
 );
 
 export const useTopic = () => {
-    const { list, add, update, remove } = useBaseApi<ITopic>('topic');
+    const { list, add, update, remove } = useBaseApi('topic');
     const toast = useToast();
     // 增 改
     const addOrUpdateTopic = async (topic: ITopic) => {

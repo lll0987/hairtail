@@ -1,11 +1,9 @@
 import dayjs from 'dayjs';
 import { BrowserWindow } from 'electron';
-import { Types } from 'mongoose';
-
-import { IEvent, IResponse, IRecordModel } from '@contracts/interface';
+import { IResponse, IRecordModel } from '@contracts/interface';
+import { TRecordStatus } from '@contracts/type';
 import { services } from '../../database';
 import { getFormattedText } from './zhipu';
-import { TRecordStatus } from '@contracts/type';
 
 const RECORD_STATUS: TRecordStatus = {
     SEND: 0,
@@ -15,8 +13,6 @@ const RECORD_STATUS: TRecordStatus = {
     NONE: 4,
     ERROR: 5
 } as const;
-
-type TIds = [string | null, Types.ObjectId[]];
 
 /**
  * 获取 ai 处理结果对象
@@ -43,22 +39,23 @@ const handleAutoInsert = async (out: string) => {
 
     if (obj.status === 1) {
         if (obj.data.events) {
-            const events = obj.data.events.map(({ start, end, ...item }) => ({
+            const events = obj.data.events.map(({ start, end, grain, ...item }) => ({
                 ...item,
+                grain: Number(grain),
                 start: dayjs(start).valueOf(),
                 end: dayjs(end).valueOf()
-            })) as IEvent[];
-            const [msg, ids] = (await services.event.create(events)) as TIds;
+            }));
+            const [msg, ids] = await services.event.create(events);
             if (msg) messages.push(`event 自动创建失败：${msg}`);
             if (ids && ids.length) record.event = ids;
         }
         if (obj.data.tags) {
-            const [msg, ids] = (await services.tag.create(obj.data.tags)) as TIds;
+            const [msg, ids] = await services.tag.create(obj.data.tags);
             if (msg) messages.push(`tag 自动创建失败：${msg}`);
             if (ids && ids.length) record.tag = ids;
         }
         if (obj.data.topics) {
-            const [msg, ids] = (await services.topic.create(obj.data.topics)) as TIds;
+            const [msg, ids] = await services.topic.create(obj.data.topics);
             if (msg) messages.push(`topic 自动创建失败：${msg}`);
             if (ids && ids.length) record.topic = ids;
         }
@@ -95,7 +92,7 @@ export const handleCache = async (text: string, window: BrowserWindow): Promise<
 
     // 记录处理结果，更新状态
     const obj = getResponseObject(result!);
-    const out = obj.status === 1 ? result : '无法转化为某种数据';
+    const out = obj.status === 1 ? result! : '无法转化为某种数据';
     const status = obj.status === 1 ? RECORD_STATUS.WAITING : RECORD_STATUS.NONE;
     const [m] = await services.record.updateById(id.toString(), { out, status });
     if (m) return m;
@@ -109,8 +106,9 @@ export const handleCache = async (text: string, window: BrowserWindow): Promise<
  * @returns
  */
 export const handleAccept = async (id: string): Promise<string | null> => {
-    const [m, { status, out }] = await services.record.findById(id);
+    const [m, d] = await services.record.findById(id);
     if (m) return m;
+    const { out, status } = d!;
     if (status !== RECORD_STATUS.WAITING) return '当前结果不可执行接受操作';
 
     // 添加处理后的数据
@@ -130,8 +128,9 @@ export const handleAccept = async (id: string): Promise<string | null> => {
  * @returns
  */
 export const handleIgnore = async (id: string): Promise<string | null> => {
-    const [m, { status }] = await services.record.findById(id);
+    const [m, d] = await services.record.findById(id);
     if (m) return m;
+    const { status } = d!;
     if (status !== RECORD_STATUS.WAITING) return '当前结果不可执行忽略操作';
 
     // 更新状态

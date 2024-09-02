@@ -10,11 +10,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { PivotSheet } from '@antv/s2';
+import type { TResponse } from '@contracts/type';
 import type { IEventRawData } from '@contracts/interface';
 import { AgButton, useToast } from '@renderer/components';
 import { useApi } from '@renderer/hooks';
-import chart from './s2/canvas.vue';
 import { DateShortcut, useS2Scroll } from './s2/use-s2-scroll';
+import chart from './s2/canvas.vue';
 
 let s2: PivotSheet | null = null;
 const handleS2 = (value: PivotSheet) => {
@@ -28,7 +29,7 @@ const events = ref<IEventRawData[]>([]);
 const toast = useToast();
 const list = useApi('event', 'list:color');
 const getList = async () => {
-    const [msg, data] = await list();
+    const [msg, data] = (await list()) as TResponse<IEventRawData, true>;
     if (msg) toast.error(msg);
     else events.value = data as IEventRawData[];
 };

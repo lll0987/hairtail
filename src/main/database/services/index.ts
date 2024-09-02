@@ -1,5 +1,7 @@
 import { ipcMain } from 'electron';
 
+import { TApiRequest, TDbApiName } from '@contracts/type';
+
 import { RecordService } from './record.service';
 import { EventService } from './event.service';
 import { TagService } from './tag.service';
@@ -28,17 +30,21 @@ export const services: TServices = {
     tag: new TagService(),
     topic: new TopicService()
 };
-const serviceNames = Object.keys(services);
+
+const funcs = { add: 'create', list: 'list', remove: 'deleteById', update: 'updateById' };
+export type TBaseApiName = keyof typeof funcs;
 
 export const handleService = () => {
-    serviceNames.forEach(serviceName => {
-        const module = serviceName as TModuleName;
+    Object.keys(services).forEach(key => {
+        const module = key as TModuleName;
         const service = services[module];
-
-        ipcMain.handle(`db:${module}:list`, () => service.list());
-        ipcMain.handle(`db:${module}:add`, (_, data) => service.create(data));
-        ipcMain.handle(`db:${module}:update`, (_, id, data) => service.updateById(id, data));
-        ipcMain.handle(`db:${module}:remove`, (_, id) => service.deleteById(id));
+        Object.keys(funcs).forEach(k => {
+            const api = k as TBaseApiName;
+            const name: TDbApiName<typeof module> = `db:${module}:${api}`;
+            const func = funcs[api];
+            const handler = (_, ...args: TApiRequest<typeof module, typeof api>) => service[func](...args);
+            ipcMain.handle(name, handler);
+        });
     });
 
     ipcMain.handle('db:cron:list:today', () => services.cron.list_today());
