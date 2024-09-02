@@ -10,7 +10,8 @@ const schema = new Schema<IInfoModel>(
         remark: { type: String, require: false },
         value: { type: Number, require: false },
         tag: { type: String, require: false },
-        min: { type: Number, require: false }
+        min: { type: Number, require: false },
+        total: { type: Number, require: false }
     },
     { collection: name, timestamps: true }
 );

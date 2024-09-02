@@ -10,7 +10,7 @@ export interface IEventModel {
     value?: number;
     remark?: string;
     tags?: string[];
-    infos: string[];
+    infos?: string[];
 }
 
 export interface IEvent extends Omit<IEventModel, 'tags' | 'infos' | 'grain'>, IModel {

@@ -1,18 +1,14 @@
 import { IModel } from '.';
 
-interface BaseInfo {
+export interface IInfoModel {
     name: string;
     atta?: string;
     remark?: string;
+    value?: number;
+    tag?: string;
+    min?: number;
+    total?: number;
 }
-
-interface BalanceInfo extends BaseInfo {
-    value: number;
-    tag: string;
-    min?: number | null;
-}
-
-export type IInfoModel = BaseInfo | BalanceInfo;
 
 export interface IInfo extends IInfoModel, IModel {}
 
