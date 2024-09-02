@@ -46,7 +46,7 @@ export default defineComponent({
                     <AgColorPicker
                         modelValue={item.color}
                         onUpdate:modelValue={v => (item.color = v)}
-                        readonly={!editing.value}
+                        disabled={!editing.value}
                         size="small"
                     ></AgColorPicker>
                 )}
@@ -54,7 +54,7 @@ export default defineComponent({
                     <AgColorPicker
                         modelValue={item.c2}
                         onUpdate:modelValue={v => (item.c2 = v)}
-                        readonly={!editing.value}
+                        disabled={!editing.value}
                         size="small"
                     ></AgColorPicker>
                 )}

@@ -2,12 +2,12 @@
     <button
         ref="triggerRef"
         class="reset-all bdr-all"
-        :cursor="readonly ? 'default' : 'pointer'"
+        :cursor="disabled ? 'default' : ''"
         :w="size === undefined ? '6' : size === 'large' ? '8' : '4'"
         :h="size === undefined ? '6' : size === 'large' ? '8' : '4'"
         :style="{ background: mergedValue }"
         :popovertarget="id"
-        :disabled="readonly"
+        :disabled="disabled"
     >
         <div :id="id" popover class="m-0 p-1.5 bg-white bdr-all" :style="{ ...styles }">
             <div grid="~ rows-11 cols-[repeat(18,_minmax(0,_1fr))] flow-col" gap="1.5">
@@ -26,11 +26,11 @@
 </template>
 
 <script setup lang="ts">
+import { ref, toRefs } from 'vue';
 import { colors, shades } from '@contracts/component';
 import { useId, useModelValue, usePopover } from '@renderer/hooks';
 import type { ColorPickerEmits, ColorPickerProps } from '..';
 import { colorNames } from './color-name';
-import { ref, toRef } from 'vue';
 
 // id
 const id = useId().next();
@@ -40,9 +40,8 @@ const styles = usePopover(triggerRef, false);
 // props & emits
 const props = withDefaults(defineProps<ColorPickerProps>(), { defaultValue: '' });
 const emits = defineEmits<ColorPickerEmits>();
-// readonly & size
-const readonly = toRef(props, 'readonly');
-const size = toRef(props, 'size');
+// disabled & size
+const { disabled, size } = toRefs(props);
 // value
 const { mergedValue, updateValue } = useModelValue(props, emits);
 const onClick = (color: string) => {
