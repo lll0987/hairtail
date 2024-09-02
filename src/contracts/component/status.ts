@@ -1,3 +1,5 @@
+// Q: status 要不要改为 type
+
 import type { TColor, TShade } from '.';
 
 export type TCStatus = 'error' | 'success' | 'warning' | 'primary' | 'accent';

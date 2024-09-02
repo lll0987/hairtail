@@ -41,7 +41,7 @@ interface IState {
 }
 
 const state = reactive<IState>({
-    // NEXT 列宽根据总宽度计算
+    // NEXT 日历 列宽根据总宽度计算
     width: {
         client: 0,
         col: col_width,
@@ -56,7 +56,7 @@ const state = reactive<IState>({
             const { length } = state.hour;
             return new BigNumber(height).idiv(length).toNumber();
         }),
-        // NEXT 根据日历数据计算日期范围行的高度
+        // NEXT 日历 根据数据计算日期范围行的高度
         bar: row_height,
         line: computed(() => {
             const { data: height, row } = state.height;

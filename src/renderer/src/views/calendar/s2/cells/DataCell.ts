@@ -135,7 +135,7 @@ export class ShapeDataCell extends DataCell {
     private getTimeShapeStyle() {
         const lineWidth = 2;
         const size = Math.min(this.meta.width, this.meta.height);
-        // NEXT 日历散点图最大最小值设置
+        // NEXT 日历 散点图最大最小值设置
         const { state } = useCalendarState();
         const maxR = (size / 2) * state.hour.span;
         const minR = lineWidth * 2;
@@ -195,7 +195,7 @@ export class ShapeDataCell extends DataCell {
         const width = w - px * 2 - style.lineWidth;
         const height = h0 - style.lineWidth;
 
-        // NEXT 日历时间范围重叠时缩小宽度
+        // NEXT 日历 时间范围重叠时缩小宽度
         this.appendChild(new Rect({ style: { ...style, x, y, width, height } }));
     }
 
@@ -276,7 +276,7 @@ export class ShapeDataCell extends DataCell {
         const width = w * date_length - style.lineWidth;
         const height = h - py * 2 - style.lineWidth;
 
-        // NEXT 按可显示的列数拆分渲染
+        // NEXT 日历 date range 按可显示的列数拆分渲染
         this.appendChild(new Rect({ style: { x, y, width, height, ...style } }));
     }
 

@@ -31,7 +31,7 @@ const noBorderCell = {
     backgroundColorOpacity: 0
 };
 
-// NEXT 交互态样式
+// NEXT 日历 交互态样式
 const interactionState: InteractionState = {
     hover: { backgroundOpacity: 0 },
     hoverFocus: { backgroundOpacity: 0 },
