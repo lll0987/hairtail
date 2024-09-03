@@ -8,10 +8,4 @@ export class RecordService extends BaseService<IRecordModel> {
     constructor() {
         super(recordName, recordModel);
     }
-
-    list_today() {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        return super.list({ createdAt: { $gte: today } });
-    }
 }

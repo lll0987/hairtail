@@ -37,15 +37,12 @@ export type TModel<M extends TModuleName> = M extends 'cron'
 
 // 数据库接口
 export type TCronApiName = TBaseApiName | 'list:today';
-export type TEventApiName = TBaseApiName | 'list:color';
-export type TRecordApiName = TBaseApiName | 'list:today';
+export type TEventApiName = TBaseApiName | 'list:color' | 'list:grain';
 export type TApiName<M extends TModuleName> = M extends 'cron'
     ? TCronApiName
     : M extends 'event'
       ? TEventApiName
-      : M extends 'record'
-        ? TRecordApiName
-        : TBaseApiName;
+      : TBaseApiName;
 
 // 数据库请求类型
 export type TApiRequest<M extends TModuleName, N = TApiName<M>, T = TModel<M>> = N extends 'list'

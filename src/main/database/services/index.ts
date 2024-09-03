@@ -1,5 +1,6 @@
 import { ipcMain } from 'electron';
-
+import { FilterQuery } from 'mongoose';
+import { IEvent } from '@contracts/interface';
 import { TApiRequest, TDbApiName } from '@contracts/type';
 
 import { RecordService } from './record.service';
@@ -49,5 +50,7 @@ export const handleService = () => {
 
     ipcMain.handle('db:cron:list:today', () => services.cron.list_today());
     ipcMain.handle('db:event:list:color', () => services.event.list_color());
-    ipcMain.handle('db:record:list:today', () => services.record.list_today());
+    ipcMain.handle('db:event:list:grain', (_, filter?: FilterQuery<IEvent>) =>
+        services.event.list_grain(filter)
+    );
 };

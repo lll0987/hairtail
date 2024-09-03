@@ -11,7 +11,7 @@ export class EventService extends BaseService<IEventModel> {
         super(eventName, eventModel);
     }
 
-    list2(filter?: FilterQuery<IEvent>) {
+    list_grain(filter?: FilterQuery<IEvent>) {
         return new Promise<TResponse<IEvent, true>>(resolve => {
             super.list(filter).then(([msg, docs]) => {
                 if (msg) {
