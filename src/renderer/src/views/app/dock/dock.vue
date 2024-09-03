@@ -1,5 +1,5 @@
 <template>
-    <div flex="~ col between-center" class="bdr-opacity border-r-2 gap-3 p-3">
+    <div flex="~ col between-center" gap-3 p-3>
         <ag-menu></ag-menu>
         <ag-theme></ag-theme>
     </div>
