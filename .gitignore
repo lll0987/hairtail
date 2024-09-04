@@ -5,3 +5,4 @@ out
 *.log*
 *.lock
 .env
+_setting.ts

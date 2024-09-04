@@ -61,13 +61,13 @@ export default defineComponent({
                 <span class="cursor-default">{item.name}</span>
                 {editing.value && (
                     <span class="flex items-center gap-1 pl-2 ml-1 -mr-1 border-l border-black">
-                        <i flex="~ center" class="text-green-600" {...{ onClick: onConfirm }}>
+                        <i flex="~ center" class="text-positive" {...{ onClick: onConfirm }}>
                             <IconPencilCheck size="1.25rem"></IconPencilCheck>
                         </i>
-                        <i flex="~ center" class="text-red-600" {...{ onClick: onDelete }}>
+                        <i flex="~ center" class="text-danger" {...{ onClick: onDelete }}>
                             <IconTrash size="1.25rem"></IconTrash>
                         </i>
-                        <i flex="~ center" class="text-slate-600" {...{ onClick: onCancel }}>
+                        <i flex="~ center" class="text-negative" {...{ onClick: onCancel }}>
                             <IconX size="1.25rem"></IconX>
                         </i>
                     </span>

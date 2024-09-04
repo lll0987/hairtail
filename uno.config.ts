@@ -13,22 +13,12 @@ export default defineConfig({
     presets: [presetUno(), presetAttributify()],
     safelist: [...safe_colors, ...safe_sizes],
     shortcuts: [
-        ...size_shortcuts,
-        { bdr: 'border-2 border-slate-800' },
-        { 'bdr-t': 'border-t-2 border-slate-800' },
-        { 'bdr-r': 'border-r-2 border-slate-800' },
-        { 'bdr-b': 'border-b-2 border-slate-800' },
-        { 'bdr-l': 'border-l-2 border-slate-800' },
-        { 'bdr-all': 'bdr has-[:focus]:border-lime-500 rounded-md' },
-        { 'bdr-opacity': 'border-slate-300 border-opacity-70' },
-        { 'bdr-dashed': 'border-slate-300 border-dashed' },
+        { bdr: 'border-2 border-slate-800 dark:border-black' },
         { 'text-placeholder': 'text-zinc-400' },
-        { 'flex-center': 'justify-center items-center' },
-        { 'flex-between-center': 'justify-between items-center' },
-        { reset: 'm-0 p-0 leading-none outline-none' },
-        { 'reset-all': 'reset border-0 bg-transparent' },
-        { 'x-center': 'left-1/2 -translate-x-1/2' },
-        { 'y-center': 'top-1/2 -translate-y-1/2' },
+        { 'text-danger': 'text-red-600 dark:text-red-500' },
+        { 'text-positive': 'text-green-600 dark:text-green-400' },
+        { 'text-negative': 'text-slate-600 dark:text-slate-300' },
+        { card: 'bdr dark:border-4 rounded-3xl bg-white dark:bg-neutral-800' },
         {
             decorative: [
                 'font-semibold',
@@ -58,6 +48,20 @@ export default defineConfig({
                 'before:bg-sky-400',
                 'before:rounded-full'
             ]
-        }
+        },
+        { 'x-center': 'left-1/2 -translate-x-1/2' },
+        { 'y-center': 'top-1/2 -translate-y-1/2' },
+        { 'flex-center': 'justify-center items-center' },
+        ...size_shortcuts,
+        { 'bdr-t': 'border-t-2 border-slate-800' },
+        { 'bdr-r': 'border-r-2 border-slate-800' },
+        { 'bdr-b': 'border-b-2 border-slate-800' },
+        { 'bdr-l': 'border-l-2 border-slate-800' },
+        { 'bdr-all': 'bdr has-[:focus]:border-lime-500 rounded-md' },
+        { 'bdr-opacity': 'border-slate-300 border-opacity-70' },
+        { 'bdr-dashed': 'border-slate-300 border-dashed' },
+        { 'flex-between-center': 'justify-between items-center' },
+        { reset: 'm-0 p-0 leading-none outline-none' },
+        { 'reset-all': 'reset border-0 bg-transparent' }
     ]
 });
