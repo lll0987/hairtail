@@ -45,7 +45,10 @@ export type TApiName<M extends TModuleName> = M extends 'cron'
       : TBaseApiName;
 
 // 数据库请求类型
-export type TApiRequest<M extends TModuleName, N = TApiName<M>, T = TModel<M>> = N extends 'list'
+export type TApiRequest<M extends TModuleName, N = TApiName<M>, T = TModel<M>> = N extends
+    | 'list'
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    | `list:${infer R}`
     ? [] | [FilterQuery<T>]
     : N extends 'add'
       ? [T | Array<T>]
@@ -56,15 +59,18 @@ export type TApiRequest<M extends TModuleName, N = TApiName<M>, T = TModel<M>> =
           : [];
 
 // 数据库响应类型
-export type TApiResponse<M extends TModuleName, N = TApiName<M>, T = TModel<M>> = N extends 'list'
-    ? TResponse<TDoc<T>, true>
+export type TApiResponse<M extends TModuleName, N = TApiName<M>, T = TDoc<TModel<M>>> = N extends
+    | 'list'
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    | `list:${infer R}`
+    ? TResponse<T, true>
     : N extends 'add'
       ? TResponse<Types.ObjectId> | TResponse<Types.ObjectId, true>
       : N extends 'update'
         ? TResponse<Types.ObjectId>
         : N extends 'remove'
           ? TResponse<Types.ObjectId>
-          : T;
+          : TResponse<T>;
 
 // 线程通信名称
 export type TDbApiName<M extends TModuleName> = `db:${M}:${TApiName<M>}`;
