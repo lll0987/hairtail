@@ -13,9 +13,7 @@ export interface IEventModel {
     infos?: string[];
 }
 
-export interface IEvent extends Omit<IEventModel, 'tags' | 'infos' | 'grain'>, IModel {
-    grain: EventGrain;
-}
+export interface IEvent extends IEventModel, IModel {}
 
 export interface IEventBody extends Omit<IEventModel, 'infos' | 'grain' | 'start' | 'end'> {
     start: string;

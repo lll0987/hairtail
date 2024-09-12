@@ -1,6 +1,5 @@
-import { FilterQuery } from 'mongoose';
-import { EventGrain, TResponse } from '@contracts/type';
-import { IEventRawData, IEvent, IEventModel } from '@contracts/interface';
+import { TResponse } from '@contracts/type';
+import { IEventRawData, IEventModel } from '@contracts/interface';
 import { eventModel, eventName, topicName } from '../models';
 import { BaseService } from '../base/BaseService';
 
@@ -9,19 +8,6 @@ export class EventService extends BaseService<IEventModel> {
 
     constructor() {
         super(eventName, eventModel);
-    }
-
-    list_grain(filter?: FilterQuery<IEvent>) {
-        return new Promise<TResponse<IEvent, true>>(resolve => {
-            super.list(filter).then(([msg, docs]) => {
-                if (msg) {
-                    resolve([msg, []]);
-                } else {
-                    const data = docs.map(doc => ({ ...doc, grain: doc.grain.toString() as EventGrain }));
-                    resolve([null, data]);
-                }
-            });
-        });
     }
 
     async list_color() {
