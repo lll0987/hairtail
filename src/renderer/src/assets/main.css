@@ -10,3 +10,7 @@
 .scrollbar-small::-webkit-scrollbar {
     width: 8px;
 }
+
+input[type='time']::-webkit-calendar-picker-indicator {
+    display: none;
+}
