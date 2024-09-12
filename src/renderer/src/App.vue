@@ -6,5 +6,6 @@
 
 <script setup lang="ts">
 import App from '@renderer/views/app';
-import { mode } from '@renderer/store';
+import { useModeStore } from '@renderer/store';
+const { mode } = useModeStore();
 </script>
