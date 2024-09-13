@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { WPill, WSleep } from '@renderer/widgets';
-import { setting } from './setting';
+import { setting } from './_setting';
 
 const compat = {
     pill: WPill,

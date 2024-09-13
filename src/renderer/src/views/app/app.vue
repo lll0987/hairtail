@@ -11,7 +11,7 @@
                             :class="index === actived ? 'menu-item-selected' : ''"
                             @click="actived = index"
                         >
-                            <component :is="icon" />
+                            <component :is="index === actived ? icon[1] : icon[0]" />
                         </li>
                     </ul>
                 </nav>
@@ -47,10 +47,14 @@ import { computed, ref } from 'vue';
 import {
     IconChevronLeft,
     IconChevronRight,
-    IconCalendarWeek,
+    IconChartAreaLine,
+    IconChartAreaLineFilled,
     IconHome,
+    IconHomeFilled,
     IconLayout,
+    IconLayoutFilled,
     IconSettings,
+    IconSettingsFilled,
     IconSunFilled,
     IconMoonFilled
 } from '@tabler/icons-vue';
@@ -66,7 +70,12 @@ import setting from '@renderer/views/setting';
 
 const { mode, updateMode } = useModeStore();
 
-const menu_icons = [IconHome, IconCalendarWeek, IconSettings, IconLayout];
+const menu_icons = [
+    [IconHome, IconHomeFilled],
+    [IconChartAreaLine, IconChartAreaLineFilled],
+    [IconSettings, IconSettingsFilled],
+    [IconLayout, IconLayoutFilled]
+];
 const components = [today, calendar, setting, preview];
 const actived = ref(0);
 
