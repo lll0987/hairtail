@@ -1,7 +1,8 @@
 import { defineConfig, presetUno } from 'unocss';
 import presetAttributify from '@unocss/preset-attributify';
 import { status_colors, shades, size_shortcuts } from './src/contracts/component';
-import { view_shortcuts } from './src/renderer/src/views';
+import { view_shortcuts } from './src/renderer/src/views/class';
+import { widget_shortcuts } from './src/renderer/src/widgets/class';
 
 const safe_attrs = ['bg', 'text', 'border'];
 const safe_colors = status_colors
@@ -19,6 +20,7 @@ export default defineConfig({
         { 'text-positive': 'text-green-600 dark:text-green-400' },
         { 'text-negative': 'text-slate-600 dark:text-slate-300' },
         ...view_shortcuts,
+        ...widget_shortcuts,
         { bdr: 'border-2 border-slate-800 dark:border-black' },
         { card: 'bdr dark:border-4 rounded-3xl bg-white dark:bg-neutral-800' },
         {

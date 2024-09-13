@@ -1,3 +1,3 @@
-import _today from './_today.vue';
+import Today from './_today.vue';
 
-export default _today;
+export default Today;

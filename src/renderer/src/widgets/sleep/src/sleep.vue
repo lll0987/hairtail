@@ -1,20 +1,21 @@
 <template>
-    <article @dblclick.stop="handleEdit">
-        <header>
+    <article widget-black widget-card @dblclick.stop="handleEdit">
+        <header widget-header>
             <h2>{{ topic }}</h2>
+            <span text-green-400><icon-zzz size="1.5rem"></icon-zzz></span>
         </header>
-        <section v-show="!editing">
+        <section v-show="!editing" flex-1 flex flex-col justify-evenly min-h-20>
             <p font-semibold>
                 <span text-4xl>{{ sleep.hour }}</span>
                 <span text-placeholder>小时</span>
                 <span text-4xl>{{ sleep.minute }}</span>
                 <span text-placeholder>分钟</span>
             </p>
-            <p>
+            <p text-sm>
                 <span>{{ sleep.length }}</span>
             </p>
         </section>
-        <section v-show="editing">
+        <section v-show="editing" flex-1 grid grid-cols-2 gap-2 min-h-20>
             <p>
                 <time-input v-model="timeValue.start"></time-input>
             </p>
@@ -34,6 +35,7 @@
 
 <script setup lang="ts">
 import { ref, toRefs } from 'vue';
+import { IconZzz } from '@tabler/icons-vue';
 import { IconButton, TimeInput } from '../..';
 import { SleepProps } from '..';
 import { useSleepValue } from './use-sleep-value';

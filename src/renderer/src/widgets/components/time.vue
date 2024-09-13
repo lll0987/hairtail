@@ -1,5 +1,5 @@
 <template>
-    <input type="time" :value="inputValue" @input="onInput" />
+    <input bg-transparent type="time" :value="inputValue" @input="onInput" />
 </template>
 
 <script setup lang="ts">
