@@ -1,6 +1,7 @@
 import { defineConfig, presetUno } from 'unocss';
 import presetAttributify from '@unocss/preset-attributify';
 import { status_colors, shades, size_shortcuts } from './src/contracts/component';
+import { view_shortcuts } from './src/renderer/src/views';
 
 const safe_attrs = ['bg', 'text', 'border'];
 const safe_colors = status_colors
@@ -13,11 +14,12 @@ export default defineConfig({
     presets: [presetUno(), presetAttributify()],
     safelist: [...safe_colors, ...safe_sizes],
     shortcuts: [
-        { bdr: 'border-2 border-slate-800 dark:border-black' },
         { 'text-placeholder': 'text-zinc-400' },
         { 'text-danger': 'text-red-600 dark:text-red-500' },
         { 'text-positive': 'text-green-600 dark:text-green-400' },
         { 'text-negative': 'text-slate-600 dark:text-slate-300' },
+        ...view_shortcuts,
+        { bdr: 'border-2 border-slate-800 dark:border-black' },
         { card: 'bdr dark:border-4 rounded-3xl bg-white dark:bg-neutral-800' },
         {
             decorative: [
@@ -63,5 +65,9 @@ export default defineConfig({
         { 'flex-between-center': 'justify-between items-center' },
         { reset: 'm-0 p-0 leading-none outline-none' },
         { 'reset-all': 'reset border-0 bg-transparent' }
+    ],
+    rules: [
+        [/^grid-cols-auto-(\d+)$/, ([, d]) => ({ 'grid-template-columns': `repeat(${d}, minmax(0, auto))` })],
+        [/^grid-rows-auto-(\d+)$/, ([, d]) => ({ 'grid-template-rows': `repeat(${d}, minmax(0, auto))` })]
     ]
 });
