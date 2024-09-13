@@ -1,19 +1,17 @@
 <!-- MEMO Toast.Z = 3000 -->
 <!-- MEMO Toast.top = 16px -->
 <template>
-    <div>
-        <slot></slot>
-        <teleport to="body">
-            <div
-                flex="~ col"
-                items="center"
-                gap="3"
-                class="z-[3000] top-[16px] fixed left-0 right-0 h-0 overflow-visible"
-            >
-                <Message v-for="item in messageList" :key="item.id" v-bind="item.options"></Message>
-            </div>
-        </teleport>
-    </div>
+    <slot></slot>
+    <teleport to="body">
+        <div
+            flex="~ col"
+            items="center"
+            gap="3"
+            class="z-[3000] top-[16px] fixed left-0 right-0 h-0 overflow-visible"
+        >
+            <Message v-for="item in messageList" :key="item.id" v-bind="item.options"></Message>
+        </div>
+    </teleport>
 </template>
 
 <script setup lang="ts">
