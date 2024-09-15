@@ -1,11 +1,11 @@
 <template>
-    <ul class="px-3 py-2 card">
-        <li v-for="item in remind" :key="item.id" class="marker mt-2">{{ item.msg }}</li>
+    <ul widget-auto border-auto border-2 p-4>
+        <li v-for="item in remind" :key="item.id" marker mb-2>{{ item.msg }}</li>
     </ul>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import type { TResponse } from '@contracts/type';
 import type { ICron } from '@contracts/interface';
 import { useApi } from '@renderer/hooks';
@@ -18,7 +18,5 @@ const getRemind = async () => {
     if (msg) toast.error(msg);
     else remind.value = data as ICron[];
 };
-onMounted(() => {
-    getRemind();
-});
+getRemind();
 </script>
