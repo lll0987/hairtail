@@ -19,6 +19,7 @@ export default defineConfig({
         { 'text-danger': 'text-red-600 dark:text-red-500' },
         { 'text-positive': 'text-green-600 dark:text-green-400' },
         { 'text-negative': 'text-slate-600 dark:text-slate-300' },
+        { 'border-auto': 'border-slate-800 dark:border-slate-950' },
         ...view_shortcuts,
         ...widget_shortcuts,
         { bdr: 'border-2 border-slate-800 dark:border-black' },

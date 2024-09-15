@@ -11,11 +11,6 @@
 </template>
 
 <script setup lang="ts">
-import { WPill, WSleep } from '@renderer/widgets';
+import { compat } from '.';
 import { setting } from './_setting';
-
-const compat = {
-    pill: WPill,
-    sleep: WSleep
-} as const;
 </script>
