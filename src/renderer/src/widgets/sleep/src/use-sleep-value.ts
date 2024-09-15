@@ -12,7 +12,7 @@ dayjs.extend(duration);
 
 export const useSleepValue = ({ topic, topic2 }: ToRefs<SleepProps>) => {
     const toast = useToast();
-    const { timestamp, next } = useDateStore();
+    const { timestamp, next, subscribe } = useDateStore();
     const { list, add, update } = useBaseApi('event');
 
     const events = ref<IEvent[]>([]);
@@ -102,6 +102,8 @@ export const useSleepValue = ({ topic, topic2 }: ToRefs<SleepProps>) => {
         getEvents();
     };
 
-    getEvents();
+    subscribe(() => {
+        getEvents();
+    });
     return { sleep, timeValue, updateSleepValue, updateTimeValue };
 };

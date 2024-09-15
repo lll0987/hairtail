@@ -8,7 +8,7 @@ import { PillProps } from '..';
 
 export const usePillValue = ({ tag, topic, length }: ToRefs<PillProps>) => {
     const toast = useToast();
-    const { timestamp } = useDateStore();
+    const { timestamp, subscribe } = useDateStore();
     const { list: listI, update: updateI } = useBaseApi('info');
     const { list: listE, add: addE, update: updateE } = useBaseApi('event');
 
@@ -79,7 +79,9 @@ export const usePillValue = ({ tag, topic, length }: ToRefs<PillProps>) => {
         info.value = item;
     };
 
-    getInfo();
-    getEvent();
+    subscribe(() => {
+        getInfo();
+        getEvent();
+    });
     return { pill, pillOptions, timeValue, selectedPill, updatePillValue, updateTimeValue };
 };
