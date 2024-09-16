@@ -70,11 +70,12 @@ export const useSleepValue = ({ topic, topic2 }: ToRefs<SleepProps>) => {
     const addOrUpdateWakeUp = () => {
         const topic = topic2?.value;
         if (!topic) return Promise.reject();
-        const { end: start, up: end } = timeValue;
-        if (!start || !end) return Promise.reject();
+        const { end, up } = timeValue;
+        if (!up) return Promise.reject();
+        const start = end || up;
         const item = events.value.filter(e => e.topic === topic)[0];
-        if (item && item.id) return update(item.id, { start, end });
-        return add({ start, end, topic, grain: Number(EVENT_GRAIN.TIME_RANGE) });
+        if (item && item.id) return update(item.id, { start, end: up });
+        return add({ start, end: up, topic, grain: Number(EVENT_GRAIN.TIME_RANGE) });
     };
     const addSleep = () => {
         const { start, end, up } = timeValue;
@@ -95,7 +96,11 @@ export const useSleepValue = ({ topic, topic2 }: ToRefs<SleepProps>) => {
         return await addOrUpdateWakeUp();
     };
     const updateSleepValue = async () => {
-        if (!timeValue.start || !timeValue.end) return;
+        if (!timeValue.start || !timeValue.end) {
+            const [m] = await addOrUpdateWakeUp();
+            if (m) return toast.error(m);
+            return;
+        }
         const handler = events.value.length ? updateSleep : addSleep;
         const [msg] = await handler();
         if (msg) return toast.error(msg);
