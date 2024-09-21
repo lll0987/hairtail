@@ -62,9 +62,10 @@ export const useSleepValue = ({ topic, topic2 }: ToRefs<SleepProps>) => {
 
     const timeValue = reactive<{ start?: number; end?: number; up?: number }>({});
     const updateTimeValue = () => {
-        timeValue.start = sleep.value.start;
-        timeValue.end = sleep.value.end;
-        timeValue.up = sleep.value.up;
+        const { start, end, up } = sleep.value;
+        timeValue.start = start ? start : undefined;
+        timeValue.end = end ? end : undefined;
+        timeValue.up = up ? up : undefined;
     };
 
     const addOrUpdateWakeUp = () => {
@@ -89,19 +90,17 @@ export const useSleepValue = ({ topic, topic2 }: ToRefs<SleepProps>) => {
     const updateSleep = async () => {
         const { start, end } = timeValue;
         if (!start || !end) return [];
-        const { id } = events.value.filter(e => e.topic === topic.value)[0];
-        if (!id) return [];
-        const [msg] = await update(id, { start, end });
+        const event = events.value.filter(e => e.topic === topic.value)[0];
+        const result = event?.id
+            ? update(event.id, { start, end })
+            : add({ start, end, topic: topic.value, grain: Number(EVENT_GRAIN.TIME_RANGE) });
+        const [msg] = await result;
         if (msg) return [msg];
         return await addOrUpdateWakeUp();
     };
     const updateSleepValue = async () => {
-        if (!timeValue.start || !timeValue.end) {
-            const [m] = await addOrUpdateWakeUp();
-            if (m) return toast.error(m);
-            return;
-        }
-        const handler = events.value.length ? updateSleep : addSleep;
+        const { start, end } = timeValue;
+        const handler = start && end ? (events.value.length ? updateSleep : addSleep) : addOrUpdateWakeUp;
         const [msg] = await handler();
         if (msg) return toast.error(msg);
         getEvents();
