@@ -1,6 +1,8 @@
 <template>
-    <ul widget-auto border-auto border-2 p-4>
-        <li v-for="item in remind" :key="item.id" marker mb-2>{{ item.msg }}</li>
+    <ul widget flex flex-col gap-1>
+        <li v-for="item in remind" :key="item.id" widget-card px-2>
+            <span marker>{{ item.msg }}</span>
+        </li>
     </ul>
 </template>
 

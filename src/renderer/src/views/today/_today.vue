@@ -1,11 +1,10 @@
 <template>
-    <div grid="~ cols-12" gap-1 px-4>
+    <div grid auto-cols="12rem" auto-rows="12rem" grid-flow-col gap-1 px-4>
         <component
             :is="compat[type]"
             v-for="({ type, ...item }, index) in setting"
             :key="index"
             v-bind="item"
-            rounded-3xl
         ></component>
     </div>
 </template>

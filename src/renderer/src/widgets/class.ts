@@ -1,7 +1,6 @@
 // @unocss-include
 export const widget_shortcuts = [
-    { 'widget-auto': 'bg-white dark:bg-black' },
-    { 'widget-black': 'bg-black text-white' },
-    { 'widget-card': 'px-4 pt-3 pb-1 flex flex-col' },
-    { 'widget-header': 'flex items-center justify-between text-neutral-100' }
-];
+    { widget: 'bg-gray-500 dark:bg-neutral-900 rounded-3xl p-1.5' },
+    { 'widget-card': 'bg-white dark:bg-black rounded-[1.25rem] px-4 py-2' },
+    { 'widget-header': 'text-gray-800 dark:text-neutral-400 text-sm font-semibold px-4 py-1.5' }
+] as unknown as { [key: string]: string }[];

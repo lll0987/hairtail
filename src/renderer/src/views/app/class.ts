@@ -1,6 +1,6 @@
 // @unocss-include
 export const app_shortcuts = [
-    { app: 'bg-slate-200 dark:bg-neutral-900 text-slate-950 dark:text-white' },
+    { app: 'bg-slate-50 text-slate-950 dark:bg-neutral-950 dark:text-white' },
     {
         'menu-item': [
             'border-auto',
@@ -15,21 +15,21 @@ export const app_shortcuts = [
     { 'menu-item-selected': 'border-2 bg-lime-300 dark:text-slate-950' },
     {
         'arrow-button': [
-            'border-slate-950 dark:border-white border',
-            'bg-white dark:bg-black',
+            'border-auto border-2',
+            'bg-cyan-200 dark:bg-cyan-300 dark:text-black',
             'rounded-full',
-            'w-7 h-7 p-1.5'
+            'w-[26px] h-[26px] p-[1px]'
         ]
     },
     {
         'day-button': [
-            'border-slate-950 dark:border-white border',
-            'bg-white dark:bg-black',
+            'border-gray dark:border-white border-2',
+            'bg-neutral-800 dark:bg-black text-white',
             'rounded-3xl',
-            'h-7 px-4',
+            'h-[26px] px-4',
             'flex items-center',
             'text-sm'
         ]
     },
-    { 'mode-button': 'w-7 h-7 bg-transparent' }
+    { 'mode-button': 'w-[26px] h-[26px] bg-transparent' }
 ];

@@ -1,5 +1,17 @@
 <template>
-    <input bg-transparent type="time" :value="inputValue" @input="onInput" />
+    <input
+        bg-black
+        dark:bg-white
+        bg-opacity-10
+        dark:bg-opacity-10
+        rounded
+        outline-cyan-400
+        outline-dashed
+        w-full
+        type="time"
+        :value="inputValue"
+        @input="onInput"
+    />
 </template>
 
 <script setup lang="ts">
