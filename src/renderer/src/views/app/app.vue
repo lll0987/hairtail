@@ -1,7 +1,7 @@
 <template>
     <toast-provider>
         <div app h-screen flex="~ col">
-            <header grid="~ cols-[1fr_auto_auto]" items-center gap-4 p-3>
+            <header grid="~ cols-[1fr_auto_auto_auto]" items-center gap-4 p-3>
                 <nav>
                     <ul flex items-center gap-2>
                         <li
@@ -11,7 +11,7 @@
                             :class="index === actived ? 'menu-item-selected' : ''"
                             @click="actived = index"
                         >
-                            <component :is="index === actived ? icon[1] : icon[0]" />
+                            <component :is="index === actived ? icon[1] : icon[0]" size="100%" />
                         </li>
                     </ul>
                 </nav>
@@ -21,15 +21,16 @@
                         <b>{{ date_str }}</b>
                     </time>
                     <button type="button" arrow-button @click="handleLast">
-                        <icon-chevron-left></icon-chevron-left>
+                        <icon-chevron-left size="100%"></icon-chevron-left>
                     </button>
                     <button type="button" arrow-button @click="handleNext">
-                        <icon-chevron-right></icon-chevron-right>
+                        <icon-chevron-right size="100%"></icon-chevron-right>
                     </button>
                     <button type="button" day-button @click="handleToday">
                         <span>Today</span>
                     </button>
                 </div>
+                <div class="w-[2px] h-[24px] rounded bg-black dark:bg-white"></div>
                 <button type="button" mode-button @click="updateMode()">
                     <icon-moon-filled v-if="mode === 'dark'"></icon-moon-filled>
                     <icon-sun-filled v-else></icon-sun-filled>
@@ -43,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import {
     IconChevronLeft,
     IconChevronRight,
@@ -96,4 +97,8 @@ const handleToday = () => {
     updateDate(dayjs().valueOf());
     date_ind.value = 0;
 };
+
+onMounted(() => {
+    handleToday();
+});
 </script>

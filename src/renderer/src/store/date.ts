@@ -16,7 +16,6 @@ export const useDateStore = (hour: number = 0) => {
     });
 
     onMounted(() => {
-        date.value = new Date();
         listeners.value.forEach(listener => listener());
     });
 
